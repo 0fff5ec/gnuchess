@@ -1,3 +1,7 @@
+2003-08-07 Mike Curtis <chess@wt.net>
+
+	* Minor ScoreDev code tidy
+
 2003-07-28 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* ensure gnuchessx included in EXTRA_DIST

@@ -1214,19 +1214,16 @@ int ScoreDev (short side)
  *
  ***************************************************************************/
 {
-   int s = 0;
-   int xside;
+   int s;
    int sq;
    BitBoard c;
 
-   xside = 1 ^ side;
-
    /* Calculate whether we are developed */
    c = (board.b[side][knight] & nn[side]) | (board.b[side][bishop] & bb[side]);
-   s += nbits(c) * -8;
+   s = nbits(c) * -8;
 
-   /* If we are castled or beyond the 10th move, no more ScoreDev */
-   if (board.castled[side] || GameCnt/2+1 >= 20)
+   /* If we are castled or beyond the 20th move, no more ScoreDev */
+   if (board.castled[side] || GameCnt >= 38)
       return (s);
 
    s += NOTCASTLED;
@@ -1264,7 +1261,8 @@ int ScoreDev (short side)
    }
 
    /* Discourage any wing pawn moves */
-   c = board.b[side][pawn] & (FileBit[0]|FileBit[1]|FileBit[6]|FileBit[7]);
+/*   c = board.b[side][pawn] & (FileBit[0]|FileBit[1]|FileBit[6]|FileBit[7]); */
+   c = board.b[side][pawn] & ULL(0xc3c3c3c3c3c3c3c3);
    while (c) {
      sq = leadz(c);
      CLEARBIT(c, sq);
@@ -1273,7 +1271,8 @@ int ScoreDev (short side)
    }
 
    /* Discourage any repeat center pawn moves */
-   c = board.b[side][pawn] & (FileBit[2]|FileBit[3]|FileBit[4]|FileBit[5]);
+/*   c = board.b[side][pawn] & (FileBit[2]|FileBit[3]|FileBit[4]|FileBit[5]); */
+   c = board.b[side][pawn] & ULL(0x3c3c3c3c3c3c3c3c);
    while (c) {
      sq = leadz(c);
      CLEARBIT(c, sq);
