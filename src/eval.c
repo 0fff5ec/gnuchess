@@ -675,17 +675,19 @@ int ScoreQ (short side)
    int s, s1, sq, EnemyKing;
    BitBoard c;
    
-   if (board.b[side][queen] == NULLBITBOARD)
-      return (0);
    s = s1 = 0;
+
+   /* Try to keep our queen on the board for attacking purposes. */
+   if (board.b[side][queen] == NULLBITBOARD) {
+       if (side == computer) {
+         s += QUEEN_NOT_PRESENT;
+       }
+       return(s);
+    }                                                                           
+
    xside = 1 ^ side;
    c = board.b[side][queen];
    EnemyKing = board.king[xside];
-
-   /* Try to keep our queen on the board for attacking purposes. */
-   if (side == computer)
-     if (c == NULLBITBOARD)
-        s += QUEEN_NOT_PRESENT;
 
    if ( c & pinned )
    {

@@ -1,3 +1,8 @@
+2002-12-22  Stuart Cracraft <cracraft@earthlink.net>
+
+	* Reinstate penalty for having no queens on in
+	  eval.c (spotted by Tim Bedding)
+
 2002-12-22  Lukas Geyer  <lukas@debian.org>
 
 	* Extra location for book checked 
