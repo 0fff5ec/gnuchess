@@ -250,6 +250,12 @@ void Iterate (void)
          break; 
    }
 
+   /* 
+    * Elapsed time is calculated in Search for timed games
+    * work it out here for statistical purposes
+    */
+   ElapsedTime = GetElapsed (StartTime);
+
    /* For the moment, just bail out if pondering after search */
    if (flags & PONDER) return;
 /***************************************************************************

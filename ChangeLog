@@ -14,6 +14,8 @@
 
 	* Rework hint to use first move in Tree
 
+	* GetElapse time even when not against the clock
+
 2003-01-27 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Stop output of result in iterate if game has ended already.
