@@ -1,3 +1,17 @@
+2003-03-06 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Correct pthread handling in configure.ac
+
+	* Correct LIBOBJS handling on platforms without getopt_long
+
+	* Avoid deprecated multiline string literals in cmd.c
+
+	* Avoid redefining MAX and MIN macros on HPUX
+
+	* Make pawncover constant to avoid difference between 
+	  first and subsequent games. Affects many King safety 
+	  calculations.
+
 2003-02-16 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Add getopt files to distribution for platforms without 
