@@ -134,9 +134,6 @@ inline int ScoreP (short side)
    short nfile[8];
    short EnemyKing;
    BitBoard c, t, p, blocker, *e;
-/*
-   BitBoard holes, d;
-*/
    PawnSlot *ptable;
 
    if (board.b[side][pawn] == NULLBITBOARD)
@@ -145,22 +142,6 @@ inline int ScoreP (short side)
    EnemyKing = board.king[xside];
    p = board.b[xside][pawn];
    c = t = board.b[side][pawn];
-/*
-   d = c;
-   if (side == white) {
-     d = d >> 8;
-     holes = (d & ( c >> 7) & ~FileBit[0]) | (d & ( c >> 9) & ~FileBit[7]);
-     holes = d & ~holes;
-   } else {
-     d = d << 8;
-     holes = (d & ( c << 7) & ~FileBit[7]) | (d & ( c << 9) & ~FileBit[0]);
-     holes = d & ~holes;
-   }
-   printf("Holes for %s for:\n",side==white?"white":"black");
-   ShowBoard();
-   ShowBitBoard(&holes);
-   getchar();
-*/
    ptable = PawnTab[side] + (PawnHashKey & PHashMask);
    TotalPawnHashCnt++;
    if (ptable->phase == phase && ptable->pkey == KEY(PawnHashKey))
@@ -536,7 +517,7 @@ inline int ScoreB (short side)
  *  3.  outpost bishop
  *  4.  fianchetto bishop
  *  5.  pinned bishop
- *  6.  hunged bishop
+ *  6.  Bishop pair
  *
  ****************************************************************************/
 {
@@ -668,7 +649,6 @@ inline int ScoreR (short side)
  *  2.  rook on open/half-open file.
  *  3.  rook in front/behind passed pawns (pawn >= 5th rank)
  *  4.  pinned rook.
- *  5.  hunged rook.
  *
  ****************************************************************************/
 {
@@ -778,8 +758,7 @@ inline int ScoreQ (short side)
  *  1. queen centralization.
  *  2. king tropism.
  *  3. pinned queen.
- *  4. hunged queen.
- *  5. Bonus if opponent king is exposed.
+ *  4. Bonus if opponent king is exposed.
  *
  ***************************************************************************/
 {
@@ -882,18 +861,6 @@ inline int ScoreK (short side)
       /* After castling kingside, reward having all 3 pawns in front but not if
 	 there is a threatening pawn. This permits the freeing move F3/F6. */
 	 
-#ifdef NEVER
-      pawncover[3] = 5;
-      if (board.castled[side]) {
-	if ((side == black && ((BitPosArray[G5] & board.b[white][pawn])||
-			       (BitPosArray[E5] & board.b[white][pawn]))) ||
-	    (side == white && ((BitPosArray[G4] & board.b[black][pawn])||
-			       (BitPosArray[E4] & board.b[black][pawn])))) 
-	  ;
-	else
-	  pawncover[3] = 30; 
-      }
-#endif
       if (side == white)
         n = nbits (MoveArray[king][sq] & board.b[side][pawn] & RankBit[rank+1]);
       else
@@ -1015,46 +982,24 @@ inline int ScoreK (short side)
 	  if (file > E_FILE) {
 	    if (board.b[side][rook]&mask_kr_trapped_w[H_FILE-file]) {
 		s += ROOKTRAPPED;
-/*
-		printf("Trapped %s rook at %s\n",side==white?"white":"black",algbr[sq]); ShowBoard(); getchar();
-*/
 	    }
 	  } else if (file < D_FILE) {
 	    if (board.b[side][rook]&mask_qr_trapped_w[file]) {
 		s += ROOKTRAPPED;
-/*
-		printf("Trapped %s rook at %s\n",side==white?"white":"black",algbr[sq]); ShowBoard(); getchar();
-*/
 	    }
 	  }
 	} else {
 	  if (file > E_FILE) {
 	    if (board.b[side][rook]&mask_kr_trapped_b[H_FILE-file]) {
 		s += ROOKTRAPPED;
-/*
-		printf("Trapped %s rook at %s\n",side==white?"white":"black",algbr[sq]); ShowBoard(); getchar();
-*/
 	    }
 	  } else if (file < D_FILE) {
 	    if (board.b[side][rook]&mask_qr_trapped_b[file]) {
 		s += ROOKTRAPPED;
-/*
-		printf("Trapped %s rook at %s\n",side==white?"white":"black",algbr[sq]); ShowBoard(); getchar();
-*/
 	    }
 	  }
 	}
       }
-
-      /* Penalize open lines to the king */
-/*
-      b = AttackFrom (sq, bishop, side) & (Ataks[xside][bishop] |
-					   Ataks[xside][queen]);
-      b |= AttackFrom (sq, rook, side) & (Ataks[xside][rook] |
-					  Ataks[xside][queen]);
-      b |= AttackFrom (sq, knight, side) & Ataks[xside][knight]; 
-      s -= nbits (b) * 4;
-*/
 
       /* Don't give fianchetto target for advanced pawns */
       if (file > E_FILE && FILE(board.king[xside]) < D_FILE) {
@@ -1489,24 +1434,11 @@ int Evaluate (int alpha, int beta)
    s1 = MATERIAL;
    if ((s1 + maxposnscore[side] < alpha || s1 - maxposnscore[xside] > beta) &&
 	phase <= 6)
-/*
-   if ((s1 + lazyscore[side] < alpha || s1 - lazyscore[xside] > beta) &&
-	phase <= 6)
-*/
    {
       score = s1;
       goto next;
    }
    s = 0;
-/*
-   GenAtaks ();
-   EvalHung (side);
-   EvalHung (xside);
-   if (hunged[side] > hunged[xside])
-      s += (hunged[side] - hunged[xside]) * HUNGPENALTY;
-   else if (hunged[xside] > hunged[side])
-      s -= (hunged[xside] - hunged[side]) * HUNGPENALTY;
-*/
    s += ScoreDev (side) - ScoreDev (xside);
    s += ScoreP (side) - ScoreP (xside);
    s += ScoreK (side) - ScoreK (xside);
@@ -1549,9 +1481,6 @@ int Evaluate (int alpha, int beta)
    else
    {
       EvalCnt++;
-/*
-      FindPins (&pinned);
-*/
       s1 = 0;
       for (piece = knight; piece < king; piece++)
       {
