@@ -13,6 +13,8 @@
 
 	* Shorten declaration of rings, this doesn't need to be in init.c
 
+	* Clean up case statement for X-ray attacks.
+
 2002-05-19  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Corrected command line size to 128 through out cmd.c to
