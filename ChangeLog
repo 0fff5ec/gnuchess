@@ -1,3 +1,14 @@
+2002-02-07  Simon Waters <simon@wretched.demon.co.uk>
+
+	* Moved Lukas's version into CVS
+
+	* Adjusted version string to 5.03
+
+	* Reimplemented bk in better fashion
+
+	* Added self to authors file
+
+
 2002-02-06  Lukas Geyer  <geyer@math.uni-dortmund.de>
 
 	* Clean-ups to make it build with the Sun cc compiler.
