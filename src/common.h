@@ -163,7 +163,9 @@ typedef struct
     (a) &= ~(b);                     \
     dbg_printf("Clear 0x%x\n", (b)); \
   } while (0)
-#define	DRAWSCORE    (computerplays == board.side ? (opprating - myrating) / 4 : (myrating - opprating ) / 4)
+
+/* Draw score can be used to penalise draws if desired */
+#define	DRAWSCORE   0 
 #define MATERIAL     (board.material[side] - board.material[1^side])
 #define PHASE	     (8 - (board.material[white]+board.material[black]) / 1150)
 #define KEY(a)	     (a >> 32) 
