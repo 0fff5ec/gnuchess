@@ -48,7 +48,7 @@ inline short leadz (BitBoard b)
    } a;
 
    a.bitboard = b;
-#ifdef i386
+#if (BYTE_ORDER == LITTLE_ENDIAN)
    if (a.v[3] != 0)
       return (lzArray[a.v[3]]);
    if (a.v[2] != 0)
