@@ -1,3 +1,16 @@
+2002-12-22  Lukas Geyer  <lukas@debian.org>
+
+	* Extra location for book checked 
+	  /usr/share/games/gnuchess/book.dat
+
+	* Correct handling of name
+
+	* Fix problem with slow exit if pondering
+
+	* Fix memset error
+
+	* Misc tidying of 'const' usage
+
 2002-12-19  Simon Waters <simon@wretched.demon.co.uk>
 
 	* 1/20th second sleep in input loop, to avoid

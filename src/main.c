@@ -335,7 +335,7 @@ int main (int argc, char *argv[])
     input_wakeup();
     /* Ponder only after first move */
     /* Ponder or (if pondering disabled) just wait for input */
-    if (flags & HARD) {
+    if ((flags & HARD) && !(flags & QUIT) ) {
       ponder();
     }
     /*

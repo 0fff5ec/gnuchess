@@ -31,6 +31,7 @@
  */
 static char const * bookbin[] = {
    "book.dat",
+   "/usr/share/games/gnuchess/book.dat",
    "/usr/lib/games/gnuchess/book.dat",
    NULL
 };

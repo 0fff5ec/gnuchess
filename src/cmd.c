@@ -323,6 +323,8 @@ void cmd_name(void)
 {
   int suffix = 0;
 
+  /* name[sizeof name - 1] should always be 0 */
+  strncpy(name, token[1], sizeof name - 1);
   for (suffix = 0; suffix < 1000; suffix++) {
     sprintf(logfile,"log.%03d",suffix);
     sprintf(gamefile,"game.%03d",suffix);

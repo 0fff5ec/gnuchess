@@ -48,8 +48,8 @@ static char lname[100];
 
 static int rscorecompare(const void *aa, const void *bb)
 {
-    const playerentry *a = (const playerentry *)aa;
-    const playerentry *b = (const playerentry *)bb;   
+    const playerentry *a = aa;
+    const playerentry *b = bb;   
     float ascore, bscore;
     ascore = (a->wins+(a->draws/2))/(a->wins+a->draws+a->losses);
     bscore = (b->wins+(b->draws/2))/(b->wins+b->draws+b->losses);
@@ -60,8 +60,8 @@ static int rscorecompare(const void *aa, const void *bb)
 
 static int scorecompare(const void *aa, const void *bb)
 {
-    const playerentry *a = (const playerentry *)aa;
-    const playerentry *b = (const playerentry *)bb;   
+    const playerentry *a = aa;
+    const playerentry *b = bb;   
     int ascore, bscore;
     ascore = 100*(a->wins+(a->draws/2))/(a->wins+a->draws+a->losses);
     bscore = 100*(b->wins+(b->draws/2))/(b->wins+b->draws+b->losses);
@@ -72,8 +72,8 @@ static int scorecompare(const void *aa, const void *bb)
 
 static int namecompare(const void *aa, const void *bb)
 {
-    const playerentry *a = (const playerentry *)aa;
-    const playerentry *b = (const playerentry *)bb;   
+    const playerentry *a = aa;
+    const playerentry *b = bb;   
     if (strcmp(a->player,b->player) > 0) return(1);
     else if (strcmp(a->player,b->player) < 0) return(-1);
     else return(0);
@@ -170,7 +170,6 @@ void DBUpdatePlayer (const char *player, const char *resultstr)
   int index;
   int result = R_NORESULT;
 
-  memset(lname,0,sizeof(lname));
   p = player;
   x = lname;
   strcpy(lname,player);
@@ -181,7 +180,7 @@ void DBUpdatePlayer (const char *player, const char *resultstr)
 	p++;
   } while (*p != '\0');
   *x = '\000';
-  memset(playerdb,0,sizeof(playerdb[MAXPLAYERS]));
+  memset(playerdb,0,sizeof(playerdb));
   DBReadPlayer ();
   index = DBSearchPlayer (lname);
   if (index == -1) {
