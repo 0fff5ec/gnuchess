@@ -7,6 +7,9 @@
 	  names for white and black are fixed which got
 	  overwritten with pgn parser merge.
 
+	* Remove GNU tool derived files from CVS to save
+	  space and avoid problems with timestamps.
+
 2003-06-13 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Use CalcHashSize in main.c
