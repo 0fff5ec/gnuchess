@@ -766,7 +766,7 @@ void InitHashTable ()
    } while (0);
    size = (HashSize * 2 * sizeof (HashSlot)) >> 10;
    if (!(flags & XBOARD)) {
-     printf ("Transposition table:  Entries=%dK Size=%dK\n", 
+     printf ("Transposition table:  Entries=%uK Size=%uK\n", 
              HashSize>>10, size);
    }
 
@@ -782,7 +782,7 @@ void InitHashTable ()
    } else {
       size = (PAWNSLOTS * 2 * sizeof (PawnSlot)) >> 10;
       if (!(flags & XBOARD))
-	printf ("Pawn hash table: Entries=%dK Size=%dK\n",
+	printf ("Pawn hash table: Entries=%dK Size=%uK\n",
 		PAWNSLOTS >> 10, size);
    }
 }
