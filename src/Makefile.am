@@ -9,6 +9,6 @@ gnuchess_SOURCES = atak.c book.c cmd.c debug.c epd.c eval.c genmove.c hash.c\
 
 AM_CFLAGS = -D_REENTRANT $(PTHREAD_CFLAGS)
 
-LDFLAGS = $(PTHREAD_LDFLAGS)
+LDFLAGS = $(PTHREAD_LDFLAGS) $(LIBOBJS)
 
 DISTCLEANFILES = *~

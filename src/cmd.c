@@ -551,29 +551,23 @@ void cmd_undo(void)
 
 void cmd_usage(void) 
 {
-      printf ("\n");
-      printf ("
- Usage: %s [OPTION]\n", progname);
- 
-      printf ("\n");
-      fputs ( "
-  -h, --help          display this help and exit\n\
-  -v, --version       display version information and exit\n", stdout);
- 
-      printf ("\n"); 
-      fputs ("
-  -x, --xboard       start in engine mode\n\
-  -p, --post   	     start up showing thinking\n\
-  -s size, --hashsize=size   specify hashtable size in slots\n\
-\n
-  Options xboard and post are accepted without leading dashes\n\
-  for backward compatibility\n", stdout);
- 
-      printf ("\n");
-      fputs ("
-Report bugs to <bug-gnu-chess@gnu.org>.\n", stdout);
-
-}
+      printf (
+     "\n"
+     " Usage: %s [OPTION]\n"
+     "\n"
+     " -h, --help         display this help and exit\n"
+     " -v, --version      display version information and exit\n" 
+     "\n"
+     " -x, --xboard       start in engine mode\n"
+     " -p, --post   	   start up showing thinking\n"
+     " -s size, --hashsize=size   specify hashtable size in slots\n"
+     "\n"
+     " Options xboard and post are accepted without leading dashes\n"
+     " for backward compatibility\n"
+     "\n"
+     "Report bugs to <bug-gnu-chess@gnu.org>.\n"
+     "\n", progname);
+     }
 
 
 /* Play variant, we instruct interface in protover we play normal */

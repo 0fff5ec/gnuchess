@@ -15,9 +15,6 @@
 /* Define if you have the `ncurses' library (-lncurses). */
 #undef HAVE_LIBNCURSES
 
-/* Define if you have the `pthread' library (-lpthread). */
-#undef HAVE_LIBPTHREAD
-
 /* Define if you have the `readline' library (-lreadline). */
 #undef HAVE_LIBREADLINE
 

@@ -24,10 +24,6 @@ if test x"$ac_cv_use_readline" = "xyes"; then
 	AC_CHECK_HEADERS(readline/readline.h readline/history.h)
 fi
 
-dnl Checks for libraries.
-AC_CHECK_LIB(pthread, pthread_create, ,
-	[AC_MSG_ERROR([You need to install the pthread library])])
-
 dnl Checks for header files.
 AC_HEADER_STDC
 
@@ -36,8 +32,6 @@ dnl AC_MSG_ERROR or we should treat missing headers
 dnl with #ifdef somehow. (As it stands, it still gives
 dnl valuable debugging info for bug reports, but not more.)
 AC_CHECK_HEADERS(time.h sys/time.h unistd.h errno.h)
-
-AC_CHECK_HEADER(pthread.h, , [AC_MSG_ERROR([Please install pthread.h])])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
