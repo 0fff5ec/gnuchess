@@ -101,6 +101,21 @@ static pthread_cond_t input_cond = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t wakeup_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t wakeup_cond = PTHREAD_COND_INITIALIZER;
 
+/*
+ * Posix threads are used to allow efficent polling for
+ * input when the program is pondering.
+ *
+ * input_status is a boolean to indicate if a command
+ * is being parsed and processed. It is set by
+ * input function, and must be cleared by the thread
+ * that uses the input.
+ *
+ * The main loop may explicitly wait_for_input, or
+ * when pondering will examine the input_status
+ * variable in Iterate.
+ *
+ */
+
 void *input_func(void *arg __attribute__((unused)) )
 {
   char prompt[MAXSTR] = "";
@@ -112,14 +127,21 @@ void *input_func(void *arg __attribute__((unused)) )
 	      (RealGameCnt+1)/2 + 1 );
     }
     pthread_mutex_lock(&input_mutex);
-    input_status = INPUT_NONE;
     getline(prompt);
     input_status = INPUT_AVAILABLE;
     pthread_cond_signal(&input_cond);
     pthread_mutex_unlock(&input_mutex);
 
     pthread_mutex_lock(&wakeup_mutex);
-    pthread_cond_wait(&wakeup_cond, &wakeup_mutex);
+    /*
+     * Posix waits can wake up spuriously
+     * so we must ensure that we keep waiting
+     * until we are woken by something that has 
+     * consumed the input
+     */
+    while ( input_status == INPUT_AVAILABLE ){
+     pthread_cond_wait(&wakeup_cond, &wakeup_mutex);
+    }
     pthread_mutex_unlock(&wakeup_mutex);
   }
   return NULL;
@@ -128,12 +150,9 @@ void *input_func(void *arg __attribute__((unused)) )
 void input_wakeup(void)
 {
   
-  if ( pthread_mutex_trylock(&input_mutex) == 0 ){
-    if ( input_status == INPUT_AVAILABLE ){
-      input_status = INPUT_NONE;
-      pthread_mutex_unlock(&input_mutex);
-    }
-  }
+  pthread_mutex_lock(&input_mutex);
+  input_status = INPUT_NONE;
+  pthread_mutex_unlock(&input_mutex);
   pthread_mutex_lock(&wakeup_mutex);
   pthread_cond_signal(&wakeup_cond);
   pthread_mutex_unlock(&wakeup_mutex);
