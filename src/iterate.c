@@ -93,7 +93,6 @@ void Iterate (void)
 
       if (suddendeath) 
 	SearchTime = 92 * SearchTime / 100;
-/* NEW */
 
 	/* From loss against Ryo Saeba where we ran out of
 	   time first move out of book and blundered pawn */
@@ -114,7 +113,6 @@ void Iterate (void)
             SearchTime = TCinc;
           }
         }
-/* END NEW */
       ShowTime ();
    }
    Idepth = 0;
@@ -227,7 +225,7 @@ void Iterate (void)
           rootscore = -INFINITY-1;
 	  RootBeta = RootAlpha;
 	  RootAlpha = -INFINITY;
-	  /* Search again? No SearchRoot() call here? */
+          score = SearchRoot (Idepth, RootAlpha, RootBeta);
         }
       }
 
@@ -241,10 +239,6 @@ void Iterate (void)
       if (SearchDepth == 0 && (flags & TIMECTL) && et >= 2 * SearchTime / 3)
          SET (flags, TIMEOUT);
 
-/*
- *     if (MATESCORE (score))
- *         SET (flags, TIMEOUT);
- */
       if (abs(score) + Idepth >= MATE + 1) 
          SET (flags, TIMEOUT);
 
@@ -316,11 +310,6 @@ void Iterate (void)
            CollHashCnt*100/(TotalPutHashCnt+1),
            GoodPawnHashCnt*100/(TotalPawnHashCnt+1));
       }
-/*
-      if (flags & TIMECTL)
-           fprintf (ofp,"Time control: %d moves in %.2f secs\n", 
-		  MoveLimit[side], TimeLimit[side]);
-*/
       if (!(flags & SOLVE)) ShowBoard ();
       printf ("\nMy move is : %s\n", SANmv);
       fflush(stdout);
