@@ -278,7 +278,7 @@ void LoadEPD (char *p)
    char file[INPUT_SIZE];
    int N = 1;
 
-   sscanf (p, "%31s %hd ", file, &N);
+   sscanf (p, "%31s %d ", file, &N);
    if (strcmp (file, "next") == 0)
    {
       ReadEPDFile (file, 0);
