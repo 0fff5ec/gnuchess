@@ -702,7 +702,7 @@ leaf * IsInMoveList (short ply, short f, short t, char piece)
 {
    leaf *node;
 
-   for (node = TreePtr[ply]; node <= TreePtr[ply + 1]; node++)
+   for (node = TreePtr[ply]; node < TreePtr[ply + 1]; node++)
    {
       if ((short) (node->move & 0x0FFF) == MOVE(f,t)  && 
 	toupper(piece) == notation[PROMOTEPIECE (node->move)])
