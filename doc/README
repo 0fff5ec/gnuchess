@@ -370,6 +370,7 @@ COMMAND LIST
   manual
 	Makes the program stop moving. You may now enter moves
 	to reach some position in the future.
+	(Same as "gnuchess --manual")
    
   white
 	Program plays black, set white to move.

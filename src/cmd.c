@@ -565,6 +565,7 @@ void cmd_usage(void)
      " -x, --xboard       start in engine mode\n"
      " -p, --post   	   start up showing thinking\n"
      " -e, --easy   	   disable thinking in opponents time\n"
+     " -m, --manual  	   enable manual mode\n"
      " -s size, --hashsize=size   specify hashtable size in slots\n"
      "\n"
      " Options xboard and post are accepted without leading dashes\n"

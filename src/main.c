@@ -301,7 +301,7 @@ int main (int argc, char *argv[])
    */
  
   int c;
-  int opt_help = 0, opt_version = 0, opt_post = 0, opt_xboard = 0, opt_hash = 0, opt_easy = 0;
+  int opt_help = 0, opt_version = 0, opt_post = 0, opt_xboard = 0, opt_hash = 0, opt_easy = 0, opt_manual = 0;
   char *endptr;
 
   progname = argv[0]; /* Save in global for cmd_usage */
@@ -316,6 +316,7 @@ int main (int argc, char *argv[])
         {"xboard", 0, 0, 'x'},
         {"post", 0, 0, 'p'},
         {"easy", 0, 0, 'e'},
+        {"manual", 0, 0, 'm'},
         {0, 0, 0, 0}
     };
  
@@ -323,7 +324,7 @@ int main (int argc, char *argv[])
 
     int option_index = 0;
  
-    c = getopt_long (argc, argv, "hpvxs:",
+    c = getopt_long (argc, argv, "ehmpvxs:",
              long_options, &option_index);
  
     /* Detect the end of the options. */
@@ -351,6 +352,9 @@ int main (int argc, char *argv[])
        break;
      case 'e':
        opt_easy = 1;
+       break;
+     case 'm':
+       opt_manual = 1;
        break;
      case 's':    
        if  ( optarg == NULL ){ /* we have error such as two -s */
@@ -396,7 +400,8 @@ int main (int argc, char *argv[])
 	SET (flags, XBOARD);
   if (opt_post == 1)
 	SET (flags, POST);	
-  
+  if (opt_manual ==1)
+	SET (flags, MANUAL);
   cmd_version();
   
   /* If the version option was specified we can exit here */
