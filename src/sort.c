@@ -76,9 +76,13 @@ void SortMoves (short ply)
  *****************************************************************************/
 {
    leaf *p;
-   short f, t, m, tovalue, side;
+   short f, t, m, tovalue, side, xside;
+   BitBoard enemyP;
 
    side = board.side;
+   xside = 1^side;
+   enemyP = board.b[xside][pawn];
+
    for (p = TreePtr[ply]; p < TreePtr[ply+1]; p++)
    {
       p->score = -INFINITY;
@@ -101,6 +105,13 @@ void SortMoves (short ply)
          p->score += KILLERSORTSCORE; 
 
       p->score += history[side][(p->move & 0x0FFF)] + taxicab[f][D5] - taxicab[t][E4];
+
+      if ( cboard[f] == pawn ) {
+        /* Look at pushing Passed pawns first */
+        if ( (enemyP & PassedPawnMask[side][t]) == NULLBITBOARD )
+           p->score +=50;
+      } 
+
    }
 }
 
@@ -114,7 +125,13 @@ void SortRoot ()
  *****************************************************************************/
 {
    leaf *p;
-   int f, t;
+   int f, t ;
+   short side, xside;
+   BitBoard enemyP;
+
+   side = board.side;
+   xside = 1^side;
+   enemyP = board.b[xside][pawn];
 
    for (p = TreePtr[1]; p < TreePtr[2]; p++)
    {
@@ -133,6 +150,12 @@ void SortRoot ()
          p->score = -3000 + SwapOff (p->move);
 
       p->score += taxicab[f][D5] - taxicab[t][E4];
+
+      if ( cboard[f] == pawn ) {
+        /* Look at pushing Passed pawns first */
+        if ( (enemyP & PassedPawnMask[side][t]) == NULLBITBOARD )
+           p->score +=50;
+      } 
 
    }
 }
