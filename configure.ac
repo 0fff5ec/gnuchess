@@ -27,6 +27,7 @@ AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_CHECK_SIZEOF(long)
+AC_NEED_STDINT_H(src/GCint.h)
 AC_C_BIGENDIAN
 
 dnl Checks for library functions.

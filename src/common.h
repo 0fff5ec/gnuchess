@@ -33,15 +33,10 @@
 # define __attribute__(x)
 #endif
 
-#if HAVE_SYS_TYPES_H
-#  include <sys/types.h>
-#endif
-#if HAVE_STDINT_H
-#  include <stdint.h>
-#endif
-#if HAVE_INTTYPES_H
-#  include <inttypes.h>
-#endif
+ /*
+  * Include "uint64_t" and similar types using the ac_need_stdint_h ac macro
+  */
+#include "GCint.h"
 
 typedef uint64_t BitBoard;
 typedef uint64_t HashType;
