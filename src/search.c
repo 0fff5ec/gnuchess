@@ -674,31 +674,38 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
    ElapsedTime = GetElapsed (StartTime);
 
    /*
-    * What is the reason for these different output formats, in
-    * particular for et? --Lukas
+    * The different output formats for Xboard and GNU Chess are documented
+    * in the engine protocol guide.
+    *
+    * In particular if the character after ply is not a space, Xboard
+    * assume it is talking to a GNU Chess compatible engine and
+    * uses time in seconds, not centiseconds.
+    *
+    * This code should be simplified!
+    *
     */
    if (flags & XBOARD) {
      if (score > MATE-255) {
        printf ("%d%c Mat%d %d %ld\t", Idepth/DEPTH, c,
-                (int)(MATE+2-abs(score))/2, (int)(ElapsedTime*100), NodeCnt+QuiesCnt);
+                (int)(MATE+2-abs(score))/2, (int)(ElapsedTime), NodeCnt+QuiesCnt);
        if (ofp != stdout)
 	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else if (score < -MATE+255) {
        printf ("%d%c -Mat%2d %d %ld\t", Idepth/DEPTH, c,
-                (int)(MATE+2-abs(score))/2, (int)(ElapsedTime*100), NodeCnt+QuiesCnt);
+                (int)(MATE+2-abs(score))/2, (int)(ElapsedTime), NodeCnt+QuiesCnt);
        if (ofp != stdout)
        fprintf (ofp,"%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else {
 	 printf ("%d%c %d %d %ld\t", Idepth/DEPTH, c, (int)score, 
-		 (int)(ElapsedTime*100), NodeCnt+QuiesCnt);
+		 (int)(ElapsedTime), NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
 	   fprintf (ofp,"%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, 
 		    ElapsedTime, score, NodeCnt+QuiesCnt);	 
        }
    }
-   else {
+   else {              // Not XBOARD
       if (score > MATE-255) {
 	 printf ("\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);

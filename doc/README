@@ -326,8 +326,9 @@ COMMAND LIST
 	command prompt
 
   quit
+	Quit the program.
   exit
-	These quit or exit the game.
+	In analysis mode this stops analysis, otherwise it quits the program.
 
   help
 	Produces a help blurb corresponding to this list of commands.
@@ -476,3 +477,9 @@ COMMAND LIST
 	eval - reads in an epd file and shows evaluation for its entries
 	evalspeed tests speed of the evaluator
 
+  analyze
+	Switches program into analysis mode, this is primarily intended for
+	communicating analysis to an external interface using the Xboard 
+	chess engine protocol. It enables "force", "post", and
+	"hard", at the same time, whilst altering the
+	output format of post to conform with the engine protocol.	

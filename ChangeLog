@@ -1,3 +1,10 @@
+2003-01-09 Simon Waters <Simon@wretched.demon.co.uk>
+
+	* Implement analysis mode
+
+	* Change time in ShowLine to seconds from centiseconds
+	  (see engine-intf.html at www.tim-mann.org)
+
 2003-01-09  Lukas Geyer  <lukas@debian.org>
 
 	* rename et ElapsedTime

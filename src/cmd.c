@@ -94,8 +94,24 @@ void cmd_activate(void)
  
 void cmd_analyze(void)
 {
-  printf("Error (unknown command): analyze\n");
-  fflush(stdout);
+  /*
+   * "analyze" mode is similar to force, hard and post together
+   * in that it produces a text output like post, but must
+   * think indefinitely like ponder.
+   *
+   * Some additional output is expected in command ".\n" but if ignored
+   * this should not be sent any more
+   */
+
+/* TODO correct output, add fail high low */
+
+   if (!(flags & ANALYZE)){
+     preanalyze_flags=flags; // save these flags for exit
+     SET (flags, ANALYZE);
+     cmd_post();
+     cmd_force();
+     cmd_hard();
+   }
 }
 
 void cmd_bk(void)
@@ -200,6 +216,22 @@ void cmd_epd(void)
   NewPosition();
   ShowBoard();
   printf ("\n%s : Best move = %s\n", id, solution); 
+}
+
+void cmd_exit(void) 
+{ 
+  /*
+   * "exit" is a synonym for quit except in engine mode
+   * when it means leave analyze mode
+   */
+
+  if ( flags & ANALYZE ){
+	flags = preanalyze_flags ; // this implicitly clears ANALYZE flag
+  } else {
+    cmd_quit(); 
+  }
+   
+
 }
 
 void cmd_force(void) { SET (flags, MANUAL); }
@@ -398,8 +430,8 @@ void cmd_post(void) { SET (flags, POST); }
 void cmd_protover(void)
 {
   if (flags & XBOARD) {
-    /* Note: change this if "analyze" or "draw" commands are added, etc. */
-    printf("feature setboard=1 analyze=0 ping=1 draw=0"
+    /* Note: change this if "draw" command is added, etc. */
+    printf("feature setboard=1 analyze=1 ping=1 draw=0"
 	   " variants=\"normal\" myname=\"%s %s\" done=1\n",
 	   PROGRAM, VERSION);
     fflush(stdout);
@@ -661,8 +693,9 @@ static const char * const helpstr[] = {
    " makes the move last considered best and returns to the",
    " command prompt",
    "quit",
+   " quit the program.",
    "exit",
-   " These quit or exit the game.",
+   " In analysis mode this stops analysis, otherwise it quits the program.",
    "help",
    " Produces a help blurb corresponding to this list of commands.",
    "book",
@@ -841,7 +874,7 @@ const struct methodtable commands[] = {
   { "epd", cmd_epd },
   { "epdload", cmd_load },
   { "epdsave", cmd_save },
-  { "exit", cmd_quit },
+  { "exit", cmd_exit },
   { "force", cmd_force },
   { "go", cmd_go },
   { "hard", cmd_hard },

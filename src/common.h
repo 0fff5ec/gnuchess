@@ -271,6 +271,7 @@ typedef struct
 #define POST    0x1000
 #define PONDER  0x2000 /* We are in pondering (during search) */
 #define HARD    0x4000 /* Pondering is turned on */
+#define ANALYZE 0x8000 /* In ANALYZE mode */
 
 /*  Node types  */ 
 #define PV  0
@@ -360,6 +361,7 @@ extern short RealSide;
 extern int GameCnt;
 extern int computer;
 extern unsigned int flags;
+extern unsigned int preanalyze_flags;
 extern Board board;
 extern int cboard[64];
 extern int Mvboard[64];
@@ -765,6 +767,7 @@ void cmd_draw(void);
 void cmd_easy(void);
 void cmd_edit(void); 
 void cmd_epd(void);
+void cmd_exit(void);
 void cmd_force(void);
 void cmd_go(void);
 void cmd_hard(void);
