@@ -1383,7 +1383,7 @@ int Evaluate (int alpha, int beta)
  ****************************************************************************/
 {
    short side, xside, piece, s, s1, score;
-   short npiece[2], Majors[2], Minors[2];
+   short npiece[2];
    BitBoard *b;
 
    side = board.side;
@@ -1435,30 +1435,6 @@ int Evaluate (int alpha, int beta)
    s += ScoreK (side) - ScoreK (xside);
    s += BishopTrapped (side) - BishopTrapped (xside);
    s += DoubleQR7 (side) - DoubleQR7 (xside);
-
-
- /**************************************************************************
-  *
-  * Check for bad trades, including queen for 3 minor pieces, rook
-  * for two minor, etc. (cf. Crafty)
-  *
-  **************************************************************************/
-
-   Majors[side]=(nbits(board.b[side][queen])*2) + nbits(board.b[side][rook]);
-   Majors[xside]=(nbits(board.b[xside][queen])*2) + nbits(board.b[xside][rook]);
-   Minors[side]=nbits(board.b[side][bishop]) + nbits(board.b[side][knight]);
-   Minors[xside]=nbits(board.b[xside][bishop]) + nbits(board.b[xside][knight]);
-
-   if (Minors[side] != Minors[xside]) {
-     if (Majors[side] == Majors[xside]) {
-       if (Minors[side] > Minors[xside]) s-=BAD_TRADE;
-       else  s+=BAD_TRADE;
-     }
-     else {
-       if (Minors[side] > Minors[xside]+1) s-=BAD_TRADE;
-       else if (Minors[xside] > Minors[side]+1) s+=BAD_TRADE;
-     }
-   }
 
    s1 = s + MATERIAL;
 

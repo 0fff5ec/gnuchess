@@ -38,7 +38,6 @@
 #define KINGMOVED    -20
 #define NOTCASTLED   -8
 #define PFACTOR      550
-#define BAD_TRADE    -100 /* -90 */
 #define EARLYMINORREPEAT -7
 
 /***********/
