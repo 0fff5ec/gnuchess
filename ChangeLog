@@ -1,3 +1,7 @@
+2002-02-26  Simon Waters <simon@wretched.demon.co.uk>
+
+	* Hacked version of ac_need_stdint_h AC macro to fix Win32 build
+
 2002-02-12  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Fix bug with saving move after mate in PGN files
