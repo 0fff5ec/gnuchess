@@ -517,6 +517,15 @@ void InputCmd ()
       TimeLimit[board.side] += Game[GameCnt+1].et;
       if (!(flags & XBOARD)) ShowBoard ();
    }
+   else if (strcmp (cmd, "bk") == 0)
+   {
+	/* Print moves from Open Book for Xboard/WinBoard */
+	/* Lines must start with " " and end with blank line */
+	/* No need to test for xboard as it is generally useful */
+	BookQuery(1);
+	printf("\n"); /* Blank line */
+        fflush(stdout);
+   }
 
    /* everything else must be a move */
    else
@@ -832,6 +841,8 @@ static const char * const helpstr[] = {
    " capturespeed - tests speed of capture move generator",
    " eval - reads in an epd file and shows evaluation for its entries",
    " evalspeed tests speed of the evaluator",
+   "bk",
+   " show moves from opening book.",
    NULL,
    NULL
 };

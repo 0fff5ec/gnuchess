@@ -365,8 +365,13 @@ int BookBuilderClose(void)
  * in iterate.c.) It used to return 1 on success before.
  */
 
-int BookQuery(void)
+int BookQuery(int BKquery)
 {
+  /*
+   * BKquery denotes format; 0 text, 1 engine 
+   * In general out put is engine compliant, lines start with a blank
+   * and end with emtpy line
+   */
   int i,j,k,icnt = 0, mcnt, found, tot, maxdistribution;
   int matches[MAXMATCH], best = 0;
   short bestsofar;
@@ -387,8 +392,8 @@ int BookQuery(void)
   xside = 1^side;
   rfp = fopen(BOOKBIN,"rb");
   if (rfp == NULL) {
-    if (!(flags & XBOARD))
-      fprintf(ofp," no book (%s).\n",BOOKBIN);
+    if (!(flags & XBOARD) || BKquery == 1 )
+      fprintf(ofp," no book (%s).\n\n",BOOKBIN);
     return BOOK_ENOBOOK;
   }
   TreePtr[2] = TreePtr[1];
@@ -415,15 +420,16 @@ int BookQuery(void)
       }
       bigbookcnt += bookcnt;
       bookloaded = 1;
-      fprintf(ofp,"%d hash collisions... ", bookhashcollisions);
+      if (!(flags & XBOARD))
+        fprintf(ofp,"%d hash collisions... ", bookhashcollisions);
     } else {
       /*
        * The following doesn't need to exit() because the old
        * book will not be overwritten.
        */
       fprintf(stderr, 
-	      "File %s does not conform to the new format.\n"
-	      "Consider rebuilding the book.\n",
+	      " File %s does not conform to the new format.\n"
+	      " Consider rebuilding the book.\n\n",
 	      BOOKBIN);
       return BOOK_EFORMAT;
     }
@@ -455,7 +461,7 @@ int BookQuery(void)
 	  
 	}
 	if (mcnt >= MAXMATCH) {
-	  fprintf(ofp,"Too many matches in book.\n");
+	  fprintf(ofp," Too many matches in book.\n\n");
 	  goto fini;
 	}
 	break; /* If we found a match, the following positions can not match */
@@ -464,15 +470,15 @@ int BookQuery(void)
   }
 
 fini:  
-  if (!(flags & XBOARD))
+  if (!(flags & XBOARD) || BKquery == 1)
   {
-    fprintf(ofp,"Opening database: %d book positions.\n",bigbookcnt);
+    fprintf(ofp," Opening database: %d book positions.\n",bigbookcnt);
     if (mcnt+1 == 0) {
-      fprintf(ofp,"In this position, there is no book move.\n");
+      fprintf(ofp," In this position, there is no book move.\n\n");
     } else if (mcnt+1 == 1) {
-      fprintf(ofp,"In this position, there is one book move:\n");
+      fprintf(ofp," In this position, there is one book move:\n");
     } else {
-      fprintf(ofp,"In this position, there are %d book moves:\n", mcnt+1);
+      fprintf(ofp," In this position, there are %d book moves:\n", mcnt+1);
     }
   }
   /* No book moves */
@@ -482,12 +488,12 @@ fini:
   k = 0;
   if (bookmode == BOOKPREFER) best = -INFINITY;
   if (mcnt+1) {
-    if ( !(flags & XBOARD)) {
+    if ( !(flags & XBOARD) || BKquery == 1 ) {
       for (i = 0; i <= mcnt; i++) {
-	if (!(flags & XBOARD)) {
+	if (!(flags & XBOARD) || BKquery == 1 ) {
 	  SANMove(m[matches[i]].move,1);
           tot = r[matches[i]].wins+r[matches[i]].draws+r[matches[i]].losses;
-	  fprintf(ofp,"%s(%2.0f/%d/%d/%d) ",SANmv,
+	  fprintf(ofp," %s(%2.0f/%d/%d/%d) ",SANmv,
 		100.0*(r[matches[i]].wins+(r[matches[i]].draws/2.0))/tot,
 		r[matches[i]].wins,
 		r[matches[i]].losses,
@@ -495,8 +501,8 @@ fini:
           if ((i+1) % 4 == 0) fputc('\n',ofp);
 	}
       }
-      if (!(flags & XBOARD))
-        if (i % 4 != 0) fprintf(ofp,"\n\n");
+      if (!(flags & XBOARD) || BKquery == 1 )
+        if (i % 4 != 0) fprintf(ofp," \n \n");
     }
     if (bookmode == BOOKRAND) {
       k = rand();
@@ -523,17 +529,17 @@ fini:
     } else if (bookmode == BOOKPREFER) {
       qsort(&pref,mcnt+1,sizeof(leaf),compare);
       for (i = 0; i <= mcnt; i++) {
-	if (!(flags & XBOARD)) {
+	if (!(flags & XBOARD) || BKquery == 1) {
 	  SANMove(pref[i].move,1);
-          printf("%s(%d) ",SANmv,pref[i].score);
+          printf(" %s(%d) ",SANmv,pref[i].score);
 	  if (pref[i].score > best) best = pref[i].score;
 	}
 	m[i].move = pref[i].move;
-	if (!(flags & XBOARD)) 
+	if (!(flags & XBOARD) || BKquery == 1) 
           if ((i+1) % 8 == 0) fputc('\n',ofp);
       }
-      if (!(flags & XBOARD))
-	if (i % 8 != 0) fprintf(ofp,"\n\n");
+      if (!(flags & XBOARD) || BKquery == 1)
+	if (i % 8 != 0) fprintf(ofp," \n \n");
         temp = (bookfirstlast > mcnt+1 ? mcnt+1 : bookfirstlast);
       /* Choose from the top preferred moves based on distribution */
       maxdistribution = 0;

@@ -471,7 +471,7 @@ void InitFICS (void);
 
 /*  The book routines */
 void MakeBinBook (char *, short);
-int BookQuery (void);
+int BookQuery (int);
 int BookBuilderOpen(void);
 int BookBuilder (short result, short side);
 int BookBuilderClose(void);

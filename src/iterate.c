@@ -148,7 +148,7 @@ void Iterate (void)
       
    wasbookmove = 0;
    if (bookmode != BOOKOFF && !(flags & SOLVE) && nmovesfrombook <= 3) {
-     if (BookQuery() == BOOK_SUCCESS) {
+     if (BookQuery(0) == BOOK_SUCCESS) {
        nmovesfrombook = 0;
        wasbookmove = 1;
        SET (flags, TIMEOUT);
