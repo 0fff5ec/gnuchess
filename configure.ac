@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/atak.c)
-AM_INIT_AUTOMAKE(gnuchess, 5.03-patched)
+AM_INIT_AUTOMAKE(gnuchess, 5.03)
 AM_CONFIG_HEADER(src/config.h)
 
 dnl Checks for programs.
