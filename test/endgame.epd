@@ -22,7 +22,7 @@ R7/4k3/8/8/8/p7/r3p3/4K3 b - - bm Ra1; id "17 Ra1";
 3K4/p2PQpkp/2q5/4P3/8/8/8/8 b - - bm Qb6+; id "23 Qb6+";
 k7/8/2p5/4P3/4B3/6p1/8/2n3K1 w - - bm Bd3; id "24 Bd3";
 k1N5/2p5/8/1P6/8/8/7K/8 w - - bm Nb6+; id "25 Nb6+";
-2n5/kP6/8/K7/4B3/8/8/8 w - - bm bxc8N+; id "26 bxc8N+";
+2n5/kP6/8/K7/4B3/8/8/8 w - - bm bxc8=N+; id "26 bxc8N+";
 8/3Np3/7P/1p3P2/1k6/5K2/1b6/8 w - - bm f6; id "27 f6";
 2r5/2pR1pk1/p1P3p1/P2K4/5P1p/5P1P/8/8 w - - bm Rxc7; id "28 Rxc7";
 8/1p5k/p1p4n/P6P/1P4N1/8/6K1/8 w - - bm Nxh6; id "29 Nxh6";
