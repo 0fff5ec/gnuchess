@@ -1,3 +1,15 @@
+2003-03-10 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Remove obselete M4 include file.
+
+2003-03-09 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Fix preprocessor directives for Macro names.
+
+2003-03-07 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Always used bundled geopt's to simply build
+
 2003-03-06 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Correct pthread handling in configure.ac
