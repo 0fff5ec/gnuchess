@@ -124,9 +124,12 @@ typedef struct
 
 /*
  * gcc 2.95.4 completely screws up the macros with lookup tables 
- * with -O2 on PPC, maybe this check has to be refined.
+ * with -O2 on PPC, maybe this check has to be refined. (I don't know
+ * whether other architectures also suffer from this gcc bug.) However,
+ * with gcc 3.0, the lookup tables are _much_ faster than this direct
+ * calculation.
  */
-#ifdef __PPC__
+#if defined(__GNUC__) && defined(__PPC__) && __GNUC__ < 3
 #  define SETBIT(b,i)   ((b) |=  ((1ULL<<63)>>(i)))
 #  define CLEARBIT(b,i) ((b) &= ~((1ULL<<63)>>(i)))
 #else
@@ -256,7 +259,7 @@ typedef struct
 
 extern short distance[64][64];
 extern short taxicab[64][64];
-extern short lzArray[65536];
+extern unsigned char lzArray[65536];
 extern short Shift00[64];
 extern short Shift90[64];
 extern short Shift45[64];
@@ -288,7 +291,7 @@ extern BitBoard mask_qr_trapped_b[3];
 extern BitBoard boardhalf[2];
 extern BitBoard boardside[2];
 extern short directions[64][64];
-extern short BitCount[65536];
+extern unsigned char BitCount[65536];
 extern leaf Tree[MAXTREEDEPTH];
 extern leaf *TreePtr[MAXPLYDEPTH];
 extern int RootPV;
@@ -533,8 +536,8 @@ void TestCmd (char *);
 
 /*  Some utility routines  */
 #ifdef NO_INLINE
-short leadz (BitBoard);
-short nbits (BitBoard);
+unsigned char leadz (BitBoard);
+unsigned char nbits (BitBoard);
 #endif
 
 void UpdateFriends (void);

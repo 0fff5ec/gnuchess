@@ -1,3 +1,17 @@
+2002-03-03  Lukas Geyer  <geyer@math.uni-dortmund.de>
+
+	* common.h: Refine check for buggy gcc 2.95 on PPC.
+
+	* common.h: Changed lzArray and BitCount from short to unsigned
+	  char, corresponding prototypes for leadz() and nbits(), too.
+
+	* inlines.h and util.c: Changed leadz() and nbits() to not use
+	  union, rather do explicit bit arithmetic which does not assume
+	  anything on endianness.
+
+	* test.c: Changed all timings to floating point and higher
+	  precision.
+
 2002-03-03  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Added unknown protocol commands to

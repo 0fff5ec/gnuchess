@@ -48,61 +48,29 @@
 
 #ifdef NO_INLINE
 
-short leadz (BitBoard b)
+unsigned char leadz (BitBoard b)
 /**************************************************************************
  *
  *  Returns the leading bit in a bitboard.  Leftmost bit is 0 and
- *  rightmost bit is 1.  Thanks to Robert Hyatt for this algorithm.
+ *  rightmost bit is 63.  Thanks to Robert Hyatt for this algorithm.
  *
  ***************************************************************************/
 {
-   register union
-   {
-      BitBoard bitboard;
-      unsigned short v[4];
-   } a;
-
-   a.bitboard = b;
-#ifndef WORDS_BIGENDIAN
-   if (a.v[3] != 0)
-      return (lzArray[a.v[3]]);
-   if (a.v[2] != 0)
-      return (lzArray[a.v[2]] + 16);
-   if (a.v[1] != 0)
-      return (lzArray[a.v[1]] + 32);
-   if (a.v[0] != 0)
-      return (lzArray[a.v[0]] + 48);
-#else
-   if (a.v[0] != 0)
-      return (lzArray[a.v[0]]);
-   if (a.v[1] != 0)
-      return (lzArray[a.v[1]] + 16);
-   if (a.v[2] != 0)
-      return (lzArray[a.v[2]] + 32);
-   if (a.v[3] != 0)
-      return (lzArray[a.v[3]] + 48);
-#endif /* WORDS_BIGENDIAN */
-   return (-1);
+  if (b >> 48) return lzArray[b >> 48];
+  if (b >> 32) return lzArray[b >> 32] + 16;
+  if (b >> 16) return lzArray[b >> 16] + 32;
+  return lzArray[b] + 48;
 }
 
-
-short nbits (BitBoard b)
+unsigned char nbits (BitBoard b)
 /***************************************************************************
  *
  *  Count the number of bits in b.
  *
  ***************************************************************************/
 {
-   register union
-   {
-      BitBoard bitboard;
-      unsigned short v[4];
-   } a;
-
-   a.bitboard = b;
-   return (BitCount[a.v[0]] + BitCount[a.v[1]] +
-		BitCount[a.v[2]] + BitCount[a.v[3]]);
-
+  return BitCount[b>>48] + BitCount[(b>>32) & 0xffff]
+    + BitCount[(b>>16) & 0xffff] + BitCount[b & 0xffff];
 }
 
 #endif /* NO_INLINE */

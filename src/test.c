@@ -23,17 +23,13 @@
      bug-gnu-chess@gnu.org
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
-/* 
- *
- */
 
 #include <stdio.h>
 #include <sys/time.h>
+
 #include "common.h"
 
-/*int gettimeofday (struct timeval *, struct timezone *);*/
-
-void TestMoveGenSpeed ()
+void TestMoveGenSpeed (void)
 /**************************************************************************
  *
  *   This routine benchmarks the speed of the bitmap move generation.
@@ -44,7 +40,7 @@ void TestMoveGenSpeed ()
 {
    unsigned long i;
    struct timeval t1, t2;
-   unsigned long et;
+   double et;
    short side, xside;
 
    GenCnt = 0;
@@ -62,20 +58,20 @@ void TestMoveGenSpeed ()
          GenMoves (1);
       }
       gettimeofday (&t2, NULL);
-      et += (t2.tv_sec - t1.tv_sec);
-      printf ("Time = %ld\n", et);
+      et += (t2.tv_sec - t1.tv_sec) + (t2.tv_usec - t1.tv_usec) / 1e6;
+      printf ("Time = %f\n", et);
 /*
    }
 */
    printf ("No. of moves generated = %lu\n", GenCnt);
-   printf ("Time taken = %ld secs\n", et);
+   printf ("Time taken = %f secs\n", et);
    if (et > 0)
-      printf ("Rate = %ld moves/sec.\n", GenCnt / et);
+      printf ("Rate = %f moves/sec.\n", GenCnt / et);
 }
 
 
 
-void TestNonCaptureGenSpeed ()
+void TestNonCaptureGenSpeed (void)
 /**************************************************************************
  *
  *   This routine benchmarks the speed of the bitmap move generation
@@ -87,7 +83,7 @@ void TestNonCaptureGenSpeed ()
 {
    unsigned long i;
    struct timeval t1, t2;
-   unsigned long et;
+   double et;
 
    GenCnt = 0;
    et = 0;
@@ -100,17 +96,17 @@ void TestNonCaptureGenSpeed ()
          GenNonCaptures (1);
       }
       gettimeofday (&t2, NULL);
-      et += (t2.tv_sec - t1.tv_sec);
-      printf ("Time = %ld\n", et);
+      et += (t2.tv_sec - t1.tv_sec) + (t2.tv_usec - t1.tv_usec) / 1e6;
+      printf ("Time = %f\n", et);
    }
    printf ("No. of moves generated = %lu\n", GenCnt);
-   printf ("Time taken = %ld\n", et);
+   printf ("Time taken = %f\n", et);
    if (et > 0)
-      printf ("Rate = %ld\n", GenCnt / et);  
+      printf ("Rate = %f\n", GenCnt / et);  
 }
 
 
-void TestCaptureGenSpeed ()
+void TestCaptureGenSpeed (void)
 /**************************************************************************
  *
  *   This routine benchmarks the speed of the bitmap move generation
@@ -122,7 +118,7 @@ void TestCaptureGenSpeed ()
 {
    unsigned long i;
    struct timeval t1, t2;
-   unsigned long et;
+   double et;
 
    GenCnt = 0;
    et = 0;
@@ -135,17 +131,17 @@ void TestCaptureGenSpeed ()
          GenCaptures (1);
       }
       gettimeofday (&t2, NULL);
-      et += (t2.tv_sec - t1.tv_sec);
-      printf ("Time = %ld\n", et);
+      et += (t2.tv_sec - t1.tv_sec) + (t2.tv_usec - t1.tv_usec) / 1e6;
+      printf ("Time = %f\n", et);
    }
    printf ("No. of moves generated = %lu\n", GenCnt);
-   printf ("Time taken = %ld\n", et);
+   printf ("Time taken = %f\n", et);
    if (et > 0)
-      printf ("Rate = %ld\n", GenCnt / et);  
+      printf ("Rate = %f\n", GenCnt / et);  
 }
 
 
-void TestMoveList ()
+void TestMoveList (void)
 /****************************************************************************
  *  
  *  This routine reads in a *.epd file (EPD notation) and prints the legal
@@ -166,7 +162,7 @@ void TestMoveList ()
 }
 
 
-void TestNonCaptureList ()
+void TestNonCaptureList (void)
 /****************************************************************************
  *  
  *  This routine reads in a *.epd file (EPD notation) and prints the 
@@ -187,7 +183,7 @@ void TestNonCaptureList ()
 }
 
 
-void TestCaptureList ()
+void TestCaptureList (void)
 /****************************************************************************
  *  
  *  This routine reads in a *.epd file (EPD notation) and prints the capture
@@ -210,7 +206,7 @@ void TestCaptureList ()
 
 #define NEVALS 30000
 
-void TestEvalSpeed ()
+void TestEvalSpeed (void)
 /***************************************************************************
  *
  *  This routine reads in the BK.epd and test the speed of the 
@@ -220,6 +216,7 @@ void TestEvalSpeed ()
 {
    unsigned long i;
    struct timeval t1, t2;
+   double et;
 
    et = 0;
    EvalCnt = 0;
@@ -231,19 +228,18 @@ void TestEvalSpeed ()
          (void) Evaluate (-INFINITY, INFINITY);
       }
       gettimeofday (&t2, NULL);
-      et += (t2.tv_sec - t1.tv_sec) + 
-		(double) (t2.tv_usec - t1.tv_usec)/1000000.0;
-      printf ("Time = %.1f\n", et);
+      et += (t2.tv_sec - t1.tv_sec) + (t2.tv_usec - t1.tv_usec)/1e6;
+      printf ("Time = %f\n", et);
    }
    printf ("No. of positions evaluated = %lu\n", EvalCnt);
-   printf ("Time taken = %.1f\n", et);
+   printf ("Time taken = %f\n", et);
    if (et > 0)
-      printf ("Rate = %d\n", (int) (EvalCnt / et));  
+      printf ("Rate = %f\n", EvalCnt / et);  
 }
 
 
 
-void TestEval ()
+void TestEval (void)
 /**************************************************************************
  *
  *  To test the evaluation routines,  read from the BK.epd test file.

@@ -151,6 +151,7 @@ int SearchRoot (short depth, int alpha, int beta)
 
       if (flags & TIMEOUT)
       {
+	/* XXX: It seems that ply == 1 always at this point */
          best = (ply & 1 ? rootscore : -rootscore );
 	 return (best);
       }

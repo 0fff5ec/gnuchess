@@ -40,7 +40,7 @@
 
 short distance[64][64];
 short taxicab[64][64];
-short lzArray[65536];
+unsigned char lzArray[65536];
 BitBoard DistMap[64][8];
 BitBoard BitPosArray[64];
 BitBoard NotBitPosArray[64];
@@ -68,7 +68,7 @@ BitBoard mask_qr_trapped_b[3];
 BitBoard boardhalf[2];
 BitBoard boardside[2];
 short directions[64][64];
-short BitCount[65536];
+unsigned char BitCount[65536];
 leaf Tree[MAXTREEDEPTH];
 leaf *TreePtr[MAXPLYDEPTH];
 int RootPV;
