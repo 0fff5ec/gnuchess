@@ -123,7 +123,7 @@ void PGNReadFromFile (const char *file)
  ****************************************************************************/
 {
    FILE *fp;
-   char s[100], c, wmv[8], bmv[8];
+   char s[100], c, wmv[SANSZ], bmv[SANSZ];
    int moveno;
    leaf *p;
 
@@ -181,7 +181,7 @@ void BookPGNReadFromFile (const char *file)
  ****************************************************************************/
 {
    FILE *fp;
-   char s[100], wmv[8], bmv[8];
+   char s[100], wmv[SANSZ], bmv[SANSZ];
    int c;
    unsigned int i;
    char header[2000];

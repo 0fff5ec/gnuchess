@@ -1,3 +1,7 @@
+2003-02-05 Simon Waters <Simon@wretched.demon.co.uk>
+
+	* Various string length issues tidied up.
+
 2003-01-31 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Implement "white" and "black" commands.

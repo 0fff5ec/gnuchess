@@ -109,6 +109,8 @@ typedef struct
  * Game is a set of GameRec's:
  */
 
+#define SANSZ 8 /* longest move is "exf8=Q+" so 7+1 */
+
 typedef struct
 {
    int move;    /* The actual move made; this is NOT the move count! */
@@ -120,7 +122,7 @@ typedef struct
    float et;     /* elapsed time */
    HashType hashkey;
    HashType phashkey;
-   char SANmv[8];  /* The move in SAN notation */
+   char SANmv[SANSZ];  /* The move in SAN notation */
 } GameRec;
 
 typedef struct
@@ -417,7 +419,7 @@ extern unsigned long TTHashMask;
 extern unsigned long PHashMask;
 extern int slider[8];
 extern int Value[7];
-extern char SANmv[10];
+extern char SANmv[SANSZ];
 extern unsigned long history[2][4096];
 extern int killer1[MAXPLYDEPTH];
 extern int killer2[MAXPLYDEPTH];
@@ -474,7 +476,9 @@ extern int rank8[2];
 extern const char *progname;
 extern FILE *ofp;
 extern int myrating, opprating, suddendeath;
-extern char name[50];
+
+#define MAXNAMESZ 50
+extern char name[MAXNAMESZ];
 extern int computerplays;
 extern int wasbookmove;
 extern int nmovesfrombook;

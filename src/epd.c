@@ -47,7 +47,7 @@ short ReadEPDFile (const char *file, short op)
  ****************************************************************************/
 {
    static FILE *fp = NULL;
-   char line[1025];
+   char line[MAXSTR];
 
    /*  If first time through, must open file  */
    if (fp == NULL)

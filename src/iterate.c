@@ -103,8 +103,7 @@ void Iterate (void)
 
       if (TCinc != 0)
         if (SearchTime < TCinc) {
-	  const char *color[2] = { "White", "Black" };
-          printf("TimeLimit[%s] = %6.2f\n",color[side],TimeLimit[side]);
+          printf("TimeLimit[%s] = %6.2f\n",side == white ? "White" : "Black" ,TimeLimit[side]);
           if (TimeLimit[side] > 30) {   /* Only if > 15 seconds left */
             SearchTime = TCinc;
           }

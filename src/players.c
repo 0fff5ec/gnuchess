@@ -37,14 +37,14 @@ int totalplayers = 0;
 #define MAXPLAYERS 500
 
 typedef struct {
-  char player[100];
+  char player[MAXNAMESZ];
   int wins;
   int losses;
   int draws;
 } playerentry;
 
 playerentry playerdb[MAXPLAYERS];
-static char lname[100];
+static char lname[MAXNAMESZ];
 
 static int rscorecompare(const void *aa, const void *bb)
 {
@@ -138,7 +138,7 @@ void DBReadPlayer (void)
    totalplayers = 0;
    if ((rfp = fopen(PLAYERFILE,"r")) != NULL) {
     while (!feof(rfp)) {
-     n = fscanf(rfp,"%s %d %d %d\n",
+     n = fscanf(rfp,"%49s %d %d %d\n",  // 49 MAXNAMESZ-1
 	playerdb[totalplayers].player,
         &playerdb[totalplayers].wins,
         &playerdb[totalplayers].losses,

@@ -122,7 +122,7 @@ unsigned long RepeatCnt;
 unsigned HashSize;
 unsigned long TTHashMask;
 unsigned long PHashMask;
-char SANmv[10];
+char SANmv[SANSZ];
 unsigned long history[2][4096];
 int killer1[MAXPLYDEPTH];
 int killer2[MAXPLYDEPTH];
