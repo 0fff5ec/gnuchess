@@ -449,7 +449,7 @@ void cmd_protover(void)
 {
   if (flags & XBOARD) {
     /* Note: change this if "draw" command is added, etc. */
-    printf("feature setboard=1 analyze=1 ping=1 draw=0"
+    printf("feature setboard=1 analyze=1 ping=1 draw=0 sigint=0"
 	   " variants=\"normal\" myname=\"%s %s\" done=1\n",
 	   PROGRAM, VERSION);
     fflush(stdout);
