@@ -27,7 +27,7 @@
 #
 
 PRODUCT = gnuchess
-VERSION = 5.02
+VERSION = 5.03
 PATCHLEVEL = 0.00
 
 srcdir = @srcdir@

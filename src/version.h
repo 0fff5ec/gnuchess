@@ -24,5 +24,5 @@
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 #define PROGRAM	  "GNU Chess"
-#define VERSION   "v5.02"
+#define VERSION   "v5.03"
 #define AUTHOR	  "Chua Kong Sian / Stuart Cracraft" 
