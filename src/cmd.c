@@ -686,7 +686,7 @@ void ShowCmd (char *subcmd)
       GenCaptures (1);      
       FilterIllegalMoves (1);
       ShowMoveList (1);
-      printf ("No. of moves generated = %ld\n", GenCnt);
+      printf ("No. of moves generated = %lu\n", GenCnt);
    }
    else if (strcmp (cmd, "eval") == 0 || strcmp (cmd, "score") == 0)
    {
