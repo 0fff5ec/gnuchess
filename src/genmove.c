@@ -41,10 +41,10 @@ static leaf *node;
 
 #define ADDPROMOTE(a,b)           \
   do {                            \
-    ADDMOVE (a, b, KNIGHTPRM);    \
-    ADDMOVE (a, b, BISHOPPRM);    \
-    ADDMOVE (a, b, ROOKPRM);      \
     ADDMOVE (a, b, QUEENPRM);     \
+    ADDMOVE (a, b, KNIGHTPRM);    \
+    ADDMOVE (a, b, ROOKPRM);      \
+    ADDMOVE (a, b, BISHOPPRM);    \
   } while (0)
 
 static inline void BitToMove (short f, BitBoard b)

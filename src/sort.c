@@ -49,6 +49,9 @@ void SortCaptures (short ply)
    leaf *p;
    int temp, f, t;
 
+//printf ("\n SortCaptures \n");
+//ShowBoard();
+
    for (p = TreePtr[ply]; p < TreePtr[ply+1]; p++)
    {
       f = Value[cboard[FROMSQ(p->move)]];
@@ -60,6 +63,8 @@ void SortCaptures (short ply)
          temp = SwapOff (p->move);
 	 p->score = (temp < 0 ? -INFINITY : temp);
       }
+//printf (" %s %d \n", AlgbrMove(p->move), p->score);
+
    }
 }
 
@@ -84,6 +89,9 @@ void SortMoves (short ply)
    xside = 1^side;
    enemyP = board.b[xside][pawn];
 
+//printf ("\n SortMoves \n");
+//ShowBoard();
+
    for (p = TreePtr[ply]; p < TreePtr[ply+1]; p++)
    {
       p->score = -INFINITY;
@@ -94,10 +102,31 @@ void SortMoves (short ply)
       /* Hash table move (highest score) */
       if (m == Hashmv[ply])
          p->score += HASHSORTSCORE;
+
       else if (cboard[t] != 0 || p->move & PROMOTION)
       {
-         tovalue = WEIGHT * (Value[cboard[t]] + Value[PROMOTEPIECE (p->move)]);
-         p->score += tovalue - Value[cboard[f]];
+
+	/* ***** SRW My Interpretation of this code *************
+           * Captures normally in other places but.....         *
+           *                                                    *
+           * On capture we generally prefer to capture with the *
+	   * with the lowest value piece so to chose between    *
+           * pieces we should subtract the piece value .... but *
+           *                                                    *
+           * The original code was looking at some captures     *
+           * last, especially where the piece was worth more    *
+           * than the piece captured - KP v K in endgame.epd    *
+           *                                                    *
+           * So code modified to prefer any capture by adding   *
+           * ValueK                                             *
+           ****************************************************** */
+
+//      tovalue = WEIGHT * (Value[cboard[t]] + Value[PROMOTEPIECE (p->move)]);
+//      p->score += tovalue - Value[cboard[f]];
+        tovalue = (Value[cboard[t]] + Value[PROMOTEPIECE (p->move)]);
+        p->score += tovalue + ValueK - Value[cboard[f]];
+
+
       }
       /* Killers */
       else if (m == killer1[ply] || m == killer2[ply])
@@ -111,9 +140,10 @@ void SortMoves (short ply)
         /* Look at pushing Passed pawns first */
         if ( (enemyP & PassedPawnMask[side][t]) == NULLBITBOARD )
            p->score +=50;
-      } 
 
-   }
+//printf (" %s %d \n", AlgbrMove(p->move), p->score);
+      } 
+  }
 }
 
 
@@ -134,6 +164,8 @@ void SortRoot (void)
    xside = 1^side;
    enemyP = board.b[xside][pawn];
 
+//printf ("\n SortRoot \n");
+//ShowBoard();
    for (p = TreePtr[1]; p < TreePtr[2]; p++)
    {
       f = Value[cboard[FROMSQ(p->move)]];
@@ -158,6 +190,7 @@ void SortRoot (void)
            p->score +=50;
       } 
 
+//printf (" %s %d \n", AlgbrMove(p->move), p->score);
    }
 }
 

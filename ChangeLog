@@ -1,5 +1,9 @@
 2002-05-02  Simon Waters <simon@wretched.demon.co.uk>
 
+	* Reorder move generation of promotions
+
+	* Improve sorting of captures in SortMove
+
 	* Insert pinned and hanging piece checks
 
 	* Remove unreachable code in cmd.c
