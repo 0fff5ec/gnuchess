@@ -325,14 +325,6 @@ int main (int argc, char *argv[])
   bookfirstlast = 3;
 
   while (!(flags & QUIT)) {
-    /* Ponder or (if pondering disabled) just wait for input */
-    if (flags & HARD) {
-      ponder();
-    }
-    /*
-     * ponder() is allowed to return early, and pondering may be
-     * disabled
-     */
     wait_for_input();
     parse_input();
     if ((flags & THINK) && !(flags & MANUAL) && !(flags & ENDED)) {
@@ -341,6 +333,15 @@ int main (int argc, char *argv[])
       CLEAR (flags, THINK);
     }
     input_wakeup();
+    /* Ponder only after first move */
+    /* Ponder or (if pondering disabled) just wait for input */
+    if (flags & HARD) {
+      ponder();
+    }
+    /*
+     * ponder() is allowed to return early, and pondering may be
+     * disabled
+     */
   }
   
   CleanupInput();
