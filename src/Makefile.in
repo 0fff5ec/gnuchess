@@ -85,7 +85,7 @@ gnuchess_SOURCES = atak.c book.c cmd.c debug.c epd.c eval.c genmove.c hash.c\
 
 AM_CFLAGS = -D_REENTRANT $(PTHREAD_CFLAGS)
 
-LDFLAGS = $(PTHREAD_LDFLAGS) $(LIBOBJS)
+LDFLAGS = $(PTHREAD_LDFLAGS) 
 
 DISTCLEANFILES = *~
 subdir = src
@@ -104,7 +104,7 @@ am_gnuchess_OBJECTS = atak.$(OBJEXT) book.$(OBJEXT) cmd.$(OBJEXT) \
 	repeat.$(OBJEXT) search.$(OBJEXT) solve.$(OBJEXT) \
 	sort.$(OBJEXT) swap.$(OBJEXT) test.$(OBJEXT) ttable.$(OBJEXT) \
 	util.$(OBJEXT)
-gnuchess_OBJECTS = $(am_gnuchess_OBJECTS)
+gnuchess_OBJECTS = $(am_gnuchess_OBJECTS) $(LIBOBJS)
 gnuchess_LDADD = $(LDADD)
 gnuchess_DEPENDENCIES =
 gnuchess_LDFLAGS =
