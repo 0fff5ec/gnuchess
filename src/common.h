@@ -548,7 +548,7 @@ void ShowGame (void);
 void ShowTime (void);
 
 /*  Random numbers routines */
-unsigned int long Rand32 (void);
+unsigned int Rand32 (void);
 HashType Rand64 (void);
 
 /*  Solver routines  */

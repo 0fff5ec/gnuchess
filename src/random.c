@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include "common.h"
 
-unsigned long Rand32 ()
+unsigned int Rand32 ()
 /****************************************************************************
  *
  *  A 32 bit random number generator.  An implementation in C of the 

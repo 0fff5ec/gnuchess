@@ -204,7 +204,7 @@ void Iterate (void)
       }
       else 
       /*  If we fail low, then research. */ 
-      if (score <= RootAlpha /*&& !(flags & TIMEOUT)*/)
+      if (score <= RootAlpha && !(flags & TIMEOUT))
       {
          ShowLine (RootPV, score, '-');
          rootscore = -INFINITY-1;
