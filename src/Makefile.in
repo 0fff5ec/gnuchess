@@ -214,6 +214,6 @@ dist:
 
 distclean:
 	rm -rf ../test
-        rm *.o gnuchess 
+	rm *.o gnuchess 
 	rm config.log config.cache config.status 
 	find .. -name "CVS" -type d -exec rm -irf {} \;
