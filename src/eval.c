@@ -1451,6 +1451,19 @@ short EvaluateDraw (void)
    BitBoard *w, *b;
    int wm, bm, wn, bn;
 
+   /* 
+    * Exception - if we are close to a pawn move, promotion 
+    * or capture it is possible a forced mate will follow.
+    * So we assume not drawn for 2 moves.
+    */
+
+   if ( (GameCnt-Game50) < 5 )
+     return (false);
+
+   /* 50 move rule */
+   if ( (GameCnt-Game50) > 100 )
+     return (true);
+
    w = board.b[white];
    b = board.b[black];
    if (w[pawn] != 0 || b[pawn] != 0)

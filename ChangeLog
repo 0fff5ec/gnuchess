@@ -2,6 +2,9 @@
 
 	* Drop enpassant knowledge on "switch" command.
 
+	* Add in 2 move exception to EvaluateDraw to
+	  avoid drawing won games.
+
 2003-02-05 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Various string length issues tidied up.
