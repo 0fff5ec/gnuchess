@@ -87,8 +87,17 @@
 /* Define as the return type of signal handlers (`int' or `void'). */
 #undef RETSIGTYPE
 
+/* The number of bytes in type char */
+#undef SIZEOF_CHAR
+
+/* The number of bytes in type int */
+#undef SIZEOF_INT
+
 /* The number of bytes in type long */
 #undef SIZEOF_LONG
+
+/* The number of bytes in type short */
+#undef SIZEOF_SHORT
 
 /* The number of bytes in type void* */
 #undef SIZEOF_VOIDP

@@ -44,7 +44,7 @@ AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
-AC_NEED_STDINT_H(src/GCint.h)
+AC_CREATE_STDINT_H(src/GCint.h)
 
 dnl Checks for library functions.
 AC_TYPE_SIGNAL

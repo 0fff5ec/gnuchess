@@ -3,6 +3,8 @@
 	* Add getopt files to distribution for platforms without 
 	  GNU C library
 
+	* Replace ac_need_stdint_h with ac_create_stdint_h
+
 2003-02-11 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Drop enpassant knowledge on "switch" command.
