@@ -821,18 +821,6 @@ short IsLegalMove (int move)
          return (false);
    }
 
-#ifdef notdef
-   /*  If the move is made, does it leave the King in check?  */
-   MakeMove (side, &move);
-   if (SqAtakd (board.king[side], 1^side))
-   {
-      UnmakeMove (1^side, &move);
-      return (false);
-   }
-   else 
-      UnmakeMove (1^side, &move);
-#endif
-      
    return (true);
 }
 
