@@ -16,6 +16,9 @@
 
 	* GetElapse time even when not against the clock
 
+	* Modify aclocal.m4 to stop spurious 32's in configure
+	  which break build AIX 4.2, and Solaris 2.5.1 
+
 2003-01-27 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Stop output of result in iterate if game has ended already.
