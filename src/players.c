@@ -153,8 +153,8 @@ void DBReadPlayer (void)
         &playerdb[totalplayers].draws);
      if (n == 4) totalplayers++;
     }
+    fclose(rfp);
    }
-   fclose(rfp);
 }
 
 int DBSearchPlayer (char *player)
