@@ -1,0 +1,26 @@
+TEST DATA
+
+These datasets are for testing purposes, and should not be included
+in the distribution of GNUchess. They (and others) are freely available
+at http://www.geocities.com/CapeCanaveral/Launchpad/2640/pgn/tests/
+
+The command to test is "solve filename". Previously issue the
+command "book off", and set hashsize and other settings to
+avoid undue variability.
+
+Other system activity can distort test results. 
+Variations of the order of 1% are common.
+
+2001/11/02 SRW, on AMD 166 MHZ, 128 MB, Linux 2.2.19, RH 7.0
+
+Development version of GNUchess 5.03 scored;
+
+Test		Score	Nodes Examined
+BT2630.epd	4/30	5051431
+endgame.epd	12/46	12240843
+wac.epd		257/300	38506581
+
+On default time and hashsize settings.
+
+BT2630.epd was modified as the format of "next move" was in the form 
+"fromsqtosq".
