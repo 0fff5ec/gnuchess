@@ -35,7 +35,7 @@
 #ifdef UNIVERSAL
 #include "univ.h"
 #include <conio.h>
-char fromboard[10];
+char fromboard[INPUT_SIZE];
 #endif
 
 #if HAVE_LIBREADLINE
@@ -158,8 +158,7 @@ void InputCmd ()
 	  printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
 	  fflush(stdout);
         }
-	if (fgets (inputstr, INPUT_SIZE, stdin) && inputstr[0])
-	    inputstr[strlen(inputstr)-1] = '\000';
+	fgets (inputstr, INPUT_SIZE, stdin) ;
 #endif /* HAVE_LIBREADLINE */
 
 	cmd[0] = '\n';
@@ -229,7 +228,7 @@ void InputCmd ()
       ShowVersion ();
    else if (strcmp (cmd, "pgnsave") == 0)
            {     
-		if ( strlen(inputstr) > 0 )
+		if ( strlen(inputstr) > 0 && strlen(inputstr) < INPUT_SIZE )
       		  PGNSaveToFile (inputstr,"");
 		else
 		  printf("Invalid filename.\n");
@@ -648,7 +647,7 @@ void ShowCmd (char *subcmd)
  *
  ************************************************************************/
 {
-   char cmd[10];
+   char cmd[INPUT_SIZE];
 
    sscanf (subcmd, "%s %[^\n]", cmd, subcmd);
    if (strcmp (cmd, "board") == 0)
@@ -746,7 +745,7 @@ void BookCmd (char *subcmd)
  *
  *************************************************************************/
 {
-   char cmd[10];
+   char cmd[INPUT_SIZE];
    char bookfile[INPUT_SIZE];
    short bookply;
 
@@ -767,7 +766,7 @@ void TestCmd (char *subcmd)
  *
  *************************************************************************/
 {
-   char cmd[10];
+   char cmd[INPUT_SIZE];
 
    sscanf (subcmd, "%s %[^\n]", cmd, subcmd);
    if (strcmp (cmd, "movelist") == 0)

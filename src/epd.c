@@ -246,7 +246,7 @@ void LoadEPD (char *p)
  *
  **************************************************************************/
 {
-   char file[32];
+   char file[INPUT_SIZE];
    short N = 1;
 
    sscanf (p, "%s %hd ", file, &N);
@@ -279,7 +279,7 @@ void SaveEPD (char *p)
  *
  **************************************************************************/
 {
-   char file[32];
+   char file[INPUT_SIZE];
    FILE *fp;
    short r, c, sq, k;
    char c1;

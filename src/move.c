@@ -509,7 +509,7 @@ leaf * ValidateMove (char *s)
 {
    short f, t, side, rank, file, fileto;
    short piece, kount;
-   char mvstr[64], *p;
+   char mvstr[INPUT_SIZE], *p;
    BitBoard b;
    leaf *n1, *n2;
 

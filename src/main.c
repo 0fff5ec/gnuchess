@@ -292,7 +292,7 @@ int main (int argc, char *argv[])
   int i;
 
 #ifdef UNIVERSAL
-  char buf[10];
+  char buf[INPUT_SIZE];
 #endif
 
   /* Initialize random number generator */
