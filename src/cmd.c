@@ -119,8 +119,10 @@ void InputCmd ()
 */
 	if (fgets (inputstr, 64, stdin) && inputstr[0])
 	    inputstr[strlen(inputstr)-1] = '\000';
+/*
 	else
 	    SET (flags, QUIT);
+*/
 	cmd[0] = '\n';
 	strcpy(userinput,inputstr);
 	sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
