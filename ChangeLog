@@ -1,3 +1,7 @@
+2002-08-02 Simon Waters <simon@wretched.demon.co.uk>
+
+	* Clean up of SortRoot (also MC suggested optimisation)
+
 2002-08-02 Based on patch from Lukas Geyer
 
 	* Add list of possible book locations, to allow

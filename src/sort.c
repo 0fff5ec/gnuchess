@@ -164,12 +164,9 @@ void SortRoot (void)
    xside = 1^side;
    enemyP = board.b[xside][pawn];
 
-//printf ("\n SortRoot \n");
-//ShowBoard();
    for (p = TreePtr[1]; p < TreePtr[2]; p++)
    {
       f = Value[cboard[FROMSQ(p->move)]];
-      t = Value[cboard[TOSQ(p->move)]];
       if (cboard[TOSQ(p->move)] != 0 || (p->move & PROMOTION))
       {
          f = Value[cboard[FROMSQ(p->move)]];
@@ -189,8 +186,6 @@ void SortRoot (void)
         if ( (enemyP & PassedPawnMask[side][TOSQ(p->move)]) == NULLBITBOARD )
            p->score +=50;
       } 
-
-//printf (" %s %d \n", AlgbrMove(p->move), p->score);
    }
 }
 
