@@ -67,7 +67,7 @@ CFLAGS=-O3 -Winline -Wmissing-prototypes -funroll-loops -fomit-frame-pointer $(M
 
 # Not normally needed unless debugging or profiling.
 # Debugging
-# CFLAGS=-g -Winline -Wmissing-prototypes -DDEBUG -DIBMPC
+# CFLAGS=-g -Wall -Wunused -Winline -Wmissing-prototypes -DDEBUG -DIBMPC
 # Profiling
 # CFLAGS=-pg -Winline -Wmissing-prototypes -DIBMPC
  
