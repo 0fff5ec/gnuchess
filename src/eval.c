@@ -744,7 +744,7 @@ static const int EndingKing[64] =
    0,  6, 12, 18, 18, 12,  6,  0
 };
 
-static int pawncover[9] = { -60, -30, 0, 5, 30, 30, 30, 30, 30 };
+static const int pawncover[9] = { -60, -30, 0, 5, 30, 30, 30, 30, 30 };
 static const int factor[9] = { 7, 8, 8, 7, 6, 5, 4, 2, 0, };
 
 int ScoreK (short side)
@@ -814,7 +814,7 @@ int ScoreK (short side)
 			      board.b[side][pawn] & RankBit[rank-1]);
           }
 	}
-        pawncover[3] = 30;
+        
 	/* Penalize breaking the wing pawn formations prior to castle */
 	if (n != -1) s += pawncover[n];
       }
