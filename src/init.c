@@ -560,7 +560,7 @@ void InitDistance ()
 
    for (f = 0; f < 64; f++)
      for (t = 0; t < 8; t++)
-       DistMap[f][t] = 0ull;
+       DistMap[f][t] = ULL(0);
 
 
    for (f = 0; f < 64; f++)

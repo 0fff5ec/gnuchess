@@ -301,7 +301,7 @@ int main (int argc, char *argv[])
   srand((unsigned) now);
   
   /* initialize control flags */
-  flags = 0ull;
+  flags = ULL(0);
 
   /* output for thinking */
   ofp = stdout;
