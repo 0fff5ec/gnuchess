@@ -315,8 +315,8 @@ void InputCmd ()
      }
    }	
    else if (strcmp (cmd, "rating") == 0) {
-      sscanf(inputstr,"%hd %hd",&myrating,&opprating); 
-      fprintf(ofp,"my rating = %hd, opponent rating = %hd\n",myrating,opprating); 
+      sscanf(inputstr,"%d %d",&myrating,&opprating); 
+      fprintf(ofp,"my rating = %d, opponent rating = %d\n",myrating,opprating); 
       /* Change randomness of book based on opponent rating. */
       /* Basically we play narrower book the higher the opponent */
       if (opprating >= 1700) bookfirstlast = 2;
@@ -354,7 +354,7 @@ void InputCmd ()
    else if (strcmp (cmd, "hashsize") == 0)
    {
       if (inputstr[0] == 0) {
-	 printf("Current HashSize is %d slots\n", HashSize);
+	 printf("Current HashSize is %u slots\n", HashSize);
       } else {
 	 i = atoi (inputstr);
 	 TTHashMask = 0;
@@ -364,7 +364,7 @@ void InputCmd ()
 	    TTHashMask |= 1;
 	 }
 	 HashSize = TTHashMask + 1;
-	 printf ("Adjusting HashSize to %d slots\n", HashSize);
+	 printf ("Adjusting HashSize to %u slots\n", HashSize);
 	 InitHashTable (); 
       }
    }
@@ -418,7 +418,7 @@ void InputCmd ()
    else if (strcmp (cmd, "level") == 0)
    {
       SearchDepth = 0;
-      sscanf (inputstr, "%hd %f %hd", &TCMove, &TCTime, &TCinc);
+      sscanf (inputstr, "%d %f %d", &TCMove, &TCTime, &TCinc);
       if (TCMove == 0) {
 	TCMove =  35 /* MIN((5*(GameCnt+1)/2)+1,60) */;
 	printf("TCMove = %d\n",TCMove);
@@ -541,7 +541,7 @@ void InputCmd ()
    else if (strcmp (cmd, "st") == 0)
    {
 	/* Approximately level 1 0 N */
-	sscanf(inputstr,"%hd",&TCinc);
+	sscanf(inputstr,"%d",&TCinc);
 	suddendeath = 0 ;
 	/* Allow a little fussiness for failing low etc */
 	SearchTime = TCinc * 0.90f ;
@@ -660,7 +660,7 @@ void ShowCmd (char *subcmd)
       TreePtr[2] = TreePtr[1];
       GenMoves (1);      
       ShowMoveList (1);
-      printf ("No. of moves generated = %ld\n", GenCnt);
+      printf ("No. of moves generated = %lu\n", GenCnt);
    }
    else if (strcmp (cmd, "escape") == 0)
    {
@@ -668,7 +668,7 @@ void ShowCmd (char *subcmd)
       TreePtr[2] = TreePtr[1];
       GenCheckEscapes (1);      
       ShowMoveList (1);
-      printf ("No. of moves generated = %ld\n", GenCnt);
+      printf ("No. of moves generated = %lu\n", GenCnt);
    }
    else if (strcmp (cmd, "noncapture") == 0)
    {
@@ -677,7 +677,7 @@ void ShowCmd (char *subcmd)
       GenNonCaptures (1);      
       FilterIllegalMoves (1);
       ShowMoveList (1);
-      printf ("No. of moves generated = %ld\n", GenCnt);
+      printf ("No. of moves generated = %lu\n", GenCnt);
    }
    else if (strcmp (cmd, "capture") == 0)
    {
