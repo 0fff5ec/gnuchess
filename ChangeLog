@@ -1,3 +1,8 @@
+2003-06-28 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Changes to lexpgn.l to handle some special
+	  cases.
+
 2003-06-19 Mike Curtis <chess@wt.net>
 
 	* Portability fix to lexpgn.l

@@ -148,6 +148,8 @@ NONSPACE	[^ \t\n\r\f]
 \[[ \t]*		{
 	/* Handle "[".  If we've already seen a move, return "[" to
 	   the stream and return. */
+	/* We rashly match on any SC to avoid trouble with unmatched
+	   brackets of various types */
 	seen_tags = 1;
 	ctag = NO_TAG;
 	if (seen_moves) {
@@ -196,8 +198,12 @@ NONSPACE	[^ \t\n\r\f]
 	return 1;
 	}
 
-<tagdata>([^\n\r])*+\" { /* tag data */
+<tagdata>("\\\""|[^\n\r\"])* { /* tag data */
+
+	/* We start at first " in tag, and must match
+	   till we reach an unprotected " or end of line */
         /* pattern modified SRW to eat all data till " */
+
 	BEGIN(tagend);
 	/* TODO: if DEST_GAME, store tag symbol and data for later saving */
 	switch(ctag) {
@@ -363,7 +369,7 @@ NONSPACE	[^ \t\n\r\f]
 [a-z0][a-z0-9\-=\+\#\?\!\,]*	{ /* Process a move */
 	seen_moves = 1;
 	if (data_dest != DEST_TRASH) {
-		/* printf("Seen move %s\n", yytext); */
+		/*  printf("Seen move %s\n", yytext); */
 		/* SAN moves can be at most 7 characters, and
 		  Game[].SANmv must be able to store the result. */
 		if (yyleng > 7) {
@@ -395,7 +401,13 @@ NONSPACE	[^ \t\n\r\f]
 <RAV>\(	{ rav_count++; append_comment(yytext); }
 <RAV>\)	{ rav_count--; append_comment(yytext);
 	 if (rav_count <=0) BEGIN(INITIAL); }
-<RAV>[^\(\)]+	{ append_comment(yytext); if (rav_count <=0) BEGIN(INITIAL); }
+<RAV>[^\(\)\[]+	{ append_comment(yytext); 
+		/* We escape [ to avoid problems with
+		   unclosed RAV */
+		}
+<RAV>^\[[wW]hite	{ yyless(0) ; BEGIN(INITIAL); return(0) ; /* Damn humans */}
+<RAV>\[		{ append_comment(yytext); }
+
 
 <INITIAL,tagsymbol,tagdata>.	{
 	 printf("Illegal character %c in input stream.\n", yytext[0]);
