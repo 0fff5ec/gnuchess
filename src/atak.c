@@ -521,10 +521,10 @@ short MateScan (short side)
    while (b)
    {
       sq = leadz (b);
-      CLEARBIT (b, sq);
       if (AttackTo (sq, side) == board.b[side][king] &&
           AttackXTo (sq, xside) != board.b[xside][queen])
          return (1);
+      CLEARBIT (b, sq);
    }
    
    return (0);

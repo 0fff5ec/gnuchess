@@ -7,6 +7,12 @@
 	* Changes proposed by MC for compiling with MSVC
 	  Note: ULL() macro should be used for 64 bit integer constants
 
+	* Change help text for "universal" if it wasn't compiled in.
+
+	* Minor optimisation in the misnamed MateScan routine.
+
+	* Shorten declaration of rings, this doesn't need to be in init.c
+
 2002-05-19  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Corrected command line size to 128 through out cmd.c to

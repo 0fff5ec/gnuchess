@@ -627,70 +627,12 @@ void InitVars ()
    SETBIT (stonewall[black], E6); /* SMC */
    SETBIT (stonewall[black], F5); /* SMC */
 
-   SETBIT (rings[0], D4);
-   SETBIT (rings[0], D5);
-   SETBIT (rings[0], E4);
-   SETBIT (rings[0], E5);
-   SETBIT (rings[1], C3);
-   SETBIT (rings[1], D3);
-   SETBIT (rings[1], E3);
-   SETBIT (rings[1], F3);
-   SETBIT (rings[1], C4);
-   SETBIT (rings[1], F4);
-   SETBIT (rings[1], C5);
-   SETBIT (rings[1], F5);
-   SETBIT (rings[1], C6);
-   SETBIT (rings[1], D6);
-   SETBIT (rings[1], E6);
-   SETBIT (rings[1], F6);
-   SETBIT (rings[2], B2);
-   SETBIT (rings[2], C2);
-   SETBIT (rings[2], D2);
-   SETBIT (rings[2], E2);
-   SETBIT (rings[2], F2);
-   SETBIT (rings[2], G2);
-   SETBIT (rings[2], B3);
-   SETBIT (rings[2], G3);
-   SETBIT (rings[2], B4);
-   SETBIT (rings[2], G4);
-   SETBIT (rings[2], B5);
-   SETBIT (rings[2], G5);
-   SETBIT (rings[2], B6);
-   SETBIT (rings[2], G6);
-   SETBIT (rings[2], B7);
-   SETBIT (rings[2], C7);
-   SETBIT (rings[2], D7);
-   SETBIT (rings[2], E7);
-   SETBIT (rings[2], F7);
-   SETBIT (rings[2], G7);
-   SETBIT (rings[3], A1);
-   SETBIT (rings[3], B1);
-   SETBIT (rings[3], C1);
-   SETBIT (rings[3], D1);
-   SETBIT (rings[3], E1);
-   SETBIT (rings[3], F1);
-   SETBIT (rings[3], G1);
-   SETBIT (rings[3], H1);
-   SETBIT (rings[3], A2);
-   SETBIT (rings[3], H2);
-   SETBIT (rings[3], A3);
-   SETBIT (rings[3], H3);
-   SETBIT (rings[3], A4);
-   SETBIT (rings[3], H4);
-   SETBIT (rings[3], A5);
-   SETBIT (rings[3], H5);
-   SETBIT (rings[3], A6);
-   SETBIT (rings[3], H6);
-   SETBIT (rings[3], A7);
-   SETBIT (rings[3], H7);
-   SETBIT (rings[3], A8);
-   SETBIT (rings[3], B8);
-   SETBIT (rings[3], C8);
-   SETBIT (rings[3], D8);
-   SETBIT (rings[3], E8);
-   SETBIT (rings[3], F8);
-   SETBIT (rings[3], G8);
-   SETBIT (rings[3], H8);
+   rings[0] = ULL(0x0000001818000000);
+   rings[1] = ULL(0x00003C24243C0000);
+   rings[2] = ULL(0x007E424242427E00);
+   rings[3] = ULL(0xFF818181818181FF);
+
+
 
    boardhalf[white] = RankBit[0]|RankBit[1]|RankBit[2]|RankBit[3];
    boardhalf[black] = RankBit[4]|RankBit[5]|RankBit[6]|RankBit[7];
