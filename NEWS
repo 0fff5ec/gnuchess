@@ -3,7 +3,6 @@ New in gnuchess 5.06:
 - Added code for pondering and analysis mode
 - Added white/black commands for use with icsDrone
 - Command line options now follow GNU standards (./gnuchess --help)
-- Easier build on AIX and Solaris
 - Some optimisations added
 - Book may be stored in /usr/share/games/gnuchess/book.dat
 - Program no longer starts search from scratch every move
