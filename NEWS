@@ -1,6 +1,15 @@
+New in gnuchess 5.06:
+
+- Added code for pondering and analysis mode
+- Added white/black commands for use with icsDrone
+- Command line options now follow GNU standards (./gnuchess --help)
+- Easier build on AIX and Solaris
+- Some optimisations added
+- Book may be stored in /usr/share/games/gnuchess/book.dat
+- Program no longer starts search from scratch every move
+
 New in gnuchess 5.05:
 
-- Added code for pondering and analysis mode.
 - Fixed a potential buffer overflow in pgn.c.
 - General code cleanups, bug fixes, and probably introduction
   of new bugs, especially in pondering related code
@@ -12,14 +21,8 @@ New in gnuchess 5.05:
   alternative is to use the winboard driver for this board, which
   is linked to on http://www.tim-mann.org/extensions.html
 
-[ Could we rewrite history for the older versions, too? I like to
-  have NEWS give a quick overview of what has changed between versions,
-  only user-visible stuff. That is the recommended purpose of NEWS. 
-  However, the following is not yet accurate and complete. ]
-
 New in gnuchess 5.04:
 - Bug fixes (as always)
-- ???
 
 New in gnuchess 5.03:
 - Bug fixes (The infamous "illegal move" bug should be dead by now.)

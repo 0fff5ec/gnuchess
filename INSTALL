@@ -17,6 +17,7 @@ compiler and maybe others.
 Test gnuchess by typing
 
 	./gnuchess.exe (or ./gnuchess on Linux/Unix)
+	easy
 	post
 	depth 8
 	go
@@ -75,3 +76,4 @@ March, 2001
 Modifications:
 
 Lukas Geyer <lukas@debian.org>
+Simon Waters <Simon@wretched.demon.co.uk>

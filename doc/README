@@ -4,6 +4,7 @@ by Stuart Cracraft <cracraft@gnu.org>
 copyright (c) 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993
 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 Modified Simon Waters <simon@wretched.demon.co.uk> 2001
+Modified Simon Waters <simon@wretched.demon.co.uk> 2003
 
 IMPORTANT: Please send all updates to Simon at the above address.
 
@@ -293,30 +294,33 @@ COMPILERS
 
   We like GNU C in all its various forms. For Unix and Linux, use GNU C.
 
-  For the PC, use GNU C in the following forms: for use with Universal,
-  use DJGPP GNU C. For use on ICS, use CYGNUS 32-BIT. For regular PC
-  use, either will do.
+  For Microsoft Windows platforms we compile and test using Cygwin,
+  which is a port of many GNU packages, including GCC.
 
-  Versions of the code that compile under Microsoft Visual C have been
-  contributed. This may be supported in future, contact the developers.
+  Cygwin requires a run time DLL to provide the interface, this should
+  be provided with any executable you receive.
 
+  Whilst GCC is the supported compiler, a key goal is portability. If
+  you experience problems compiling GNU Chess with a modern C compiler
+  please let the developer know.
 
 INTERNET
 
   GNU CHESS 5 has been tested substantially on the Free Internet Chess
-  Servers (freechess.org) with Winboard which is included along with various
-  scripts we use. We made no attempt to have these immediately user-ready
-  but you could tinker around with it if you're an hobbyist.
+  Servers (freechess.org) with Xboard (See Zippy documentation in the
+  Xboard/Winboard distribution http://www.tim-mann.org/).
 
-  One caveat: you must use CYGNUS 32-BIT GNU C under WINBOARD. Do not try
-  to use DJGPP as that will fail (last time we tried.)
-
+  GNU Chess 5.06 and later should also operate with icsDrone. Testing
+  5.06 with icsDrone 1.5.0 showed no immediate issues.
 
 XBOARD/WINBOARD
 
-  Running the program with the "xboard" command line parameter sets it
+  Running the program with the "--xboard" command line parameter sets it
   to produce output acceptable to and accept input suitable for xboard
   and winboard, the graphical display front-ends with mouse interface.
+
+  For historical reasons the option "xboard" does not need to be 
+  preceeded by "--", however we would encourage the new syntax.
 
 COMMAND LIST
 
@@ -333,6 +337,10 @@ COMMAND LIST
   help
 	Produces a help blurb corresponding to this list of commands.
 
+  usage
+	Produce blurb on command line options.
+	(Same as "gnuchess --help")
+
   book
 	add - compiles book.dat from book.pgn
 	on - enables use of book
@@ -346,6 +354,7 @@ COMMAND LIST
 
   version
 	prints out the version of this program
+	(Same as "gnuchess --version")
 
   pgnsave FILENAME
 	saves the game so far to the file from memory
@@ -359,24 +368,33 @@ COMMAND LIST
 	to reach some position in the future.
    
   white
-	Program plays white
+	Program plays black, set white to move.
 
   black
-	Program plays black
+	Program plays white, set black to move.
+
+	(White and black commands are mainly for icsDrone
+	 and will cause the current en-passant capture
+	 square to be forgotten).
 
   go
 	Computer takes whichever side is on move and begins its
 	thinking immediately
 
-  easy (NOT IMPLEMENTED)
+  easy 
 	Disables thinking on opponent's time
 
-  hard (NOT IMPLEMENTED)
+  hard
 	Enables thinking on opponent's time
 
   post
 	Arranges for verbose thinking output showing variation, score,
 	time, depth, etc.
+
+	If pondering (see hard) is on, the program will output
+	it's thinking whilst the opponent is thinking.
+
+	(Also "gnuchess --post")
 
   nopost
 	Turns off verbose thinking output
@@ -419,6 +437,8 @@ COMMAND LIST
 
   hashsize N
 	Sets the hash table to permit storage of N positions
+	N is rounded down to nearest power of 2.
+	(Also "gnuchess --hashsize=N")
 
   null
 	on - enables using the null move heuristic to speed search
@@ -427,6 +447,7 @@ COMMAND LIST
   xboard
 	on - enables use of xboard/winboard
 	off - disables use of xboard/winboard
+	(Also "gnuchess --xboard")
 
   depth N
 	Sets the program to look N ply (half-moves) deep for every
