@@ -268,11 +268,37 @@ void ShowGame (void);
 void ShowGame (void)
 {
   short i;
-  printf ("      White   Black\n");
-  for (i = 0; i <= GameCnt; i += 2)
+
+/* *********************************************
+   * We must handle the special case of an EPD *
+   * game where the first move is by black     *
+   ********************************************* */
+  
+  if ( GameCnt >= 0 )
+  {
+  
+    printf ("      White   Black\n");
+  
+    if ( ( board.side == white && GameCnt % 2 == 1 ) ||
+         ( board.side == black && GameCnt % 2 == 0 ))
     {
-      printf ("%3d.  %-7s %-7s\n", i/2 + 1, Game[i].SANmv, 
-	      Game[i + 1].SANmv);
+    
+      for (i = 0; i <= GameCnt; i += 2)
+        {
+          printf ("%3d.  %-7s %-7s\n", i/2 + 1, Game[i].SANmv, 
+    	      Game[i + 1].SANmv);
+        }
     }
-  printf ("\n");
+    else {
+    
+      printf ("  1.          %-7s\n", Game[0].SANmv);
+  
+      for (i = 1; i <= GameCnt; i += 2)
+        {
+          printf ("%3d.  %-7s %-7s\n", i/2 + 2, Game[i].SANmv, 
+    	      Game[i + 1].SANmv);
+        }
+    }
+    printf ("\n");
+  }
 }
