@@ -275,7 +275,7 @@ void InputCmd ()
    }
    else if (strcmp (cmd, "time") == 0) {
      sscanf (inputstr, "%s %[^\n]", s, inputstr);
-     TimeLimit[1^board.side] = atoi(s) / 100;
+     TimeLimit[1^board.side] = atoi(s) / 100.0f ;
    }
    else if (strcmp (cmd, "otim") == 0)
 	;
@@ -368,7 +368,7 @@ void InputCmd ()
 	suddendeath = 0;
       if (TCTime == 0) {
          SET (flags, TIMECTL);
-	 SearchTime = TCinc / 2;
+	 SearchTime = TCinc / 2.0f ;
          printf("Fischer increment of %d seconds\n",TCinc);
       }
       else
