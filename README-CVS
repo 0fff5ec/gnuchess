@@ -1,0 +1,11 @@
+As of 2003-06-19 the GNU autotools derived files
+have been removed from the CVS archive.
+
+To build GNU Chess from CVS you must;
+
+aclocal
+automake --add-missing
+autoreconf
+
+At which point the config.sub and config.guess files will
+have been created, and configure made.
