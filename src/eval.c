@@ -405,8 +405,7 @@ int ScoreN (short side)
  *  1.  central knight - distance from enemy king.
  *  2.  mobility/control/attack
  *  3.  outpost knight protected by pawn.
- *  4.  pinned knight.
- *  5.  knight attacking weak pawns.
+ *  4.  knight attacking weak pawns.
  *
  ***************************************************************************/
 {
@@ -444,9 +443,6 @@ int ScoreN (short side)
             s1 += OUTPOSTKNIGHT;
       }
     
-      if (pinned & BitPosArray[sq])
-         s1 += PINNEDKNIGHT;
-
       /* Attack on weak opponent pawns */
       if (MoveArray[knight][sq] & weaked[xside])
          s1 += ATAKWEAKPAWN;
@@ -466,8 +462,7 @@ int ScoreB (short side)
  *  2.  mobility/control/attack
  *  3.  outpost bishop
  *  4.  fianchetto bishop
- *  5.  pinned bishop
- *  6.  Bishop pair
+ *  5.  Bishop pair
  *
  ****************************************************************************/
 {
@@ -518,9 +513,6 @@ int ScoreB (short side)
          if (board.king[side] >= A8 && board.king[side] <= C8 && sq == B7)
 	    s1 += FIANCHETTO;
       }
-
-      if (pinned & BitPosArray[sq])
-         s1 += PINNEDBISHOP;
 
       /* Attack on weak opponent pawns */
       if (BishopAttack(sq) & weaked[xside])
@@ -576,7 +568,6 @@ int ScoreR (short side)
  *  1.  rook on 7th rank and Enemy king on 8th rank or pawns on 7th rank.
  *  2.  rook on open/half-open file.
  *  3.  rook in front/behind passed pawns (pawn >= 5th rank)
- *  4.  pinned rook.
  *
  ****************************************************************************/
 {
@@ -626,10 +617,6 @@ int ScoreR (short side)
             s1 += ROOKINFRONTPP;
       }
 
-      if (pinned & BitPosArray[sq])
-         s1 += PINNEDROOK;
-
-
       /* Attack on weak opponent pawns */
       if (RookAttack(sq) & weaked[xside])
          s1 += ATAKWEAKPAWN;
@@ -672,8 +659,7 @@ int ScoreQ (short side)
  *
  *  1. queen centralization.
  *  2. king tropism.
- *  3. pinned queen.
- *  4. Bonus if opponent king is exposed.
+ *  3. Bonus if opponent king is exposed.
  *
  ***************************************************************************/
 {
@@ -702,9 +688,6 @@ int ScoreQ (short side)
 
       if (distance[sq][EnemyKing] <= 2)
          s1 += QUEENNEARKING;
-
-      if (pinned & BitPosArray[sq])
-         s1 += PINNEDQUEEN;
 
       /* Attack on weak opponent pawns */
       if (QueenAttack(sq) & weaked[xside])
