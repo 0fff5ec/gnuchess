@@ -276,7 +276,7 @@ typedef struct
 #define THINK   0x0004
 #define MANUAL  0x0008
 #define TIMEOUT 0x0010
-#define DEBUGG  0x0020
+#define SPARE1  0x0020
 #define ENDED   0x0040
 #define USEHASH 0x0080
 #define SOLVE   0x0100
@@ -444,9 +444,6 @@ extern float TCTime;
 extern int hunged[2];
 extern int phase;
 extern int Hashmv[MAXPLYDEPTH];
-extern int Debugmv[MAXPLYDEPTH];
-extern short Debugmvl;
-extern short Debugline;
 extern short RootPieces;
 extern short RootPawns;
 extern short RootMaterial;
@@ -774,10 +771,6 @@ void cmd_bk(void);
 void cmd_black(void);
 void cmd_book(void);
 void cmd_computer(void);
-void cmd_debug(void);
-void cmd_debugdepth(void);
-void cmd_debugnode(void);
-void cmd_debugply(void);
 void cmd_depth(void);
 void cmd_draw(void);
 void cmd_easy(void);

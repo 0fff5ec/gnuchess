@@ -171,41 +171,6 @@ void cmd_book(void)
 /* Our opponent is a computer */
 void cmd_computer(void) {}
 
-/*
- * XXX - Debugging is more or less borked like that. (I think.)
- * Have to figure out how this was meant to work.
- */
-void cmd_debug(void)
-{
-  char *s1, *s2;
-  int i;
-  leaf *ptr;
-  
-  SET (flags, DEBUGG);
-  Debugmvl = 0;
-  s1 = token[1];
-  while (*s1) {
-    for (s2 = s1+1; *s2 && !isspace(*s2); s2++) ;
-    *s2 = '\0';
-    ptr = ValidateMove (s1);
-    if (ptr) {
-      Debugmv[Debugmvl++] = ptr->move;
-      MakeMove (board.side, &ptr->move);
-    }
-    for (s1 = s2+1; isspace(*s1); s1++) ;
-  } 
-  i = Debugmvl;
-  while (i)	{
-    UnmakeMove (board.side, &Debugmv[--i]);
-  } 
-}
-
-void cmd_debugply(void) {  }
-
-void cmd_debugdepth(void) {  }
-
-void cmd_debugnode(void) { }
-
 void cmd_depth(void)
 {
   SearchDepth = atoi (token[1]);
@@ -922,10 +887,6 @@ const struct methodtable commands[] = {
   { "black", cmd_black },
   { "book", cmd_book },
   { "computer", cmd_computer },
-  { "debug", cmd_debug },
-  { "debugdepth", cmd_debugdepth },
-  { "debugnode", cmd_debugnode },
-  { "debugply", cmd_debugply },
   { "depth", cmd_depth },
   { "draw", cmd_draw },
   { "easy", cmd_easy },
