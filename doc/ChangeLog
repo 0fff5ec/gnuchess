@@ -664,3 +664,6 @@ Version 5.03
 
   Removed Outside passed pawn bonus from Evaluate as it was
   incorrectly in the pawn hash section.
+
+  Removed the chess_faq.html file from the distribution, as this
+  belongs on the GNU web site.
