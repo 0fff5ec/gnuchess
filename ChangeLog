@@ -1,3 +1,7 @@
+2003-07-28 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* ensure gnuchessx included in EXTRA_DIST
+
 2003-06-30 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Fix to Posix thread for readline
