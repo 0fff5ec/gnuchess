@@ -1,5 +1,10 @@
 2003-06-13 Simon Waters <Simon@wretched.demon.co.uk>      
 
+	* const declaration for progname removed to 
+	  resolve problems with other compilers.
+
+2003-06-13 Simon Waters <Simon@wretched.demon.co.uk>      
+
 	* Use CalcHashSize in main.c
 
 	* Check HashSize return code in cmd.c

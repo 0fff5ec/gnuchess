@@ -476,7 +476,7 @@ extern int rank6[2];
 extern int rank7[2];
 extern int rank8[2];
 
-extern const char *progname;
+extern char *progname;
 extern FILE *ofp;
 extern int myrating, opprating, suddendeath;
 

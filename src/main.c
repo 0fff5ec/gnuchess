@@ -161,7 +161,7 @@ short pscore[64];
 short bookmode;
 short bookfirstlast;
 
-const char *progname;
+char *progname;
 FILE *ofp;
 int myrating, opprating, suddendeath, TCionc;
 char name[50];
