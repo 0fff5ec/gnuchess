@@ -106,7 +106,7 @@ void cmd_analyze(void)
 /* TODO correct output, add fail high low */
 
    if (!(flags & ANALYZE)){
-     preanalyze_flags=flags; // save these flags for exit
+     preanalyze_flags=flags; /* save these flags for exit */
      SET (flags, ANALYZE);
      cmd_post();
      cmd_force();
@@ -130,7 +130,7 @@ void cmd_black(void)
   * No longer used by Xboard but requested as a feature
   */
 
-  NewPosition(); //Reset some flags and settings
+  NewPosition(); /* Reset some flags and settings */
   CLEAR ( flags, THINK);
   CLEAR ( flags, MANUAL);
   CLEAR (flags, TIMEOUT);   
@@ -241,7 +241,7 @@ void cmd_exit(void)
    */
 
   if ( flags & ANALYZE ){
-	flags = preanalyze_flags ; // this implicitly clears ANALYZE flag
+	flags = preanalyze_flags ; /* this implicitly clears ANALYZE flag */
   } else {
     cmd_quit(); 
   }
@@ -589,14 +589,14 @@ void cmd_white(void)
   * No longer used by Xboard but requested as a feature
   */
 
-  NewPosition(); //Reset some flags and settings
+  NewPosition(); /* Reset some flags and settings */
   CLEAR ( flags, THINK);
   CLEAR ( flags, MANUAL);
   CLEAR (flags, TIMEOUT);   
   computer = black;
   if ( board.side == black ){
     board.side = white;
-    board.ep = -1; // Hack to fixed appearing pawn bug
+    board.ep = -1; /* Hack to fixed appearing pawn bug */
   }
 }
 

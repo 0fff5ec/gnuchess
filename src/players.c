@@ -138,7 +138,7 @@ void DBReadPlayer (void)
    totalplayers = 0;
    if ((rfp = fopen(PLAYERFILE,"r")) != NULL) {
     while (!feof(rfp)) {
-     n = fscanf(rfp,"%49s %d %d %d\n",  // 49 MAXNAMESZ-1
+     n = fscanf(rfp,"%49s %d %d %d\n",  /* 49 MAXNAMESZ-1 */
 	playerdb[totalplayers].player,
         &playerdb[totalplayers].wins,
         &playerdb[totalplayers].losses,

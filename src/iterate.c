@@ -121,7 +121,7 @@ void Iterate (void)
    /*  Are there any legal moves? */
    if (GenCnt == 0)
    {
-     if (!(flags & ENDED)) { // Don't give result after mate as it will be muddled
+     if (!(flags & ENDED)) { /* Don't give result after mate as it will be muddled */
        if (InChk[1]) {
   	if (computerplays == black)
   	  printf("1-0 {computer loses as black}\n");

@@ -149,7 +149,6 @@ void wait_for_input(void)
 #endif /* HAVE_USLEEP */
 #endif /* No HAVE_NANOSLEEP */
   };
-//  while (input_status == INPUT_NONE) /* Busy loop */ ;
 }
 
 void InitInput(void)

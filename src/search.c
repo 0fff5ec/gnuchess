@@ -568,9 +568,11 @@ done:
 
    /*  Save the best move inside the transposition table  */
    if (flags & USEHASH){
-// Nasty temporary hack to try and work around timeout problem
-// If we are pondering and timeout don't save incomplete answers
-// Must look at failure of TIMEOUT condition more carefully!
+/*
+ * Nasty temporary hack to try and work around timeout problem
+ * If we are pondering and timeout don't save incomplete answers
+ * Must look at failure of TIMEOUT condition more carefully!
+ */
 	if ( !(flags & TIMEOUT))
           TTPut (side, depth, ply, savealpha, beta, best, pbest->move); 
       }
@@ -652,7 +654,7 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
 		    ElapsedTime, score, NodeCnt+QuiesCnt);	 
        }
    }
-   else {              // Not XBOARD
+   else {              /* Not XBOARD */
       if (score > MATE-255) {
 	 printf ("\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);

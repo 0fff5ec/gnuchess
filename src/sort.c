@@ -115,8 +115,6 @@ void SortMoves (int ply)
            * ValueK                                             *
            ****************************************************** */
 
-//      tovalue = WEIGHT * (Value[cboard[t]] + Value[PROMOTEPIECE (p->move)]);
-//      p->score += tovalue - Value[cboard[f]];
         tovalue = (Value[cboard[t]] + Value[PROMOTEPIECE (p->move)]);
         p->score += tovalue + ValueK - Value[cboard[f]];
 

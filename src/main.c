@@ -304,7 +304,7 @@ int main (int argc, char *argv[])
   int opt_help = 0, opt_version = 0, opt_post = 0, opt_xboard = 0, opt_hash = 0;
   char *endptr;
 
-  progname = argv[0]; // Save in global for cmd_usage
+  progname = argv[0]; /* Save in global for cmd_usage */
 
   while (1)
   {
@@ -349,25 +349,25 @@ int main (int argc, char *argv[])
        opt_post = 1;
        break;
      case 's':    
-       if  ( optarg == NULL ){ // we have error such as two -s
+       if  ( optarg == NULL ){ /* we have error such as two -s */
          opt_help = 1;
          break;
        }
-       errno = 0; // zero error indicator
+       errno = 0; /* zero error indicator */
        opt_hash = strtol (optarg, &endptr, 10);
        if ( errno != 0 || *endptr != '\0' ){
          printf("Hashsize out of Range or Invalid\n");
          return(1);
        }
        break;
-     case '?': // On error give help - getopt does a basic message.
+     case '?': /* On error give help - getopt does a basic message. */
        opt_help = 1;
        break;
      default:
        puts ("Option Processing Failed\n");
        abort();
      }
-  } // end of getopt_long style parsing
+  } /* end of getopt_long style parsing */
 
   /* Initialize random number generator */
   srand((unsigned int) time(NULL));
@@ -402,7 +402,7 @@ int main (int argc, char *argv[])
   /* If a usage statement is required output it here */
   if (opt_help == 1){
     cmd_usage();
-    return (1); // Maybe an error if due to bad arguments.
+    return (1); /* Maybe an error if due to bad arguments. */
   }
 
   dbg_open(NULL);
