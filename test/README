@@ -24,3 +24,12 @@ On default time and hashsize settings.
 
 BT2630.epd was modified as the format of "next move" was in the form 
 "fromsqtosq".
+
+2002/10/22 SRW, on AMD 166 MHz, 128 MB, Linux 2.2.19, RH 7.0
+
+GNU Chess 5.05 scored (GCC v2) scored;
+
+Test		Score	Nodes Examined
+BT2630.epd	7/30	4087232
+endgame.epd	14/46	10893908
+wac.epd		249/300	32364914
