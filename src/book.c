@@ -613,9 +613,9 @@ fini:
           tot = r[matches[i]].wins+r[matches[i]].draws+r[matches[i]].losses;
 	  fprintf(ofp," %s(%2.0f/%d/%d/%d) ",SANmv,
 		100.0*(r[matches[i]].wins+(r[matches[i]].draws/2.0))/tot,
-		r[matches[i]].wins,
-		r[matches[i]].losses,
-		r[matches[i]].draws);
+		(int) r[matches[i]].wins,
+		(int) r[matches[i]].losses,
+		(int) r[matches[i]].draws);
           if ((i+1) % 4 == 0) fputc('\n',ofp);
 	}
       }
