@@ -171,14 +171,8 @@ inline int ScoreP (short side)
 	 {
             passed[side] |= BitPosArray[sq];
             if (side == white) {
-              if (board.friend[xside] & BitPosArray[sq+8])
-                  s += (Passed0[side][RANK(sq)] * phase) / 12;
-              else
                   s += (Passed[side][RANK(sq)] * phase) / 12;
             } else if (side == black) {
-              if (board.friend[xside] & BitPosArray[sq-8])
-                  s += (Passed0[side][RANK(sq)] * phase) / 12;
-              else
                   s += (Passed[side][RANK(sq)] * phase) / 12;
 	    }
             if (ENDING) {
