@@ -158,7 +158,7 @@ inline int ScoreP (short side)
    {
       sq = leadz (t);
       CLEARBIT (t, sq);
-      s += PawnSq[side][sq]; /* * (phase+1) / 4; */
+      s += PawnSq[side][sq]; 
 
       /*  Passed pawns  */
       if ((p & PassedPawnMask[side][sq]) == NULLBITBOARD)
