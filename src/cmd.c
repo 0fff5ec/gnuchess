@@ -41,9 +41,9 @@ char fromboard[10];
 
 extern short stage, InChkDummy, terminal;
 static char inputstr[128], cmd[128], file[128], s[128], logfile[128], 
-            gamefile[128],resultstr[128];
+            gamefile[128],resultstr[128],userinput[128];
 
-char userinput[128],subcmd[128],setting[128],subsetting[128];
+char subcmd[128],setting[128],subsetting[128];
 
 
 #ifdef UNIVERSAL
@@ -77,10 +77,10 @@ void InputCmd ()
 #endif
 
    CLEAR (flags, THINK);
-#ifdef UNIVERSAL
   memset(userinput,0,sizeof(userinput));
   memset(cmd,0,sizeof(cmd));
   memset(inputstr,0,sizeof(inputstr));
+#ifdef UNIVERSAL
   if (1) {
     if (flags & UNIV) {
       userinput[0] = '\000';
@@ -132,7 +132,7 @@ void InputCmd ()
   }
 #endif
 
-  sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting);
+   sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting); 
 
    if (strcmp (cmd, "quit") == 0 || strcmp (cmd, "exit") == 0)
       SET (flags, QUIT);
@@ -160,7 +160,12 @@ void InputCmd ()
    else if (strcmp (cmd, "version") == 0)
       ShowVersion ();
    else if (strcmp (cmd, "pgnsave") == 0)
-      PGNSaveToFile (inputstr,"");
+           {     
+		if ( strlen(inputstr) > 2 )
+      		  PGNSaveToFile (inputstr,"");
+		else
+		  printf("Invalid filename.\n");
+	   }
    else if (strcmp (cmd, "pgnload") == 0)
       PGNReadFromFile (inputstr);
    else if (strcmp (cmd, "manual") == 0)
@@ -383,7 +388,12 @@ void InputCmd ()
       }
    }
    else if (strcmp (cmd, "save") == 0 || strcmp (cmd, "epdsave") == 0)
-      SaveEPD (inputstr);
+	{  
+	   if ( strlen(inputstr) > 2 )
+             SaveEPD (inputstr);
+	   else
+	     printf("Invalid filename.\n");
+	}
    else if (strcmp (cmd, "epd") == 0)
    {
       ParseEPD (inputstr);
