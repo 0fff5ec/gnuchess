@@ -584,17 +584,22 @@ leaf * ValidateMove (char *s)
       {
 	 t = ASCIITOSQ (mvstr[0], mvstr[1]);
          f = t + (side == white ? -8 : 8);
-	 if (BitPosArray[f] & board.b[side][pawn])
-         {
-            if (mvstr[2] != '\0') 
-               return (IsInMoveList (1, f, t, mvstr[2]));
-            else
-               return (IsInMoveList (1, f, t, ' '));
-         }
-         f = t + (side == white ? -16 : 16);
-	 if (BitPosArray[f] & board.b[side][pawn])
-            return (IsInMoveList (1, f, t, ' '));
-      }
+         /* Add Sanity Check */
+         if ( f > 0 && f < 64 ) {
+	   if (BitPosArray[f] & board.b[side][pawn])
+           {
+              if (mvstr[2] != '\0') 
+                 return (IsInMoveList (1, f, t, mvstr[2]));
+              else
+                 return (IsInMoveList (1, f, t, ' '));
+           }
+           f = t + (side == white ? -16 : 16);
+           if ( f > 0 && f < 64 ) {
+	     if (BitPosArray[f] & board.b[side][pawn])
+                return (IsInMoveList (1, f, t, ' '));
+	   } /* End bound check +/- 16 */
+	 } /* End bound check +/- 8 */
+        }
       else if (ATOH (mvstr[1]) && ITO8 (mvstr[2]))		/* ed4 type */
       {
 	 t = ASCIITOSQ (mvstr[1], mvstr[2]);
