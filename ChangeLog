@@ -2,6 +2,8 @@
 
 	* Clean up of SortRoot (also MC suggested optimisation)
 
+	* Tidy code to remove 99 lclint errors (274 to go)
+
 2002-08-02 Based on patch from Lukas Geyer
 
 	* Add list of possible book locations, to allow

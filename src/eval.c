@@ -737,13 +737,11 @@ static const short EndingKing[64] =
 
 static short pawncover[9] = { -60, -30, 0, 5, 30, 30, 30, 30, 30 };
 static const short factor[9] = { 7, 8, 8, 7, 6, 5, 4, 2, 0, };
-static const BitBoard Corner[2] = { ULL(0xC3C3000000000000),
-				    ULL(0x000000000000C3C3) };
 
 int ScoreK (short side)
 /***************************************************************************
  *
- *  1.  king in the corner.
+ *  1.  king in the corner. ?? SRW 2002-08-02 Unclear if implemented
  *  2.  pawns around king.
  *  3.  king on open file.
  *  4.  Uncastled king.
@@ -1194,8 +1192,6 @@ int ScoreKBNK (short side, short loser)
 
 static const BitBoard nn[2] = { ULL(0x4200000000000000), ULL(0x0000000000000042) };
 static const BitBoard bb[2] = { ULL(0x2400000000000000), ULL(0x0000000000000024) };
-static const BitBoard rr[2] = { ULL(0x8100000000000000), ULL(0x0000000000000081) };
-static const BitBoard corner = ULL(0xC3C300000000C3C3);
 
 int ScoreDev (short side)
 /***************************************************************************

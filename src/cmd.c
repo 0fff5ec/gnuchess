@@ -85,7 +85,7 @@ void InputCmd ()
  *
  *************************************************************************/
 {
-   char color[2][6] = { "White", "Black" };
+   char *color[2] = { "White", "Black" };
    short suffix;
    int i;
    leaf *ptr; 
@@ -342,12 +342,6 @@ void InputCmd ()
 	;
    else if (strcmp (cmd, "random") == 0)
 	;
-   else if (strcmp (cmd, "debugply") == 0)
-      DebugPly = atoi (inputstr);
-   else if (strcmp (cmd, "debugdepth") == 0)
-      DebugDepth = atoi (inputstr);
-   else if (strcmp (cmd, "debugnode") == 0)
-      DebugNode = atoi (inputstr);
    else if (strcmp (cmd, "hash") == 0)
    {
       sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
@@ -697,7 +691,6 @@ void ShowCmd (char *subcmd)
    else if (strcmp (cmd, "eval") == 0 || strcmp (cmd, "score") == 0)
    {
       int s, wp, bp, wk, bk;
-      short r, c, sq;
       BitBoard *b;
 
       phase = PHASE;

@@ -698,9 +698,6 @@ void InitVars ()
       PHashMask |= 1;
    }
 
-   DebugPly = 99;
-   DebugDepth = 0;
-   DebugNode = 999999999;
    signal (SIGINT, EndSearch);
 
    nmovesfrombook = 0;

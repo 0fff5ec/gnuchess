@@ -382,12 +382,8 @@ extern float TCTime;
 extern short hunged[2];
 extern short phase;
 extern int Hashmv[MAXPLYDEPTH];
-extern short DebugPly;
-extern short DebugDepth;
-extern long DebugNode;
 extern int Debugmv[MAXPLYDEPTH];
 extern short Debugmvl;
-extern short Debugline;
 extern short RootPieces;
 extern short RootPawns;
 extern short RootMaterial;
@@ -551,7 +547,7 @@ void TestCmd (char *);
 
 /*  Some utility routines  */
 #ifdef NO_INLINE
-unsigned char leadz (BitBoard);
+short int leadz (BitBoard);
 unsigned char nbits (BitBoard);
 #endif
 

@@ -48,7 +48,7 @@
 
 #ifdef NO_INLINE
 
-unsigned char leadz (BitBoard b)
+short int leadz (BitBoard b)
 /**************************************************************************
  *
  *  Returns the leading bit in a bitboard.  Leftmost bit is 0 and
