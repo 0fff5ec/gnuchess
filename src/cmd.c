@@ -725,23 +725,6 @@ void ShowCmd (char *subcmd)
       printf ("score = %d\n", s);
       printf ("\n");
       return;
-      for (r = 56; r >= 0; r -= 8)
-      {
-         printf ("     +---+---+---+---+---+---+---+---+\n");
-         printf ("   %d |", (r >> 3) + 1);
-         for (c = 0; c < 8; c++)
-         {
-            sq = r + c;
-	    if (cboard[sq] == 0)
- 	       printf ("   |");
-	    else
-               printf ("%3d|", pscore[sq]);
-         }
-         printf ("\n");
-      }
-
-      printf ("     +---+---+---+---+---+---+---+---+\n");
-      printf ("       a   b   c   d   e   f   g   h  \n");
    }
    else if (strcmp (cmd, "game") == 0)
      ShowGame ();

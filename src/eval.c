@@ -67,7 +67,7 @@ static short PawnSq[2][64] =
 };
 
 static const short Passed[2][8] =
-{ { 0, 48, 48, 96, 144, 192, 240, 0}, {0, 240, 192, 144, 96, 48, 48, 0} };
+{ { 0, 48, 48, 120, 144, 192, 240, 0}, {0, 240, 192, 144, 120, 48, 48, 0} };
 /* Penalties for one or more isolated pawns on a given file */
 static const short isolani_normal[8] = {
   -8, -10, -12, -14, -14, -12, -10, -8
@@ -147,15 +147,11 @@ int ScoreP (short side)
       if ((p & PassedPawnMask[side][sq]) == NULLBITBOARD)
       {
 	 if ((side == white && (FromToRay[sq][sq|56] & c) == 0) ||
-	     (side == black && (FromToRay[sq][sq&7] & c) == 0))
-	 {
+	     (side == black && (FromToRay[sq][sq&7] & c) == 0)) 
+         {
             passed[side] |= BitPosArray[sq];
-            if (side == white) {
-                  s += (Passed[side][RANK(sq)] * phase) / 12;
-            } else if (side == black) {
-                  s += (Passed[side][RANK(sq)] * phase) / 12;
-	    }
-	 }
+            s += (Passed[side][RANK(sq)] * phase) / 12;
+         }
       }
 
       /*  Backward pawns */
@@ -421,6 +417,11 @@ int ScoreN (short side)
    t = board.b[xside][pawn]; 
    EnemyKing = board.king[xside];
 
+   if ( c & pinned )
+   {
+	s += PINNEDKNIGHT * nbits(c & pinned);
+   }
+
    while (c)
    {
       sq = leadz (c);
@@ -447,7 +448,6 @@ int ScoreN (short side)
       if (MoveArray[knight][sq] & weaked[xside])
          s1 += ATAKWEAKPAWN;
 
-      pscore[sq] = s1;
       s += s1;
    }
 
@@ -478,6 +478,11 @@ int ScoreB (short side)
    n = 0;
    t = board.b[xside][pawn];
 
+   if ( c & pinned )
+   {
+	s += PINNEDBISHOP * nbits(c & pinned);
+   }
+
    while (c)
    {
       sq = leadz (c);
@@ -489,7 +494,7 @@ int ScoreB (short side)
 
       /*  Outpost bishop */
       if (Outpost[side][sq] && 
-	  !(t & IsolaniMask[ROW (sq)] & PassedPawnMask[side][sq]))
+	  !(t & IsolaniMask[ROW(sq)] & PassedPawnMask[side][sq]))
       {
          s1 += OUTPOSTBISHOP;
 
@@ -518,7 +523,6 @@ int ScoreB (short side)
       if (BishopAttack(sq) & weaked[xside])
          s1 += ATAKWEAKPAWN;
 
-      pscore[sq] = s1;
       s += s1;
    }
 
@@ -581,6 +585,11 @@ int ScoreR (short side)
    xside = side ^ 1;
    EnemyKing = board.king[xside];
 
+   if ( c & pinned )
+   {
+	s += PINNEDROOK * nbits(c & pinned);
+   }
+
    while (c)
    {
       sq = leadz (c);
@@ -626,7 +635,6 @@ int ScoreR (short side)
 	  board.b[xside][pawn] & RankBit[RANK(sq)]))
          s1 += ROOK7RANK;
 
-      pscore[sq] = s1;
       s += s1;
    }
 
@@ -678,6 +686,11 @@ int ScoreQ (short side)
      if (c == NULLBITBOARD)
         s += QUEEN_NOT_PRESENT;
 
+   if ( c & pinned )
+   {
+	s += PINNEDQUEEN * nbits(c & pinned);
+   }
+
    while (c)
    {
       sq = leadz (c);
@@ -693,7 +706,6 @@ int ScoreQ (short side)
       if (QueenAttack(sq) & weaked[xside])
          s1 += ATAKWEAKPAWN;
 
-      pscore[sq] = s1;
       s += s1;
    }
 
@@ -969,7 +981,6 @@ int ScoreK (short side)
       }
    }
 
-   pscore[sq] = s;
    return (s);
 }
 
@@ -1326,9 +1337,8 @@ int Evaluate (int alpha, int beta)
    b = board.b[black];
    pieces[black] = b[knight] | b[bishop] | b[rook] | b[queen];
    npiece[black] = nbits (pieces[black]);
-   hunged[white] = hunged[black] = 0;
-   memset (pscore, 0, sizeof (pscore));
    s1 = MATERIAL;
+
    if ((s1 + maxposnscore[side] < alpha || s1 - maxposnscore[xside] > beta) &&
 	phase <= 6)
    {
@@ -1349,12 +1359,19 @@ int Evaluate (int alpha, int beta)
  *  See if we can have a lazy evaluation cut.  Otherwise its a slow eval.
  * 
  **************************************************************************/
+
    if (s1 + lazyscore[side] < alpha || s1 - lazyscore[side] > beta)
+   {
       score = s1;
+   }
    else
    {
       EvalCnt++;
-      s1 = 0;
+
+	GenAtaks();
+	s1 = HUNGPENALTY * ( EvalHung(side) - EvalHung(xside) );
+	FindPins(&pinned);
+
       for (piece = knight; piece < king; piece++)
       {
          s1 += (*ScorePiece[piece]) (side) - (*ScorePiece[piece]) (xside);

@@ -159,7 +159,6 @@ short KingThrt[2][MAXPLYDEPTH];
 short threatmv;
 short threatply;
 short KingSafety[2];
-short pscore[64];
 short bookmode;
 short bookfirstlast;
 FILE *ofp;

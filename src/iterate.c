@@ -51,8 +51,8 @@ void Iterate (void)
    /* Note computer is playing side we are making move for. */
    computerplays = board.side;
 
-   lazyscore[white] = lazyscore[black] = 100; /* was 50 */
-   maxposnscore[white] = maxposnscore[black] = 100;
+   lazyscore[white] = lazyscore[black] = 150; /* was 50 */
+   maxposnscore[white] = maxposnscore[black] = 150;
    GenCnt = 0;
    NodeCnt = QuiesCnt = 0;
    EvalCnt = EvalCall = 0;

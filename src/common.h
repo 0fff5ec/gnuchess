@@ -388,7 +388,6 @@ extern short KingThrt[2][MAXPLYDEPTH];
 extern short threatmv;
 extern short threatply;
 extern short KingSafety[2];
-extern short pscore[64];
 
 extern short bookmode;
 extern short bookfirstlast;

@@ -37,7 +37,7 @@
 #define ENDING       (phase >= 6)
 #define TRADEPIECE   4
 #define TRADEPAWNS   8
-#define HUNGPENALTY  -8
+#define HUNGPENALTY  -20
 #define ROOKMOVED    -20
 #define KINGMOVED    -20
 #define NOTCASTLED   -8
@@ -67,7 +67,7 @@
 /*************/
 #define KNIGHTONRIM	-13
 #define	OUTPOSTKNIGHT    10
-#define PINNEDKNIGHT    -3
+#define PINNEDKNIGHT    -30
 #define KNIGHTTRAPPED   -250
 
 
@@ -79,7 +79,7 @@
 #define FIANCHETTO	 8
 #define GOODENDINGBISHOP 16
 #define BISHOPTRAPPED   -250
-#define PINNEDBISHOP	-8
+#define PINNEDBISHOP	-30
 
 /***********/
 /*  Rooks  */
@@ -90,7 +90,7 @@
 #define ROOKOPENFILE   6
 #define ROOKBEHINDPP   6
 #define ROOKINFRONTPP -10
-#define PINNEDROOK    -6
+#define PINNEDROOK    -50
 #define ROOKTRAPPED   -10
 #define ROOKLIBERATED 40
 
@@ -99,7 +99,7 @@
 /***********/
 #define EARLYQUEENMOVE  -40
 #define QUEENNEARKING   12
-#define PINNEDQUEEN    -8
+#define PINNEDQUEEN    -90
 #define QUEEN_NOT_PRESENT -25
 
 /**********/
