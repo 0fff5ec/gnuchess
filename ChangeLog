@@ -1,3 +1,14 @@
+2002-02-09  Lukas Geyer  <geyer@math.uni-dortmund.de>
+
+	* book.c: Checked for calloc() failure to return BOOK_ENOMEM
+	in BookBuilderOpen().
+
+	* iterate.c: Changed search time calculation to a very
+	non-aggressive strategy (keep always 2 seconds for possible
+	delays). Added SearchRoot() if we fail low. This should fix
+	the illegal move problem, which occurred exactly when we
+	failed low for all depths.
+
 2002-02-08  Lukas Geyer  <geyer@math.uni-dortmund.de>
 
 	* Changes mainly to book.c in order to have

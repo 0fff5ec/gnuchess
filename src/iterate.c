@@ -77,12 +77,9 @@ void Iterate (void)
    CLEAR (flags, TIMEOUT);
    if (flags & TIMECTL)
    {
-      /* XXX: The comments and the code seem not to match here... */
+     /* 2 seconds for unknown latencies */
 
-      /* Time for a move is just total time remaining divided by moves left */
-      /* mcriley - was no # */
-
-      SearchTime = TimeLimit[side] * 1.25 / MoveLimit[side];
+      SearchTime = (TimeLimit[side] - 2) / MoveLimit[side];
 
       /* Allocate 10% of total time as reserve */
       /* mcriley - was 9 * S /10 */

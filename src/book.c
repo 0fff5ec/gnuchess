@@ -342,7 +342,9 @@ int BookBuilderOpen(void)
     }
     digest_bits = MAX_DIGEST_BITS;
     /* We use read_book() here only to allocate memory */
-    read_book(wfp);
+    if (read_book(wfp) == BOOK_ENOMEM) {
+      return BOOK_ENOMEM;
+    }
   }
   return BOOK_SUCCESS;
 }
