@@ -80,6 +80,9 @@ short SqAtakd (short sq, short side)
    return (false);
 }
 
+extern short raybeg[];
+extern short rayend[];
+
 void GenAtaks ()
 /*************************************************************************
  *
@@ -308,18 +311,22 @@ BitBoard AttackXFrom (short sq, short side)
  *
  ***************************************************************************/
 {
-   const short raybeg[7] = { 0, 0, 0, 0, 4, 0, 0 };
-   const short rayend[7] = { 0, 0, 0, 4, 8, 8, 0 };
-
-   BitBoard *a, b, c, blocker;
+   register BitBoard *a, b, c, blocker;
    short piece, dir, blocksq;
 
    a = board.b[side];
    piece = cboard[sq];
+   blocker = board.blocker;
    b = 0;
    switch (piece)
    {
-      case bishop : /* fall through Queens move diagonally */
+      case pawn :
+         b = MoveArray[ptype[side]][sq];
+         break;
+      case knight :
+	 b = MoveArray[knight][sq];
+         break;
+      case bishop : /* falls through as queens move diagnonally */
       case queen :
 	 blocker &= ~(a[bishop] | a[queen]);
 	 for (dir = raybeg[bishop]; dir < rayend[bishop]; dir++)
@@ -334,11 +341,9 @@ BitBoard AttackXFrom (short sq, short side)
             }
             b |= c;
          }
-
-	 /* Bishops don't move like rooks, unlike Queens which fall through */
-	 if (piece == bishop)
+	 if (piece == bishop) /* Queen falls through as they move like rooks */
 	    break;
-
+         blocker = board.blocker;
       case rook :
 	 blocker &= ~(a[rook] | a[queen]);
 	 for (dir = raybeg[rook]; dir < rayend[rook]; dir++)
@@ -354,8 +359,9 @@ BitBoard AttackXFrom (short sq, short side)
             b |= c;
 	 }
 	 break;
-      default :
-	 break;
+      case king :
+	 b = MoveArray[king][sq];
+         break;
    } 
    return (b);
 }
