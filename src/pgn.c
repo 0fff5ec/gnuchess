@@ -412,6 +412,15 @@ void BookPGNReadFromFile (char *file)
    fclose (fp);
    BookBuilder(-2,-2, -2, -2);
 
+   /* Reset the board otherwise we leave the last position in the book
+      on the board. */
+   memset(header,0,sizeof(header));
+   InitVars ();
+   NewPosition ();
+   CLEAR (flags, MANUAL);
+   CLEAR (flags, THINK);
+   myrating = opprating = 0;
+
    gettimeofday (&t2, &tz);
    et += (t2.tv_sec - t1.tv_sec);
    putchar('\n');
