@@ -148,21 +148,6 @@ void Iterate (void)
 
    maxtime = 4 * SearchTime;
 
-#ifdef HYATT
-   /* Human-like: take more time after opening book, reducing into endgame */
-
-   /* mcriley - was  maxtime = 2 * searchtime */
-
-if (bookmode != BOOKOFF && (flags & TIMECTL)) {
-     maxtime = 6 * SearchTime;
-     /* Hyatt's grandmaster-like time control curve */
-     if (nmovesfrombook <= 5 /* && GameCnt < 20 */) {
-       SearchTime = (2 - (MIN(nmovesfrombook,5)/5)) * SearchTime;
-       maxtime = SearchTime;
-     }
-   } 
-#endif
-
    if (flags & POST) {
      printf ("Root = %d, ", score);
      printf ("Phase = %d ", phase);
