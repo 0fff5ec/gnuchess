@@ -72,16 +72,15 @@ void GenMoves (short ply)
  ****************************************************************************/
 {
    short side, piece, sq, t, ep;
-   BitBoard b, c, d, e, friend, notfriend, blocker, notblocker;
+   BitBoard b, c, d, e, friends, notfriends, blocker, notblocker;
    BitBoard *a;
 
    side = board.side;
    a = board.b[side];
-   friend = board.friend[side];
-   notfriend = ~friend;
+   friends = board.friends[side];
+   notfriends = ~friends;
    blocker = board.blocker;
    notblocker = ~blocker;
-/*   TreePtr[ply + 1] = TreePtr[ply];  */
    node = TreePtr[ply + 1];
    ep = board.ep;
 
@@ -93,7 +92,7 @@ void GenMoves (short ply)
       {
          sq = leadz (b);
          CLEARBIT (b, sq);
-         BitToMove (sq, MoveArray[piece][sq] & notfriend);
+         BitToMove (sq, MoveArray[piece][sq] & notfriends);
       }
    }
 
@@ -104,7 +103,7 @@ void GenMoves (short ply)
       sq = leadz (b);
       CLEARBIT (b, sq);
       d = BishopAttack(sq);
-      BitToMove (sq, d & notfriend);
+      BitToMove (sq, d & notfriends);
    }
 
    /* Rooks */
@@ -114,7 +113,7 @@ void GenMoves (short ply)
       sq = leadz (b);
       CLEARBIT (b, sq);
       d = RookAttack(sq);
-      BitToMove (sq, d & notfriend);
+      BitToMove (sq, d & notfriends);
    }
 
    /* Queen */
@@ -124,11 +123,11 @@ void GenMoves (short ply)
       sq = leadz (b);
       CLEARBIT (b, sq);
       d = QueenAttack(sq);
-      BitToMove (sq, d & notfriend);
+      BitToMove (sq, d & notfriends);
    }
 
    /*  White pawn moves  */
-   e = (board.friend[1^side] | (ep > -1 ? BitPosArray[ep] : NULLBITBOARD));
+   e = (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : NULLBITBOARD));
    if (side == white)
    {
       c = (a[pawn] >> 8) & notblocker;		/* 1 square forward */
@@ -305,16 +304,15 @@ void GenNonCaptures (short ply)
  ****************************************************************************/
 {
    register short side, piece, sq, t, ep;
-   register BitBoard b, c, d, friend, notfriend, blocker, notblocker;
+   register BitBoard b, c, d, friends, notfriends, blocker, notblocker;
    register BitBoard *a;
 
    side = board.side;
    a = board.b[side];
-   friend = board.friend[side];
-   notfriend = ~friend;
+   friends = board.friends[side];
+   notfriends = ~friends;
    blocker = board.blocker;
    notblocker = ~blocker;
-/*   TreePtr[ply + 1] = TreePtr[ply]; */
    node = TreePtr[ply + 1];
    ep = board.ep;
 
@@ -449,16 +447,15 @@ void GenCaptures (short ply)
  ****************************************************************************/
 {
    short side, piece, sq, t, ep;
-   BitBoard b, c, friend, notfriend, enemy, blocker;
+   BitBoard b, c, friends, notfriends, enemy, blocker;
    register BitBoard *a;
 
    side = board.side;
    a = board.b[side];
-   friend = board.friend[side];
-   notfriend = ~friend;
-   enemy = board.friend[1^side];
+   friends = board.friends[side];
+   notfriends = ~friends;
+   enemy = board.friends[1^side];
    blocker = board.blocker;
-/*   TreePtr[ply + 1] = TreePtr[ply]; */
    node = TreePtr[ply + 1];
    ep = board.ep;
 
@@ -517,7 +514,7 @@ void GenCaptures (short ply)
       }
 
       b = a[pawn] & ~FileBit[0]; 		/* captures to the left */
-      c = (b >> 7) & (board.friend[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
+      c = (b >> 7) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
       while (c)
       {
          t = leadz (c);
@@ -537,7 +534,7 @@ void GenCaptures (short ply)
       }
 
       b = a[pawn] & ~FileBit[7]; 		/* captures to the right */
-      c = (b >> 9) & (board.friend[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
+      c = (b >> 9) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
       while (c)
       {
          t = leadz (c);
@@ -570,7 +567,7 @@ void GenCaptures (short ply)
       }
 
       b = a[pawn] & ~FileBit[7];		/* captures to the left */
-      c = (b << 7) & (board.friend[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
+      c = (b << 7) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
       while (c)
       {
          t = leadz (c);
@@ -590,7 +587,7 @@ void GenCaptures (short ply)
       }
 
       b = a[pawn] & ~FileBit[0];		/* captures to the right */
-      c = (b << 9) & (board.friend[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
+      c = (b << 9) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
       while (c)
       {
          t = leadz (c);
@@ -723,7 +720,7 @@ void GenCheckEscapes (short ply)
    }
 
    /* If more than one checkers, move king to get out of check */
-   p = MoveArray[king][kingsq] & ~board.friend[side];
+   p = MoveArray[king][kingsq] & ~board.friends[side];
    while (checkers)
    {
       chksq = leadz (checkers);

@@ -34,7 +34,7 @@ typedef unsigned long KeyType;
 typedef struct 
 {
    BitBoard b[2][7];
-   BitBoard friend[2];
+   BitBoard friends[2];
    BitBoard blocker;
    BitBoard blockerr90;
    BitBoard blockerr45;

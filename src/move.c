@@ -612,9 +612,9 @@ leaf * ValidateMove (char *s)
          else
 	    b = b << (fileto < file ? 9 : 7);
          if (board.ep > -1)
-	    b = b & (board.friend[1^side] | BitPosArray[board.ep]);
+	    b = b & (board.friends[1^side] | BitPosArray[board.ep]);
          else
-	    b = b & (board.friend[1^side]);
+	    b = b & (board.friends[1^side]);
          switch (nbits (b))
 	 {
 	    case 0  : return ((leaf *) NULL);
@@ -739,11 +739,11 @@ short IsLegalMove (int move)
 
    /*  Piece is not right color  */
    side = board.side;
-   if (!(BitPosArray[f] & board.friend[side]))
+   if (!(BitPosArray[f] & board.friends[side]))
       return (false);
 
    /*  TO square is a friendly piece, so illegal move  */
-   if (BitPosArray[t] & board.friend[side])
+   if (BitPosArray[t] & board.friends[side])
       return (false);
 
    piece = cboard[f];
@@ -764,9 +764,9 @@ short IsLegalMove (int move)
    if (piece == pawn)
    {
       if ((move & ENPASSANT) && board.ep > -1)
-         enemy = board.friend[1^side] | BitPosArray[board.ep];
+         enemy = board.friends[1^side] | BitPosArray[board.ep];
       else
-         enemy = board.friend[1^side];
+         enemy = board.friends[1^side];
       if (side == white)
       {
          if (!(MoveArray[pawn][f] & BitPosArray[t] & enemy) &&

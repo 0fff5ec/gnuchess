@@ -65,7 +65,7 @@ void Iterate (void)
    TotalPutHashCnt = CollHashCnt = 0;
    TotalPawnHashCnt = GoodPawnHashCnt = 0;
    RootPawns = nbits (board.b[white][pawn] | board.b[black][pawn]);
-   RootPieces = nbits (board.friend[white] | board.friend[black]) -
+   RootPieces = nbits (board.friends[white] | board.friends[black]) -
 		RootPawns;
    RootMaterial = MATERIAL;
    RepeatCnt = 0;

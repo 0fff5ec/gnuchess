@@ -322,7 +322,7 @@ phase2:
    }
 
    /* Pawn on d2,e2/d7,e7 is blocked  */
-   blocker = board.friend[side] | board.friend[xside];
+   blocker = board.friends[side] | board.friends[xside];
    if (side == white && (((c & d2e2[white]) >> 8) & blocker))
       s += BLOCKDEPAWN;
    if (side == black && (((c & d2e2[black]) << 8) & blocker))
@@ -1014,10 +1014,10 @@ inline int ScoreK (short side)
       /* First identify the quadrant */
       x = boardhalf[side] & boardside[file<=D_FILE];
       /* Now identify the number of non-pawn enemy in quadrant */
-      n1 = nbits(x & (board.friend[xside]));
+      n1 = nbits(x & (board.friends[xside]));
       if (n1 > 0) {
         /* Now identify the number of non-pawn friends in quadrant */
-        n2 = nbits(x & (board.friend[side] & ~board.b[side][pawn] & 
+        n2 = nbits(x & (board.friends[side] & ~board.b[side][pawn] & 
 	 	~board.b[side][king]));
         if (n1 > n2)
 	  s += (n1 - n2) * KING_DEFENDER_DEFICIT;

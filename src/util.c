@@ -102,11 +102,11 @@ inline void UpdateFriends ()
 
    w = board.b[white];
    b = board.b[black];
-   board.friend[white] = 
+   board.friends[white] = 
       w[pawn] | w[knight] | w[bishop] | w[rook] | w[queen] | w[king];
-   board.friend[black] = 
+   board.friends[black] = 
       b[pawn] | b[knight] | b[bishop] | b[rook] | b[queen] | b[king];
-   board.blocker = board.friend[white] | board.friend[black];
+   board.blocker = board.friends[white] | board.friends[black];
 }
    
 

@@ -421,7 +421,7 @@ void FindPins (BitBoard *pin)
    BitBoard b, c, e, f, t, *p;
    
    *pin = NULLBITBOARD;
-   t = board.friend[white] | board.friend[black];
+   t = board.friends[white] | board.friends[black];
    for (side = white; side <= black; side++)
    {
       xside = 1^side;
@@ -442,7 +442,7 @@ void FindPins (BitBoard *pin)
 	    sq1 = leadz (c);
 	    CLEARBIT (c, sq1);
 	    f = t & NotBitPosArray[sq] & FromToRay[sq1][sq];
-            if ((board.friend[xside] & f) && nbits (f) == 1)
+            if ((board.friends[xside] & f) && nbits (f) == 1)
 	       *pin |= f;
          }
       }
@@ -462,7 +462,7 @@ void FindPins (BitBoard *pin)
 	    sq1 = leadz (c);
 	    CLEARBIT (c, sq1);
 	    f = t & NotBitPosArray[sq] & FromToRay[sq1][sq];
-            if ((board.friend[xside] & f) && nbits (f) == 1)
+            if ((board.friends[xside] & f) && nbits (f) == 1)
 	       *pin |= f;
          }
       }
@@ -482,7 +482,8 @@ void FindPins (BitBoard *pin)
 	    sq1 = leadz (c);
 	    CLEARBIT (c, sq1);
 	    f = t & NotBitPosArray[sq] & FromToRay[sq1][sq];
-            if ((board.friend[xside] & f) && nbits (f) == 1)
+            if ((board.friends[xside] & f) && nbits (f) == 1)
+
 	       *pin |= f;
          }
       }

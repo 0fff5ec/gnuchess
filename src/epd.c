@@ -300,7 +300,7 @@ void SaveEPD (char *p)
 	       fprintf (fp, "%1d", k);
 	    k = 0;
 	    c1 = notation[cboard[sq]];
-	    if (BitPosArray[sq] & board.friend[black])
+	    if (BitPosArray[sq] & board.friends[black])
 	       c1 = tolower (c1);
 	    fprintf (fp, "%c", c1);
 	 }

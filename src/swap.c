@@ -51,7 +51,7 @@ short SwapOff (int move)
 
    f = FROMSQ (move);
    t = TOSQ (move);
-   side = ((board.friend[white] & BitPosArray[f]) ? white : black);
+   side = ((board.friends[white] & BitPosArray[f]) ? white : black);
    xside = 1^side;
 
    /*  Squares attacking t for side and xside  */
@@ -159,7 +159,7 @@ void AddXrayPiece (short t, short sq, short side, BitBoard *b, BitBoard *c)
    if ((piece == queen) || (piece == rook && dir > 3) || 
 			    (piece == bishop && dir < 4))
    {
-      if (BitPosArray[nsq] & board.friend[side])
+      if (BitPosArray[nsq] & board.friends[side])
          *b |= BitPosArray[nsq];
       else
          *c |= BitPosArray[nsq];
