@@ -224,14 +224,12 @@ typedef struct
 #define MAXPLYDEPTH   65
 #define MAXGAMEDEPTH  600
 
-
-#define HASHSLOTS 262144*6
-#define PAWNSLOTS 65536*6
-//#define HASHSLOTS 32668/48
-//#define PAWNSLOTS 32668/48
-
-//#define HASHSLOTS  4000
-//#define PAWNSLOTS  2000
+/* 
+   Smaller HASHSLOT defaults 20011017 to improve blitz play
+   and make it easier to run on old machines
+*/
+#define HASHSLOTS 1024 
+#define PAWNSLOTS 512
 
 #define DEPTH	12
 
