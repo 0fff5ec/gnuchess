@@ -197,7 +197,8 @@ NONSPACE	[^ \t\n\r\f]
 	return 1;
 	}
 
-<tagdata>([^\n\r\"\\]|\\.)* { /* tag data */
+<tagdata>([^\n\r])*+\" { /* tag data */
+        /* pattern modified SRW to eat all data till " */
 	BEGIN(tagend);
 	/* TODO: if DEST_GAME, store tag symbol and data for later saving */
 	switch(ctag) {

@@ -1,8 +1,15 @@
+2003-06-19 Mike Curtis <chess@wt.net>
+
+	* Portability fix to lexpgn.l
+
 2003-06-19 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Add "--easy" flag to command line.
 
 	* Add "--manual" flah to command line.
+
+	* Fix to new PGN parser to handle odd
+	  character in tag data.
 
 2003-06-15 Simon Waters <Simon@wretched.demon.co.uk>      
 
