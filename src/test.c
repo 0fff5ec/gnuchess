@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 
 #include <stdio.h>
@@ -40,7 +41,7 @@ void TestMoveGenSpeed (void)
    unsigned long i;
    struct timeval t1, t2;
    double et;
-   int side, xside;
+   short side, xside;
 
    GenCnt = 0;
    et = 0;

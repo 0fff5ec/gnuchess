@@ -1,15 +1,9 @@
-TODO for gnuchess: 
+Items are in random order, mostly chronological, the important ones
+are marked IMPORTANT, so that you can grep for them if this gets too
+large... I like the TODO of xboard...)
 
-(Items are in random order, mostly chronological, the important ones are
-marked IMPORTANT, so that you can grep for them if this
-gets too large... I like the TODO of xboard...)
-
-The items marked with '-' are honest TODOs, the ones marked with '+' are
-already prototyped (or at least worked on).
-
-+ Add Analyze mode
-
-- Make the location of opening books runtime-configurable
+- General cleanups (Recheck global variables like et and types of
+  variables)
 
 - Benchmark alternatives for the ubiquitous method used to
   traverse bits, a la (currently)
@@ -20,9 +14,9 @@ already prototyped (or at least worked on).
 		do_something();
 	}
 
-+ Add pondering (may be difficult, use pthreads or some low-level
-  select() stuff?). That would be very close to implementing
-  analysis mode.
+  I do not believe that the current technique is fastest.
+
+- Improve pondering and  analysis mode, still
 
 - Add "offer draw" feature, both active and passive, add resign
 
@@ -42,7 +36,7 @@ already prototyped (or at least worked on).
   also moving the list of chess players allowed in the book to some
   configuration file.
 
-+ Improve PGN parser to accept "Import style PGN"? Would reduce
+- Improve PGN parser to accept "Import style PGN"? Would reduce
   performance slightly, but one could grab PGN files from all over the
   net...
 

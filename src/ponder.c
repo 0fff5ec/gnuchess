@@ -1,5 +1,5 @@
-/* GNU Chess 5.0 - version.c - version number code.
-   Copyright (c) 1999-2002 Free Software Foundation, Inc.
+/* GNU Chess 5.0 - ponder.c - Pondering
+   Copyright (c) 2002 Free Software Foundation, Inc.
 
    GNU Chess is based on the two research programs 
    Cobalt by Chua Kong-Sian and Gazebo by Stuart Cracraft.
@@ -21,15 +21,30 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
+     lukas@debian.org
 */
-#include <stdio.h>
-#include "common.h"
-#include "version.h"
 
-void ShowVersion ()
+#include "common.h"
+#include <stdlib.h>
+#include <unistd.h>
+
+/*
+ * Pondering has to check for input_status == INPUT_NONE regularly,
+ * that is what Iterate() is supposed to do when the PONDER flag is
+ * set.  Output should only be generated if the xboard flag is
+ * set. (Otherwise stdout gets messed up.)
+ */
+void ponder(void)
 {
-   if (!(flags & XBOARD))
-     printf ("%s %s\n\n", PROGRAM, VERSION);
-   else
-     printf ("Chess\n");
+   /* Save flags and clear the time control bit for pondering */
+   const unsigned int saved_flags = flags;
+
+   CLEAR(flags, TIMECTL);
+   SET(flags, PONDER);
+		 
+   Iterate();
+
+   /* Restore flags, will also clear the PONDER flag */
+   flags=saved_flags;
 }

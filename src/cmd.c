@@ -21,595 +21,563 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
+#include <errno.h>
+
 #include "version.h"
 #include "common.h"
 #include "eval.h"
 
-#if HAVE_LIBREADLINE
-# if HAVE_READLINE_READLINE_H
-#  include <readline/readline.h>
-#  include <readline/history.h>
-# else
-extern char* readline(char *);
-extern void add_history(char *);
-# endif
-#endif
+static char logfile[MAXSTR];
+static char gamefile[MAXSTR];
 
-#define prompt ':'
+/*
+ * Splitting input is actually not neccessary, but we find
+ * tokens separated by whitespace and put pointers on them.
+ * How many do we need? We just take 3 for now. Check if the
+ * fact that tokens are not 0-terminated but whitespace-terminated
+ * generates bugs. (Already killed one bug in move.c)
+ * We also kill trailing whitespace. (The trailing '\n' might
+ * be really annoying otherwise.)
+ */
 
-extern int stage, InChkDummy, terminal;
+#define TOKENS 3
 
-#ifdef HAVE_LIBREADLINE
-static char *inputstr;
-#else
-static char inputstr[INPUT_SIZE];
-#endif
+static char *token[TOKENS];
 
-static char cmd[INPUT_SIZE], file[INPUT_SIZE], 
-            s[INPUT_SIZE], logfile[INPUT_SIZE], 
-            gamefile[INPUT_SIZE], userinput[INPUT_SIZE];
-
-char subcmd[INPUT_SIZE],setting[INPUT_SIZE],subsetting[INPUT_SIZE];
-
-void InputCmd ()
-/*************************************************************************
- *
- *  This is the main user command interface driver.
- *
- *************************************************************************/
+static void split_input(void)
 {
-   const char *color[2] = { "White", "Black" };
-   int suffix;
-   int i;
-   leaf *ptr; 
-   int ncmds;
-   char *x,*trim;
+  /* r points to the last non-space character */
+  char *s, *r;
+  int k;
 
-   CLEAR (flags, THINK);
-   memset(userinput,0,sizeof(userinput));
-   memset(cmd,0,sizeof(cmd));
-#ifndef HAVE_LIBREADLINE /* Why is this necessary anyway? */
-   memset(inputstr,0,sizeof(inputstr));
-#endif
-
-#ifdef HAVE_LIBREADLINE
-	 if (isatty(STDIN_FILENO)) {
-	    sprintf(s,"%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
-	    inputstr = readline(s);
-	    if (inputstr == NULL) return;
-	    if (*inputstr) {
-	       add_history(inputstr);
-	    }
-	    if (strlen(inputstr) > INPUT_SIZE-1) {
-	       printf("Warning: Input line truncated to %d characters.\n", INPUT_SIZE -1 );
-	       inputstr[INPUT_SIZE-1] = '\000';
-	    }
-	 } else {
-	    inputstr = malloc(INPUT_SIZE);
-	    if (inputstr == NULL) {
-	       perror("InputCmd");
-	       exit(EXIT_FAILURE);
-	    }
-	    fgets(inputstr, INPUT_SIZE, stdin);
-	    if (inputstr[0]) {
-	       inputstr[strlen(inputstr)-1] = 0;
-	    }
-	 }
-#else /* !HAVE_LIBREADLINE */
-	if (!(flags & XBOARD)) {
-	  printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
-	  fflush(stdout);
-        }
-	fgets (inputstr, INPUT_SIZE, stdin) ;
-#endif /* HAVE_LIBREADLINE */
-
-	cmd[0] = '\n';
-	strcpy(userinput,inputstr);
-	sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
-	if (cmd[0] == '\n')
-	  goto done;
-	cmd[0] = subcmd[0] = setting[0] = subsetting[0] = '\0';
-        ncmds = sscanf (userinput,"%s %s %s %[^\n]",
-			cmd,subcmd,setting,subsetting);
-
-   /* Put options after command back in inputstr - messy */
-   sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting);
-
-   trim = inputstr + strlen(inputstr) - 1;
-   while ( trim>=inputstr && *trim==' ')
-                *trim--='\0';
-
-   if (strcmp (cmd, "quit") == 0 || strcmp (cmd, "exit") == 0)
-      SET (flags, QUIT);
-   else if (strcmp (cmd, "help") == 0)
-      ShowHelp (inputstr);
-   else if (strcmp (cmd, "show") == 0)
-      ShowCmd (inputstr);
-   else if (strncmp (cmd, "book", 4) == 0) {
-      if (strncmp(inputstr, "add",3) == 0) {
-        sscanf (inputstr, "add %s", file);
-        if (access(file,F_OK) < 0) {
-	  printf("The syntax to add a new book is:\n\n\tbook add file.pgn\n");
-        } else {
-          BookPGNReadFromFile (file);
-	}
-      } else if (strncmp (inputstr, "on", 2) == 0 || strncmp (inputstr, "prefer", 6) == 0) {
-	bookmode = BOOKPREFER;
-	printf("book now on.\n");
-      } else if (strncmp (inputstr, "off", 3) == 0) {
-	bookmode = BOOKOFF;
-	printf("book now off.\n");
-      } else if (strncmp (inputstr, "best", 4) == 0) {
-	bookmode = BOOKBEST;
-	printf("book now best.\n");
-      } else if (strncmp (inputstr, "worst", 5) == 0) {
-	bookmode = BOOKWORST;
-	printf("book now worst.\n");
-      } else if (strncmp (inputstr, "random", 6) == 0) {
-	bookmode = BOOKRAND;
-	printf("book now random.\n");
-      }
-   } else if (strcmp (cmd, "test") == 0)
-      TestCmd (inputstr);
-   else if (strcmp (cmd, "version") == 0)
-      ShowVersion ();
-   else if (strcmp (cmd, "pgnsave") == 0)
-           {     
-		if ( strlen(inputstr) > 0 && strlen(inputstr) < INPUT_SIZE )
-      		  PGNSaveToFile (inputstr,"");
-		else
-		  printf("Invalid filename.\n");
-	   }
-   else if (strcmp (cmd, "pgnload") == 0)
-      PGNReadFromFile (inputstr);
-   else if (strcmp (cmd, "manual") == 0)
-      SET (flags, MANUAL);
-   else if (strcmp (cmd, "debug") == 0)
-   {
-      SET (flags, DEBUGG);
-      Debugmvl = 0;
-      if (strcmp (inputstr, "debug") == 0)
-      {
-         while (strcmp (inputstr, s))
-         {
-            sscanf (inputstr, "%s %[^\n]", s, inputstr);
-            ptr = ValidateMove (s);
-            Debugmv[Debugmvl++] = ptr->move;
-            MakeMove (board.side, &ptr->move);
-         } 
-         i = Debugmvl;
-         while (i)
-         {
-            UnmakeMove (board.side, &Debugmv[--i]);
-         } 
-      }
-   }
-   else if (strcmp (cmd, "force") == 0)
-	SET (flags, MANUAL);
-   else if (strcmp (cmd, "white") == 0)
-	;
-   else if (strcmp (cmd, "black") == 0)
-	;
-   else if (strcmp (cmd, "hard") == 0)
-	;
-   else if (strcmp (cmd, "easy") == 0)
-	;
-   else if (strcmp (cmd, "list") == 0) {
-	if (inputstr[0] == '?')
-	{
-	  printf("name    - list known players alphabetically\n");
-	  printf("score   - list by GNU best result first \n");
-	  printf("reverse - list by GNU worst result first\n");
-	} else {
-          sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
-          if (inputstr == '\000') DBListPlayer("rscore");
-	  else DBListPlayer(inputstr);
-	}
-   }
-   else if (strcmp (cmd, "post") == 0)
-	SET (flags, POST);
-   else if (strcmp (cmd, "nopost") == 0)
-	CLEAR (flags, POST);
-   else if (strcmp (cmd, "name") == 0) {
-      strcpy(name, inputstr);
-      x = name;
-      while (*x != '\000') {
-        if (*x == ' ') {
-	  *x = '\000';
-	  break;
-	}
-        x++;
-      }
-      suffix = 0;
-      for (;;) {
-	sprintf(logfile,"log.%03d",suffix);
- 	sprintf(gamefile,"game.%03d",suffix);
-	if (access(logfile,F_OK) < 0) {
-	  ofp = fopen(logfile,"w");
-	  break;
-	} else 
-	  suffix++;
-      }
-   }
-   else if (strcmp (cmd, "result") == 0) {
-     if (ofp != stdout) {  
-	fprintf(ofp, "result: %s\n",inputstr);
-	fclose(ofp); 
-	ofp = stdout;
-        printf("Save to %s\n",gamefile);
-        PGNSaveToFile (gamefile, inputstr);
-	DBUpdatePlayer (name, inputstr);
-     }
-   }	
-   else if (strcmp (cmd, "rating") == 0) {
-      sscanf(inputstr,"%d %d",&myrating,&opprating); 
-      fprintf(ofp,"my rating = %d, opponent rating = %d\n",myrating,opprating); 
-      /* Change randomness of book based on opponent rating. */
-      /* Basically we play narrower book the higher the opponent */
-      if (opprating >= 1700) bookfirstlast = 2;
-      else if (opprating >= 1700) bookfirstlast = 2;
-      else bookfirstlast = 2;
-   }
-   else if (strcmp (cmd, "activate") == 0) {
-	CLEAR (flags, TIMEOUT);
-	CLEAR (flags, ENDED);
-   }
-   else if (strcmp (cmd, "new") == 0) {
-     InitVars ();
-     NewPosition ();
-     CLEAR (flags, MANUAL);
-     CLEAR (flags, THINK);
-     myrating = opprating = 0;
-   }
-   else if (strcmp (cmd, "time") == 0) {
-     sscanf (inputstr, "%s %[^\n]", s, inputstr);
-     TimeLimit[1^board.side] = atoi(s) / 100.0f ;
-   }
-   else if (strcmp (cmd, "otim") == 0)
-	;
-   else if (strcmp (cmd, "random") == 0)
-	;
-   else if (strcmp (cmd, "hash") == 0)
-   {
-      sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
-      if (strcmp (cmd, "off") == 0)
-         CLEAR (flags, USEHASH);
-      else if (strcmp (cmd, "on") == 0)
-         SET (flags, USEHASH);
-      printf ("Hashing %s\n", flags & USEHASH ? "on" : "off");
-   }
-   else if (strcmp (cmd, "hashsize") == 0)
-   {
-      if (inputstr[0] == 0) {
-	 printf("Current HashSize is %u slots\n", HashSize);
-      } else {
-	 i = atoi (inputstr);
-	 TTHashMask = 0;
-	 while ((i >>= 1) > 0)
-	 {
-	    TTHashMask <<= 1;
-	    TTHashMask |= 1;
-	 }
-	 HashSize = TTHashMask + 1;
-	 printf ("Adjusting HashSize to %u slots\n", HashSize);
-	 InitHashTable (); 
-      }
-   }
-   else if (strcmp (cmd, "null") == 0)
-   {
-      sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
-      if (strcmp (cmd, "off") == 0)
-         CLEAR (flags, USENULL);
-      else if (strcmp (cmd, "on") == 0)
-         SET (flags, USENULL);
-      printf ("Null moves %s\n", flags & USENULL ? "on" : "off");
-   }
-   else if (strcmp (cmd, "xboard") == 0)
-   {
-      sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
-      if (strcmp (cmd, "off") == 0)
-         CLEAR (flags, XBOARD);
-      else if (strcmp (cmd, "on") == 0)
-         SET (flags, XBOARD);
-      else if (!(flags & XBOARD)) { /* set if unset and only xboard called */
-	 SET (flags, XBOARD);	    /* like in xboard/winboard usage */
-      }
-   }
-   else if (strcmp (cmd, "protover") == 0)
-   {
-      if (flags & XBOARD) {
-	/* Note: change this if "analyze" or "draw" commands are added, etc. */
-	printf("feature setboard=1 analyze=0 ping=1 draw=0"
-	       " variants=\"normal\" myname=\"%s %s\" done=1\n",
-	       PROGRAM, VERSION);
-	fflush(stdout);
-      }
-   }
-   else if (strcmp (cmd, "depth") == 0 || strcmp (cmd, "sd") == 0) {
-      SearchDepth = atoi (inputstr);
-      printf("Search to a depth of %d\n",SearchDepth);
-   }
-   else if (strcmp (cmd, "level") == 0)
-   {
-      SearchDepth = 0;
-      sscanf (inputstr, "%d %f %d", &TCMove, &TCTime, &TCinc);
-      if (TCMove == 0) {
-	TCMove =  35 /* MIN((5*(GameCnt+1)/2)+1,60) */;
-	printf("TCMove = %d\n",TCMove);
-	suddendeath = 1;
-      } else
-	suddendeath = 0;
-      if (TCTime == 0) {
-         SET (flags, TIMECTL);
-	 SearchTime = TCinc / 2.0f ;
-         printf("Fischer increment of %d seconds\n",TCinc);
-      }
-      else
-      {
-         SET (flags, TIMECTL);
-         MoveLimit[white] = MoveLimit[black] = TCMove - (GameCnt+1)/2;
-         TimeLimit[white] = TimeLimit[black] = TCTime * 60;
-	 if (!(flags & XBOARD)) {
-	   printf ("Time Control: %d moves in %.2f secs\n", 
-	          MoveLimit[white], TimeLimit[white]);
-	   printf("Fischer increment of %d seconds\n",TCinc);
-	 }
-      }
-   }
-   else if (strcmp (cmd, "load") == 0 || strcmp (cmd, "epdload") == 0)
-   {
-      LoadEPD (inputstr);
-      if (!ValidateBoard())
-      {
-	 SET (flags, ENDED);
-         printf ("Board is wrong!\n");
-      }
-   }
-   else if (strcmp (cmd, "save") == 0 || strcmp (cmd, "epdsave") == 0)
-	{  
-	   if ( strlen(inputstr) > 0 )
-             SaveEPD (inputstr);
-	   else
-	     printf("Invalid filename.\n");
-	}
-   else if (strcmp (cmd, "epd") == 0)
-   {
-      ParseEPD (inputstr);
-      NewPosition();
-      ShowBoard();
-      printf ("\n%s : Best move = %s\n", id, solution); 
-   }
-   else if (strcmp (cmd, "setboard") == 0)
-   {
-      /* setboard uses FEN, not EPD, but ParseEPD will accept FEN too */
-      ParseEPD (inputstr);
-      NewPosition();
-   }
-   else if (strcmp (cmd, "ping") == 0)
-   {
-      /* If ping is received when we are on move, we are supposed to 
-	 reply only after moving.  In this version of GNU Chess, we
-	 never read commands while we are on move, so we don't have to
-	 worry about that here. */
-      printf("pong %s\n", inputstr);
-      fflush(stdout);
-   }
-   else if (strcmp (cmd, "switch") == 0)
-   {
-      board.side = 1^board.side;
-      printf ("%s to move\n", board.side == white ? "White" : "Black");
-   }
-   else if (strcmp (cmd, "go") == 0)
-   {
-      SET (flags, THINK);
-      CLEAR (flags, MANUAL);
-      CLEAR (flags, TIMEOUT);
-      CLEAR (flags, ENDED);
-      computer = board.side;
-   }
-   else if (strcmp (cmd, "solve") == 0 || strcmp (cmd, "solveepd") == 0)
-      Solve (inputstr);
-   else if (strcmp (cmd,"remove") == 0) {
-    if (GameCnt >= 0) {
-       CLEAR (flags, ENDED);
-       CLEAR (flags, TIMEOUT);
-       UnmakeMove (board.side, &Game[GameCnt].move);
-       if (GameCnt >= 0) {
-         UnmakeMove (board.side, &Game[GameCnt].move);
-         if (!(flags & XBOARD))
-           ShowBoard ();
-       }
-       PGNSaveToFile ("game.log","");
-    } else
-       printf ("No moves to undo! \n");
-   }
-   else if (strcmp (cmd, "undo") == 0)
-   {
-      if (GameCnt >= 0)
-         UnmakeMove (board.side, &Game[GameCnt].move);
-      else
-	 printf ("No moves to undo! \n");
-      MoveLimit[board.side]++;
-      TimeLimit[board.side] += Game[GameCnt+1].et;
-      if (!(flags & XBOARD)) ShowBoard ();
-   }
-   else if (strcmp (cmd, "bk") == 0)
-   {
-	/* Print moves from Open Book for Xboard/WinBoard */
-	/* Lines must start with " " and end with blank line */
-	/* No need to test for xboard as it is generally useful */
-	BookQuery(1);
-	printf("\n"); /* Blank line */
-        fflush(stdout);
-   }
-   /* List commands we don't implement to avoid illegal moving them */
-   /* Play variant, we instruct interface in protover we play normal */
-   else if (strcmp (cmd, "variant") == 0)
-	;
-   /* accepted and rejected refers to protocol requests */
-   else if (strcmp (cmd, "accepted") == 0)
-	;
-   else if (strcmp (cmd, "rejected") == 0)
-	;
-   /* Set total time for move to be N seconds is "st N" */
-   else if (strcmp (cmd, "st") == 0)
-   {
-	/* Approximately level 1 0 N */
-	sscanf(inputstr,"%d",&TCinc);
-	suddendeath = 0 ;
-	/* Allow a little fussiness for failing low etc */
-	SearchTime = TCinc * 0.90f ;
-        CLEAR (flags, TIMECTL);
-   }
-   /* Ignore draw offers */
-   else if (strcmp (cmd, "draw") == 0)
-	;
-   /* Predecessor to setboard */
-   else if (strcmp (cmd, "edit") == 0)
-   {
-	if ( flags & XBOARD )
-	{
-	 printf("tellusererror command 'edit' not implemented\n");
-	 fflush(stdout);
-	}
-   }
-   /* Give a possible move for the player to play */
-   else if (strcmp (cmd, "hint") == 0)
-   {
-     /* Find next move in PV, ignore if none available */
-     /* Code belongs in search.c with ShowLine ? */
-
-     int pvar;
-     if ((flags & USEHASH))
-     {
-        if (TTGetPV(board.side,2,rootscore,&pvar))
-        {
-	  /* Find all moves for ambiguity checks */
-	  /* Otherwise xboard complains at ambiguous hints */
-	  GenMoves(2); 
-
-          SANMove(pvar,2);
-          printf("Hint: %s\n", SANmv);
-          fflush(stdout);
-	}
-     }
-   }
-   /* Move now, not applicable */
-   else if (strcmp (cmd, "?") == 0)
-	;
-   /* Enter analysis mode */
-   else if (strcmp (cmd, "analyze") == 0)
-   {
-	printf("Error (unknown command): analyze\n");
-	fflush(stdout);
-   }
-   /* Our opponent is a computer */
-   else if (strcmp (cmd, "computer") == 0)
-	;
-
-   /* everything else must be a move */
-   else
-   {
-      ptr = ValidateMove (cmd);
-      if (ptr != NULL) 
-      {
-	 SANMove (ptr->move, 1);
-	 MakeMove (board.side, &ptr->move);
-	 strcpy (Game[GameCnt].SANmv, SANmv);
-	 printf("%d. ",GameCnt/2+1);
-	 printf("%s",cmd);
-	 if (ofp != stdout) {
-	   fprintf(ofp,"%d. ",GameCnt/2+1);
-	   fprintf(ofp,"%s",cmd);
-	 }
-	 putchar('\n');
-	 fflush(stdout);
-  	 if (ofp != stdout) {
-	   fputc('\n',ofp);
-	   fflush(ofp);
-         }
-         if (!(flags & XBOARD)) ShowBoard (); 
-	 SET (flags, THINK);
-      }
-      else {
-	/*
-	 * Must Output Illegal move to prevent Xboard accepting illegal
-	 * en passant captures and other subtle mistakes
-	 */
-	printf("Illegal move: %s\n",cmd);
- 	fflush(stdout);
-      }
-   }
-  done:
-#ifdef HAVE_LIBREADLINE
-   free(inputstr);
-#endif
-   return;
+  for (k = 0, s = r = inputstr; k < TOKENS; ++k) {
+    /* Skip leading whitespace */
+    while (isspace(*s)) s++;
+    token[k] = s;
+    /* Skip token */
+    while (*s && !isspace(*s)) r = s++;
+  }
+  while (*s) {
+    while (isspace(*s)) s++;
+    while (*s && !isspace(*s)) r = s++;
+  }
+  r[1] = '\0';
 }
 
+/*
+ * Compares two tokens, returns 1 on equality. Tokens
+ * are separated by whitespace.
+ */
+static int tokeneq(const char *s, const char *t)
+{
+  while (*s && *t && !isspace(*s) && !isspace(*t)) {
+    if (*s++ != *t++) return 0;
+  }
+  return (!*s || isspace(*s)) && (!*t || isspace(*t));
+}
+  
+void cmd_accepted(void) {}
 
+void cmd_activate(void) 
+{
+  CLEAR (flags, TIMEOUT);
+  CLEAR (flags, ENDED);
+}
+ 
+void cmd_analyze(void)
+{
+  printf("Error (unknown command): analyze\n");
+  fflush(stdout);
+}
 
-void ShowCmd (char *subcmd)
+void cmd_bk(void)
+{
+  /* Print moves from Open Book for Xboard/WinBoard */
+  /* Lines must start with " " and end with blank line */
+  /* No need to test for xboard as it is generally useful */
+  BookQuery(1);
+  printf("\n"); /* Blank line */
+  fflush(stdout);
+}
+
+void cmd_black(void) {}
+
+void cmd_book(void)
+{
+  if (tokeneq(token[1], "add")) {
+    if (access(token[2], F_OK) < 0) {
+      printf("The syntax to add a new book is:\n\n\tbook add file.pgn\n");
+    } else {
+      BookPGNReadFromFile (token[2]);
+    }
+  } else if (tokeneq (token[1], "on") || tokeneq(token[1], "prefer")) {
+    bookmode = BOOKPREFER;
+    printf("book now on.\n");
+  } else if (tokeneq (token[1], "off")) {
+    bookmode = BOOKOFF;
+    printf("book now off.\n");
+  } else if (tokeneq (token[1], "best")) {
+    bookmode = BOOKBEST;
+    printf("book now best.\n");
+  } else if (tokeneq (token[1], "worst")) {
+    bookmode = BOOKWORST;
+    printf("book now worst.\n");
+  } else if (tokeneq (token[1], "random")) {
+    bookmode = BOOKRAND;
+    printf("book now random.\n");
+  }
+}
+
+/* Our opponent is a computer */
+void cmd_computer(void) {}
+
+/*
+ * XXX - Debugging is more or less borked like that. (I think.)
+ * Have to figure out how this was meant to work.
+ */
+void cmd_debug(void)
+{
+  char *s1, *s2;
+  int i;
+  leaf *ptr;
+  
+  SET (flags, DEBUGG);
+  Debugmvl = 0;
+  s1 = token[1];
+  while (*s1) {
+    for (s2 = s1+1; *s2 && !isspace(*s2); s2++) ;
+    *s2 = '\0';
+    ptr = ValidateMove (s1);
+    if (ptr) {
+      Debugmv[Debugmvl++] = ptr->move;
+      MakeMove (board.side, &ptr->move);
+    }
+    for (s1 = s2+1; isspace(*s1); s1++) ;
+  } 
+  i = Debugmvl;
+  while (i)	{
+    UnmakeMove (board.side, &Debugmv[--i]);
+  } 
+}
+
+void cmd_debugply(void) {  }
+
+void cmd_debugdepth(void) {  }
+
+void cmd_debugnode(void) { }
+
+void cmd_depth(void)
+{
+  SearchDepth = atoi (token[1]);
+  printf("Search to a depth of %d\n",SearchDepth);
+}
+
+/* Ignore draw offers */
+void cmd_draw(void) {}
+
+void cmd_easy(void) { CLEAR (flags, HARD); }
+
+/* Predecessor to setboard */
+void cmd_edit(void) 
+{
+  if ( flags & XBOARD ) {
+    printf("tellusererror command 'edit' not implemented\n");
+    fflush(stdout);
+  }
+}
+
+void cmd_epd(void)
+{
+  ParseEPD (token[1]);
+  NewPosition();
+  ShowBoard();
+  printf ("\n%s : Best move = %s\n", id, solution); 
+}
+
+void cmd_force(void) { SET (flags, MANUAL); }
+
+void cmd_go(void)
+{
+  SET (flags, THINK);
+  CLEAR (flags, MANUAL);
+  CLEAR (flags, TIMEOUT);
+  CLEAR (flags, ENDED);
+  computer = board.side;
+}
+
+void cmd_hard(void) { SET (flags, HARD); }
+
+void cmd_hash(void)
+{
+  if (tokeneq (token[1], "off"))
+    CLEAR (flags, USEHASH);
+  else if (tokeneq (token[1], "on"))
+    SET (flags, USEHASH);
+  printf ("Hashing %s\n", flags & USEHASH ? "on" : "off");
+}
+
+void cmd_hashsize(void)
+{
+  if (token[1][0] == 0) {
+    printf("Current HashSize is %d slots\n", HashSize);
+  } else {
+    int i;
+    i = atoi (token[1]);
+    TTHashMask = 0;
+    while ((i >>= 1) > 0) {
+      TTHashMask <<= 1;
+      TTHashMask |= 1;
+    }
+    HashSize = TTHashMask + 1;
+    printf ("Adjusting HashSize to %d slots\n", HashSize);
+    InitHashTable (); 
+  }
+}
+
+/* Give a possible move for the player to play */
+void cmd_hint(void)
+{
+  /* Find next move in PV, ignore if none available */
+  /* Code belongs in search.c with ShowLine ? */
+  
+  int pvar[2];
+  if ((flags & USEHASH)) {
+    if (TTGetPV(board.side,2,rootscore,&pvar[2])) {
+      /* Find all moves for ambiguity checks */
+      /* Otherwise xboard complains at ambiguous hints */
+      GenMoves(2); 
+      
+      SANMove(pvar[2],2);
+      printf("Hint: %s\n", SANmv);
+      fflush(stdout);
+    }
+  }
+}
+
+void cmd_level(void)
+{
+  SearchDepth = 0;
+  sscanf (token[1], "%d %f %d", &TCMove, &TCTime, &TCinc);
+  if (TCMove == 0) {
+    TCMove =  35 /* MIN((5*(GameCnt+1)/2)+1,60) */;
+    printf("TCMove = %d\n",TCMove);
+    suddendeath = 1;
+  } else
+    suddendeath = 0;
+  if (TCTime == 0) {
+    SET (flags, TIMECTL);
+    SearchTime = TCinc / 2.0f ;
+    printf("Fischer increment of %d seconds\n",TCinc);
+  } else {
+    SET (flags, TIMECTL);
+    MoveLimit[white] = MoveLimit[black] = TCMove - (GameCnt+1)/2;
+    TimeLimit[white] = TimeLimit[black] = TCTime * 60;
+    if (!(flags & XBOARD)) {
+      printf ("Time Control: %d moves in %.2f secs\n", 
+	      MoveLimit[white], TimeLimit[white]);
+      printf("Fischer increment of %d seconds\n",TCinc);
+    }
+  }
+}
+
+void cmd_list(void)
+{
+  if (token[1][0] == '?') {
+    printf("name    - list known players alphabetically\n");
+    printf("score   - list by GNU best result first \n");
+    printf("reverse - list by GNU worst result first\n");
+  } else {
+    if (token[1][0] == '\0') DBListPlayer("rscore");
+    else DBListPlayer(token[1]);
+  }
+}
+
+void cmd_load(void)
+{
+  LoadEPD (token[1]);
+  if (!ValidateBoard()) {
+    SET (flags, ENDED);
+    printf ("Board is wrong!\n");
+  }
+}
+
+void cmd_manual(void) { SET (flags, MANUAL); }
+
+/* Move now, not applicable */
+void cmd_movenow(void) {}
+
+/*
+ * TODO: Add a logpath variable or macro, not always dump into current
+ * dir. Again, how does one handle paths portably across Unix/Windows?
+ *   -- Lukas 
+ */
+void cmd_name(void)
+{
+  int suffix = 0;
+
+  for (suffix = 0; suffix < 1000; suffix++) {
+    sprintf(logfile,"log.%03d",suffix);
+    sprintf(gamefile,"game.%03d",suffix);
+    /*
+     * There is an obvious race condition here but who cares, we just
+     * bail out in case of failure... --Lukas 
+     */
+    if (access(logfile,F_OK) < 0) {
+      ofp = fopen(logfile,"w");
+      if (ofp == NULL) {
+	ofp = stdout;
+	fprintf(stderr, "Failed to open %s for writing: %s\n", 
+		logfile, strerror(errno));
+      }
+      return;
+    }
+  }
+  fprintf(stderr, "Could not create logfile, all slots occupied.\n");
+  fprintf(stderr, "You may consider deleting or renaming your existing logfiles.\n");
+}
+
+void cmd_new(void)
+{
+  InitVars ();
+  NewPosition ();
+  CLEAR (flags, MANUAL);
+  CLEAR (flags, THINK);
+  myrating = opprating = 0;
+}
+
+void cmd_nopost(void) {	CLEAR (flags, POST); }
+
+void cmd_null(void)
+{
+  if (tokeneq (token[1], "off"))
+    CLEAR (flags, USENULL);
+  else if (tokeneq (token[1], "on"))
+    SET (flags, USENULL);
+  printf ("Null moves %s\n", flags & USENULL ? "on" : "off");
+}
+
+void cmd_otim(void) {}
+
+void cmd_pgnload(void) { PGNReadFromFile (token[1]); }
+
+/*
+ * XXX - Filenames with spaces will break here,
+ * do we want to support them? I vote for "no" 
+ *   - Lukas
+ */
+void cmd_pgnsave(void)
+{
+  if ( strlen(token[1]) > 0 )
+    PGNSaveToFile (token[1], "");
+  else
+    printf("Invalid filename.\n");
+}
+ 
+void cmd_ping(void)
+{
+  /* If ping is received when we are on move, we are supposed to 
+     reply only after moving.  In this version of GNU Chess, we
+     never read commands while we are on move, so we don't have to
+     worry about that here. */
+  printf("pong %s\n", token[1]);
+  fflush(stdout);
+}
+ 
+void cmd_post(void) { SET (flags, POST); }
+
+void cmd_protover(void)
+{
+  if (flags & XBOARD) {
+    /* Note: change this if "analyze" or "draw" commands are added, etc. */
+    printf("feature setboard=1 analyze=0 ping=1 draw=0"
+	   " variants=\"normal\" myname=\"%s %s\" done=1\n",
+	   PROGRAM, VERSION);
+    fflush(stdout);
+  }
+}
+
+void cmd_quit(void) { SET (flags, QUIT); }
+
+void cmd_random(void) {}
+
+void cmd_rating(void)
+{
+  myrating = atoi(token[1]);
+  opprating = atoi(token[2]);
+  fprintf(ofp,"my rating = %d, opponent rating = %d\n",myrating,opprating); 
+  /* Change randomness of book based on opponent rating. */
+  /* Basically we play narrower book the higher the opponent */
+  if (opprating >= 1700) bookfirstlast = 2;
+  else if (opprating >= 1700) bookfirstlast = 2;
+  else bookfirstlast = 2;
+}
+
+void cmd_rejected(void) {}
+
+void cmd_remove(void)
+{
+  if (GameCnt >= 0) {
+    CLEAR (flags, ENDED);
+    CLEAR (flags, TIMEOUT);
+    UnmakeMove (board.side, &Game[GameCnt].move);
+    if (GameCnt >= 0) {
+      UnmakeMove (board.side, &Game[GameCnt].move);
+      if (!(flags & XBOARD))
+           ShowBoard ();
+    }
+    PGNSaveToFile ("game.log","");
+  } else
+    printf ("No moves to undo! \n");
+}
+
+void cmd_result(void)
+{
+  if (ofp != stdout) {  
+    fprintf(ofp, "result: %s\n",token[1]);
+    fclose(ofp); 
+    ofp = stdout;
+    printf("Save to %s\n",gamefile);
+    PGNSaveToFile (gamefile, token[1]);
+    DBUpdatePlayer (name, token[1]);
+  }
+}
+	
+void cmd_save(void)
+{  
+  if ( strlen(token[1]) > 0 )
+    SaveEPD (token[1]);
+  else
+    printf("Invalid filename.\n");
+}
+
+void cmd_setboard(void)
+{
+  /* setboard uses FEN, not EPD, but ParseEPD will accept FEN too */
+  ParseEPD (token[1]);
+  NewPosition();
+}
+
+void cmd_solve(void) { Solve (token[1]); }
+
+/* Set total time for move to be N seconds is "st N" */
+void cmd_st(void) 
+{
+  /* Approximately level 1 0 N */
+  sscanf(token[1],"%d",&TCinc);
+  suddendeath = 0 ;
+  /* Allow a little fussiness for failing low etc */
+  SearchTime = TCinc * 0.90f ;
+  CLEAR (flags, TIMECTL);
+}
+
+void cmd_switch(void)
+{
+  board.side = 1^board.side;
+  printf ("%s to move\n", board.side == white ? "White" : "Black");
+}
+
+void cmd_time(void)
+{
+  TimeLimit[1^board.side] = atoi(token[1]) / 100.0f ;
+}
+
+void cmd_undo(void)
+{
+  if (GameCnt >= 0)
+    UnmakeMove (board.side, &Game[GameCnt].move);
+  else
+    printf ("No moves to undo! \n");
+  MoveLimit[board.side]++;
+  TimeLimit[board.side] += Game[GameCnt+1].et;
+  if (!(flags & XBOARD)) ShowBoard ();
+}
+
+/* Play variant, we instruct interface in protover we play normal */
+void cmd_variant(void) {}
+
+void cmd_version(void)
+{
+   if (!(flags & XBOARD))
+     printf ("%s %s\n\n", PROGRAM, VERSION);
+   else
+     printf ("Chess\n");
+}
+
+void cmd_white(void) {}
+
+void cmd_xboard(void)
+{
+  if (tokeneq (token[1], "off"))
+    CLEAR (flags, XBOARD);
+  else if (tokeneq (token[1], "on"))
+    SET (flags, XBOARD);
+  else if (!(flags & XBOARD)) { /* set if unset and only xboard called */
+    SET (flags, XBOARD);	    /* like in xboard/winboard usage */
+  }
+}
+
+/*
+ * Command with subcommands, could write secondary method
+ * tables here
+ */
+
+void cmd_show (void)
 /************************************************************************
  *
  *  The show command driver section.
  *
  ************************************************************************/
 {
-   char cmd[INPUT_SIZE];
-
-   sscanf (subcmd, "%s %[^\n]", cmd, subcmd);
-   if (strcmp (cmd, "board") == 0)
+   if (tokeneq (token[1], "board"))
       ShowBoard ();
-   else if (strcmp (cmd, "rating") == 0)
+   else if (tokeneq (token[1], "rating"))
    {
       printf("My rating = %d\n",myrating);
       printf("Opponent rating = %d\n",opprating);
    } 
-   else if (strcmp (cmd, "time") == 0)
+   else if (tokeneq (token[1], "time"))
       ShowTime ();
-   else if (strcmp (cmd, "moves") == 0)
-   {
+   else if (tokeneq (token[1], "moves")) {
       GenCnt = 0;
       TreePtr[2] = TreePtr[1];
       GenMoves (1);      
       ShowMoveList (1);
-      printf ("No. of moves generated = %lu\n", GenCnt);
+      printf ("No. of moves generated = %ld\n", GenCnt);
    }
-   else if (strcmp (cmd, "escape") == 0)
-   {
+   else if (tokeneq (token[1], "escape")) {
       GenCnt = 0;
       TreePtr[2] = TreePtr[1];
       GenCheckEscapes (1);      
       ShowMoveList (1);
-      printf ("No. of moves generated = %lu\n", GenCnt);
+      printf ("No. of moves generated = %ld\n", GenCnt);
    }
-   else if (strcmp (cmd, "noncapture") == 0)
+   else if (tokeneq (token[1], "noncapture"))
    {
       GenCnt = 0;
       TreePtr[2] = TreePtr[1];
       GenNonCaptures (1);      
       FilterIllegalMoves (1);
       ShowMoveList (1);
-      printf ("No. of moves generated = %lu\n", GenCnt);
+      printf ("No. of moves generated = %ld\n", GenCnt);
    }
-   else if (strcmp (cmd, "capture") == 0)
+   else if (tokeneq (token[1], "capture"))
    {
       GenCnt = 0;
       TreePtr[2] = TreePtr[1];
       GenCaptures (1);      
       FilterIllegalMoves (1);
       ShowMoveList (1);
-      printf ("No. of moves generated = %lu\n", GenCnt);
+      printf ("No. of moves generated = %ld\n", GenCnt);
    }
-   else if (strcmp (cmd, "eval") == 0 || strcmp (cmd, "score") == 0)
+   else if (tokeneq (token[1], "eval") || tokeneq (token[1], "score"))
    {
       int s, wp, bp, wk, bk;
       BitBoard *b;
@@ -639,11 +607,10 @@ void ShowCmd (char *subcmd)
       s = ( EvaluateDraw () ? DRAWSCORE : Evaluate (-INFINITY, INFINITY));
       printf ("score = %d\n", s);
       printf ("\n");
-      return;
    }
-   else if (strcmp (cmd, "game") == 0)
+   else if (tokeneq (token[1], "game"))
      ShowGame ();
-   else if (strcmp (cmd, "pin") == 0)
+   else if (tokeneq (token[1], "pin"))
    {
       BitBoard b;
       GenAtaks ();
@@ -652,28 +619,25 @@ void ShowCmd (char *subcmd)
    }
 }
 
-void TestCmd (char *subcmd)
+void cmd_test (void)
 /*************************************************************************
  *
  *  The test command driver section.
  *
  *************************************************************************/
 {
-   char cmd[INPUT_SIZE];
-
-   sscanf (subcmd, "%s %[^\n]", cmd, subcmd);
-   if (strcmp (cmd, "movelist") == 0)
-      TestMoveList ();
-   else if (strcmp (cmd, "capture") == 0)
-      TestCaptureList ();
-   else if (strcmp (cmd, "movegenspeed") == 0)
-      TestMoveGenSpeed ();
-   else if (strcmp (cmd, "capturespeed") == 0)
-      TestCaptureGenSpeed ();
-   else if (strcmp (cmd, "eval") == 0)
-      TestEval ();
-   else if (strcmp (cmd, "evalspeed") == 0)
-      TestEvalSpeed ();
+  if (tokeneq (token[1], "movelist"))
+    TestMoveList ();
+  else if (tokeneq (token[1], "capture"))
+    TestCaptureList ();
+  else if (tokeneq (token[1], "movegenspeed"))
+    TestMoveGenSpeed ();
+  else if (tokeneq (token[1], "capturespeed"))
+    TestCaptureGenSpeed ();
+  else if (tokeneq (token[1], "eval"))
+    TestEval ();
+  else if (tokeneq (token[1], "evalspeed"))
+    TestEvalSpeed ();
 }
 
 /*
@@ -684,6 +648,9 @@ void TestCmd (char *subcmd)
  * use tabs for indentation, only spaces. CAPITALS are
  * reserved for parameters in the command names. The
  * array must be terminated by two NULLs.
+ * 
+ * This one should be integrated in the method table.
+ * (Very much like docstrings in Lisp.)
  */
 
 static const char * const helpstr[] = {
@@ -702,8 +669,8 @@ static const char * const helpstr[] = {
    " off - disables use of book",
    " worst - play worst move from book",
    " best - play best move from book",
-   " random - play any move from book",
    " prefer - default, same as 'book on'",
+   " random - play any move from book",
    "version",
    " prints out the version of this program",
    "pgnsave FILENAME",
@@ -801,7 +768,7 @@ static const char * const helpstr[] = {
    NULL
 };
 
-void ShowHelp (const char * command)
+void cmd_help (void)
 /**************************************************************************
  *
  *  Display all the help commands.
@@ -811,9 +778,9 @@ void ShowHelp (const char * command)
    const char * const *p;
    int count, len;
 
-   if (strlen(command)>0) {
+   if (strlen(token[1])>0) {
       for (p=helpstr, count=0; *p; p++) {
-	 if  (strncmp(*p, inputstr, strlen(command)) == 0) {
+	 if  (strncmp(*p, token[1], strlen(token[1])) == 0) {
 	    puts(*p);
 	    while (*++p && **p != ' ') /* Skip aliases */ ;
 	    for (; *p && **p == ' '; p++) {
@@ -822,7 +789,7 @@ void ShowHelp (const char * command)
 	    return;
 	 }
       }
-      printf("Help for command %s not found\n\n", command);
+      printf("Help for command %s not found\n\n", token[1]);
    }
    printf("List of commands: (help COMMAND to get more help)\n");
    for (p=helpstr, count=0; *p; p++) {
@@ -836,5 +803,138 @@ void ShowHelp (const char * command)
       }
    }
    puts("");
+}
+
+/*
+ * Try a method table, one could also include the documentation
+ * strings here
+ */
+
+struct methodtable {
+  const char *name;
+  void (*method) (void);
+};
+
+/* Last entry contains to NULL pointers */
+
+/* List commands we don't implement to avoid illegal moving them */
+
+const struct methodtable commands[] = {
+  { "?", cmd_movenow },
+  { "accepted", cmd_accepted },
+  { "activate", cmd_activate },
+  { "analyze", cmd_analyze },
+  { "bk", cmd_bk },
+  { "black", cmd_black },
+  { "book", cmd_book },
+  { "computer", cmd_computer },
+  { "debug", cmd_debug },
+  { "debugdepth", cmd_debugdepth },
+  { "debugnode", cmd_debugnode },
+  { "debugply", cmd_debugply },
+  { "depth", cmd_depth },
+  { "draw", cmd_draw },
+  { "easy", cmd_easy },
+  { "edit", cmd_edit },
+  { "epd", cmd_epd },
+  { "epdload", cmd_load },
+  { "epdsave", cmd_save },
+  { "exit", cmd_quit },
+  { "force", cmd_force },
+  { "go", cmd_go },
+  { "hard", cmd_hard },
+  { "hash", cmd_hash },
+  { "hashsize", cmd_hashsize },
+  { "help", cmd_help },
+  { "hint", cmd_hint },
+  { "level", cmd_level },
+  { "list", cmd_list },
+  { "load", cmd_load },
+  { "manual", cmd_manual },
+  { "name", cmd_name },
+  { "new", cmd_new },
+  { "nopost", cmd_nopost },
+  { "null", cmd_null },
+  { "otim", cmd_otim },
+  { "pgnload", cmd_pgnload },
+  { "pgnsave", cmd_pgnsave },
+  { "ping", cmd_ping },
+  { "post", cmd_post },
+  { "protover", cmd_protover },
+  { "quit", cmd_quit },
+  { "random", cmd_random },
+  { "rating", cmd_rating },
+  { "rejected", cmd_rejected },
+  { "remove", cmd_remove },
+  { "result", cmd_result },
+  { "save", cmd_save },
+  { "setboard", cmd_setboard },
+  { "show", cmd_show },
+  { "solve", cmd_solve },
+  { "solveepd", cmd_solve },
+  { "st", cmd_st },
+  { "switch", cmd_switch },
+  { "test", cmd_test },
+  { "time", cmd_time },
+  { "undo", cmd_undo },
+  { "variant", cmd_variant },
+  { "version", cmd_version },
+  { "white", cmd_white },
+  { "xboard", cmd_xboard },
+  { NULL, NULL }
+};
+
+void parse_input(void)
+/*************************************************************************
+ *
+ *  This is the main user command interface driver.
+ *
+ *************************************************************************/
+{
+   leaf *ptr; 
+   const struct methodtable * meth;
+ 
+   if (ofp != stdout) {
+	   fprintf(ofp, "parse_input() called, inputstr = *%s*\n", inputstr);
+   }
+   
+   split_input();
+
+   for (meth = commands; meth->name != NULL; meth++) {
+     if (tokeneq(token[0], meth->name)) {
+       meth->method();
+       return;
+     }
+   }
+
+   /* OK, no known command, this should be a move */
+   ptr = ValidateMove (token[0]);
+   if (ptr != NULL) {
+     SANMove (ptr->move, 1);
+     MakeMove (board.side, &ptr->move);
+     strcpy (Game[GameCnt].SANmv, SANmv);
+     printf("%d. ",GameCnt/2+1);
+     printf("%s",token[0]);
+     if (ofp != stdout) {
+       fprintf(ofp,"%d. ",GameCnt/2+1);
+       fprintf(ofp,"%s",token[0]);
+     }
+     putchar('\n');
+     fflush(stdout);
+     if (ofp != stdout) {
+       fputc('\n',ofp);
+       fflush(ofp);
+     }
+     if (!(flags & XBOARD)) ShowBoard (); 
+     SET (flags, THINK);
+   }
+   else {
+     /*
+      * Must Output Illegal move to prevent Xboard accepting illegal
+      * en passant captures and other subtle mistakes
+      */
+     printf("Illegal move: %s\n",token[0]);
+     fflush(stdout);
+   }  
 }
 

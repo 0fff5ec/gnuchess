@@ -21,15 +21,11 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 /*
- * Endianness is now detected by configure. Actually, if we really
- * want this stuff inline, then we have to include things instead
- * of compiling separately. Make the function static inline to detect
- * errors. However, this means that the code _has_ to be compiled with
- * inlining enabled, 
+ * Endianness checks are now unnecessary
  */
-
 
 #include <stdio.h>
 #include <string.h>
@@ -47,7 +43,7 @@
 
 #ifdef NO_INLINE
 
-int leadz (BitBoard b)
+unsigned char leadz (BitBoard b)
 /**************************************************************************
  *
  *  Returns the leading bit in a bitboard.  Leftmost bit is 0 and
@@ -61,7 +57,7 @@ int leadz (BitBoard b)
   return lzArray[b] + 48;
 }
 
-int nbits (BitBoard b)
+unsigned char nbits (BitBoard b)
 /***************************************************************************
  *
  *  Count the number of bits in b.
@@ -127,7 +123,7 @@ static const int OrigCboard[64] =
   pawn,  pawn,   pawn,   pawn,  pawn,  pawn,   pawn,   pawn,
   rook,  knight, bishop, queen, king,  bishop, knight, rook };
 
-void UpdateMvboard ()
+void UpdateMvboard (void)
 /**************************************************************************
  *
  *  Updates Mvboard[].  Mvboard[i] returns the number of times the piece
@@ -160,7 +156,7 @@ void EndSearch (int sig __attribute__ ((unused)) )
 }
 
 
-int ValidateBoard (void)
+short ValidateBoard (void)
 /***************************************************************************
  *
  *  Check the board to make sure that its valid.  Some things to check are

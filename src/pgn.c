@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 
 #include <stdio.h>
@@ -170,7 +171,6 @@ void PGNReadFromFile (const char *file)
    fclose (fp);
    ShowBoard ();
    TTClear ();
-   return;
 }
 
 void BookPGNReadFromFile (const char *file)
@@ -189,7 +189,7 @@ void BookPGNReadFromFile (const char *file)
    leaf *p;
    time_t t1, t2;
    double et;
-   int examinecolor, playerfound[2];
+   short examinecolor, playerfound[2];
 
 /* Only players in the table below are permitted into the opening book 
    from the PGN files. Please expand the table as needed. Generally,

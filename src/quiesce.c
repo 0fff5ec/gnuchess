@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 /*
  *
@@ -29,7 +30,7 @@
 #include <stdio.h>
 #include "common.h"
 
-int Quiesce (int ply, int alpha, int beta)
+int Quiesce (uint8_t ply, int alpha, int beta)
 /**************************************************************************
  *
  *  Our quiescent search.  This quiescent search is able to recognize
@@ -37,7 +38,7 @@ int Quiesce (int ply, int alpha, int beta)
  *
  **************************************************************************/
 {
-   int side, xside;
+   uint8_t side, xside;
    int best, delta, score, savealpha;
    leaf *p, *pbest;
 

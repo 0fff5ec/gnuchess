@@ -21,44 +21,43 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
-/*
- *
- */
 
 #include <stdio.h>
 #include <string.h>
 #include "common.h"
 
-void TTPut (int side, int depth, int ply, int alpha, int beta, 
+void TTPut (uint8_t side, uint8_t depth, uint8_t ply, int alpha, int beta, 
 	    int score, int move)
 /****************************************************************************
  *
  *  Uses a two-tier depth-based transposition table.  The criteria for 
  *  replacement is as follows.
- *  1.  If the position is better than the hash position, move the hash
- *      position to the 2nd tier and store the current position. 
- *      Minor change:  the move is only done if the 1st slot and the
- *      current position don't have the same hash key.
- *  2.  Otherwise, simply store the position into the second position.
- *  The & -2 is a trick to clear the last bit making the offset even. 
+ *  1.  The first element is replaced whenever we have a position with
+ *      at least the same depth. In that case the element is moved to
+ *      the second slot.
+ *  2.  The second slot is otherwise always replaced.
+ *  Problem may be that the first elements eventually get filled with
+ *  outdated entries. Might add an age counter later.
+ *  The & ~1 is a trick to clear the last bit making the offset even. 
  *
  ****************************************************************************/
 {
    HashSlot *t;
 
    depth = depth/DEPTH;
-   t = HashTab[side] + ((HashKey & TTHashMask) & -2); 
-   if (depth < t->depth && !MATESCORE(score))
+   t = HashTab[side] + ((HashKey & TTHashMask) & ~1); 
+   if (depth < t->depth)
       t++;
-   else if (t->flag && t->key != KEY(HashKey))
+   else if (t->flag)
       *(t+1) = *t;
 
    if (t->flag)
       CollHashCnt++;
    TotalPutHashCnt++;
    t->move = move;
-   t->key = KEY(HashKey);
+   t->key = HashKey;
    t->depth = depth;
    if (t->depth == 0)
       t->flag = QUIESCENT;
@@ -76,10 +75,8 @@ void TTPut (int side, int depth, int ply, int alpha, int beta,
 }
 
 
-int TTGet (int side, int depth, int ply, 
-	     int alpha __attribute__ ((unused)),
-	     int beta  __attribute__ ((unused)), 
-	     int *score, int *move)
+uint8_t TTGet (uint8_t side, uint8_t depth, uint8_t ply, 
+	       int *score, int *move)
 /*****************************************************************************
  *
  *  Probe the transposition table.  There are 2 entries to be looked at as
@@ -88,12 +85,10 @@ int TTGet (int side, int depth, int ply,
  *****************************************************************************/
 {
    HashSlot *t;
-   KeyType Key;
 
    TotalGetHashCnt++;
-   t = HashTab[side] + ((HashKey & TTHashMask) & -2);  
-   Key = KEY(HashKey);
-   if (Key != t->key && Key != (++t)->key)
+   t = HashTab[side] + ((HashKey & TTHashMask) & ~1);  
+   if (HashKey != t->key && HashKey != (++t)->key)
       return (0);
 
    depth = depth/DEPTH;
@@ -110,7 +105,7 @@ int TTGet (int side, int depth, int ply,
 }
 
 
-int TTGetPV (int side, int ply, int score, int *move)
+short TTGetPV (uint8_t side, uint8_t ply, int score, int *move)
 /*****************************************************************************
  *
  *  Probe the transposition table.  There are 2 entries to be looked at as
@@ -120,15 +115,13 @@ int TTGetPV (int side, int ply, int score, int *move)
  *****************************************************************************/
 {
    HashSlot *t;
-   KeyType Key;
    int s;
 
    t = HashTab[side] + ((HashKey & TTHashMask) & -2);  
-   Key = KEY(HashKey);
    s = t->score;
    if (MATESCORE(s))
       s -= (s > 0 ? ply : -ply);
-   if (Key == t->key && ((ply & 1 && score == s)||(!(ply & 1) && score == -s)))
+   if (HashKey == t->key && ((ply & 1 && score == s)||(!(ply & 1) && score == -s)))
    {
       *move = t->move;
       return (1);
@@ -137,7 +130,7 @@ int TTGetPV (int side, int ply, int score, int *move)
    s = t->score;
    if (MATESCORE(s))
       s -= (s > 0 ? ply : -ply);
-   if (Key == t->key && ((ply & 1 && score == s)||(!(ply & 1) && score == -s)))
+   if (HashKey == t->key && ((ply & 1 && score == s)||(!(ply & 1) && score == -s)))
    {
       *move = t->move;
       return (1);
@@ -146,7 +139,7 @@ int TTGetPV (int side, int ply, int score, int *move)
 }
 
 
-void TTClear ()
+void TTClear (void)
 /****************************************************************************
  *   
  *  Zero out the transposition table.
@@ -158,10 +151,10 @@ void TTClear ()
 }
 
 
-void PTClear ()
+void PTClear (void)
 /****************************************************************************
  *   
- *  Zero out the transposition table.
+ *  Zero out the pawn transposition table.
  *
  ****************************************************************************/
 {

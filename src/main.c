@@ -21,20 +21,20 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
-/*
- *
- */
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "common.h"
 #include <time.h>
 
-int distance[64][64];
-int taxicab[64][64];
-int lzArray[65536];
+#include "common.h"
+#include "book.h"
+
+short distance[64][64];
+short taxicab[64][64];
+unsigned char lzArray[65536];
 BitBoard DistMap[64][8];
 BitBoard BitPosArray[64];
 BitBoard NotBitPosArray[64];
@@ -61,8 +61,8 @@ BitBoard mask_qr_trapped_w[3];
 BitBoard mask_qr_trapped_b[3];
 BitBoard boardhalf[2];
 BitBoard boardside[2];
-int directions[64][64];
-int BitCount[65536];
+short directions[64][64];
+unsigned char BitCount[65536];
 leaf Tree[MAXTREEDEPTH];
 leaf *TreePtr[MAXPLYDEPTH];
 int RootPV;
@@ -137,20 +137,22 @@ int hunged[2];
 int phase;
 int Hashmv[MAXPLYDEPTH];
 int Debugmv[MAXPLYDEPTH];
-int Debugmvl;
-int RootPieces;
-int RootPawns;
-int RootMaterial;
-int RootAlpha;
-int RootBeta;
-int pickphase[MAXPLYDEPTH];
-int InChk[MAXPLYDEPTH];
-int KingThrt[2][MAXPLYDEPTH];
-int threatmv;
-int threatply;
-int KingSafety[2];
-int bookmode;
-int bookfirstlast;
+short Debugmvl;
+short Debugline;
+short RootPieces;
+short RootPawns;
+short RootMaterial;
+short RootAlpha;
+short RootBeta;
+short pickphase[MAXPLYDEPTH];
+short InChk[MAXPLYDEPTH];
+short KingThrt[2][MAXPLYDEPTH];
+short threatmv;
+uint8_t threatply;
+short KingSafety[2];
+short pscore[64];
+short bookmode;
+short bookfirstlast;
 FILE *ofp;
 int myrating, opprating, suddendeath, TCionc;
 char name[50];
@@ -183,7 +185,7 @@ char algbrrank[9] = "12345678";
 char notation[8] = { " PNBRQK" };
 char lnotation[8] = { " pnbrqk" };
 
-int Shift00[64] =
+short Shift00[64] =
 { 56, 56, 56, 56, 56, 56, 56, 56,
   48, 48, 48, 48, 48, 48, 48, 48,
   40, 40, 40, 40, 40, 40, 40, 40,
@@ -204,7 +206,7 @@ int r90[64] =
   G8, G7, G6, G5, G4, G3, G2, G1,
   H8, H7, H6, H5, H4, H3, H2, H1 };
 
-int Shift90[64] =
+short Shift90[64] =
 { 0, 8, 16, 24, 32, 40, 48, 56,
   0, 8, 16, 24, 32, 40, 48, 56,
   0, 8, 16, 24, 32, 40, 48, 56,
@@ -225,7 +227,7 @@ int r45[64] =
   F8, D8, A8, E7, H6, B6, C5, D4, 
   H8, G8, E8, B8, F7, A7, C6, D5 };
 
-int Shift45[64] =
+short Shift45[64] =
 { 28, 36, 43, 49, 54, 58, 61, 63,
   21, 28, 36, 43, 49, 54, 58, 61,
   15, 21, 28, 36, 43, 49, 54, 58,
@@ -255,7 +257,7 @@ int r315[64] =
   F3, F4, F5, E6, C7, H7, D8, G8,
   E4, E5, D6, B7, G7, C8, F8, H8 };
 
-int Shift315[64] =
+short Shift315[64] =
 { 63, 61, 58, 54, 49, 43, 36, 28,
   61, 58, 54, 49, 43, 36, 28, 21,
   58, 54, 49, 43, 36, 28, 21, 15,
@@ -282,13 +284,10 @@ int rank8[2] = { 7, 0 };
 
 int main (int argc, char *argv[])
 {
-  int compilebook = 0;
-  time_t now; 
   int i;
 
   /* Initialize random number generator */
-  time(&now);
-  srand((unsigned) now);
+  srand((unsigned int) time(NULL));
   
   /* initialize control flags */
   flags = ULL(0);
@@ -302,15 +301,15 @@ int main (int argc, char *argv[])
 	SET (flags, XBOARD);
       } else if (strcmp(argv[i],"post") == 0) {
 	SET (flags, POST);
-      } else if (strcmp(argv[i],"compile") == 0)
-	compilebook++;
+      }
     }
   }
   
-  if (!(flags & XBOARD))
-    SET (flags, POST);
-  ShowVersion ();
+  cmd_version();
   Initialize ();
+
+  /* Default to enable pondering */
+  SET (flags, HARD);
 
   if (argc > 1) {
     for (i = 0; i < argc; i++) {
@@ -325,20 +324,30 @@ int main (int argc, char *argv[])
   bookmode = BOOKPREFER;
   bookfirstlast = 3;
 
-   while (!(flags & QUIT))
-   {
-      InputCmd (); 
-      if ((flags & THINK) && !(flags & MANUAL) && !(flags & ENDED)) {
-        
+  while (!(flags & QUIT)) {
+    /* Ponder or (if pondering disabled) just wait for input */
+    if (flags & HARD) {
+      ponder();
+    }
+    /*
+     * ponder() is allowed to return early, and pondering may be
+     * disabled
+     */
+    wait_for_input();
+    parse_input();
+    if ((flags & THINK) && !(flags & MANUAL) && !(flags & ENDED)) {
       if (!(flags & XBOARD)) printf("Thinking...\n");
       Iterate ();
-      }
-   }
+      CLEAR (flags, THINK);
+    }
+    input_wakeup();
+  }
+  
+  CleanupInput();
 
-   /*  Some cleaning up  */
-   free (HashTab[0]);
-   free (HashTab[1]);
-   free (PawnTab[0]);
-   free (PawnTab[1]);
-   return (0);
+  /*  Some cleaning up  */
+  free (HashTab[0]);
+  free (HashTab[1]);
+
+  return (0);
 }

@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 /*
  *
@@ -507,10 +508,9 @@ leaf * ValidateMove (char *s)
  *
  **************************************************************************/
 {
-   int side;
-   int f, t, rank, file, fileto;
-   int piece, kount;
-   char mvstr[INPUT_SIZE], *p;
+   short f, t, side, rank, file, fileto;
+   short piece, kount;
+   char mvstr[MAXSTR], *p;
    BitBoard b;
    leaf *n1, *n2;
 
@@ -526,9 +526,9 @@ leaf * ValidateMove (char *s)
    p = mvstr;
    do
    {
-      if (*s != 'x' && *s != '+' && *s != '=')
+      if (*s != 'x' && *s != '+' && *s != '=' && !isspace(*s))
          *p++ = *s; 
-   } while (*s++ != '\0');
+   } while (*s++ != '\0' );
 
    /* Flush castles that check */
    if (mvstr[strlen(mvstr)-1] == '+' || mvstr[strlen(mvstr)-1] == '#' ||

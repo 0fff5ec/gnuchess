@@ -34,7 +34,7 @@ dnl
 dnl Remember, if the system already had a valid <stdint.h>, the generated
 dnl file will include it directly. No need for fuzzy HAVE_STDINT_H things...
 dnl
-dnl @version $Id: acinclude.m4,v 1.1 2002/03/05 17:32:56 srw Exp $
+dnl @version $Id: acinclude.m4,v 1.2 2002/12/17 12:52:39 srw Exp $
 dnl @author  Guido Draheim <guidod@gmx.de>       STATUS: used on new platforms
 
 AC_DEFUN([AC_NEED_STDINT_H],
@@ -221,7 +221,7 @@ dnl      AC_COMPILE_CHECK_SIZEOF(ptrdiff_t, $headers)
 dnl      AC_COMPILE_CHECK_SIZEOF(off_t, $headers)
 dnl
 dnl @author Kaveh Ghazi <ghazi@caip.rutgers.edu>
-dnl @version $Id: acinclude.m4,v 1.1 2002/03/05 17:32:56 srw Exp $
+dnl @version $Id: acinclude.m4,v 1.2 2002/12/17 12:52:39 srw Exp $
 dnl
 AC_DEFUN([AC_COMPILE_CHECK_SIZEOF],
 [changequote(<<, >>)dnl
@@ -259,7 +259,7 @@ dnl
 dnl a convenience macro AC_CHECK_TYPEDEF_ is provided that will not emit
 dnl any message to the user - it just executes one of the actions.
 dnl
-dnl @version $Id: acinclude.m4,v 1.1 2002/03/05 17:32:56 srw Exp $
+dnl @version $Id: acinclude.m4,v 1.2 2002/12/17 12:52:39 srw Exp $
 dnl @author  Guido Draheim <guidod@gmx.de>
 
 AC_DEFUN(AC_CHECK_TYPEDEF_,

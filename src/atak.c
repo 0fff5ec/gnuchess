@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 
 #include <stdio.h>
@@ -28,7 +29,7 @@
 #include "common.h"
 
 
-int SqAtakd (int sq, int side)
+short SqAtakd (short sq, short side)
 /**************************************************************************
  *
  *  To determine if sq is attacked by any pieces from side.
@@ -79,10 +80,10 @@ int SqAtakd (int sq, int side)
    return (false);
 }
 
-extern const int raybeg[];
-extern const int rayend[];
+extern short raybeg[];
+extern short rayend[];
 
-void GenAtaks ()
+void GenAtaks (void)
 /*************************************************************************
  *
  *  To generate the attack table.

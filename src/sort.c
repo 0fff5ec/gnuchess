@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 /*
  *
@@ -180,7 +181,7 @@ void SortRoot (void)
 }
 
 
-void pick (leaf *head, int ply)
+void pick (leaf *head, short ply)
 /***************************************************************************
  *
  *  This pick routine searches the movelist and swap the high score entry

@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,8 +32,7 @@
 #define WINDOW	75
 
 static struct timeval t1, t2;
-extern int stage;
-int InChkDummy, terminal;
+short InChkDummy, terminal;
 
 void Iterate (void)
 /**************************************************************************
@@ -42,7 +42,7 @@ void Iterate (void)
  *
  **************************************************************************/
 {
-   int side;
+   uint8_t side;
    int score, RootAlpha, RootBeta;
 
    side = board.side;
@@ -72,7 +72,6 @@ void Iterate (void)
    memset (history, 0, sizeof (history));
    memset (killer1, 0, sizeof (killer1));
    memset (killer2, 0, sizeof (killer2));
-   TTClear (); 
    CLEAR (flags, TIMEOUT);
    if (flags & TIMECTL)
    {
@@ -103,7 +102,7 @@ void Iterate (void)
 
       if (TCinc != 0)
         if (SearchTime < TCinc) {
-	  const char *color[2] = { "White", "Black" };
+	  char *color[2] = { "White", "Black" };
           printf("TimeLimit[%s] = %6.2f\n",color[side],TimeLimit[side]);
           if (TimeLimit[side] > 30) {   /* Only if > 15 seconds left */
             SearchTime = TCinc;
@@ -141,7 +140,10 @@ void Iterate (void)
    lastrootscore = score = Evaluate (-INFINITY, INFINITY);
       
    wasbookmove = 0;
-   if (bookmode != BOOKOFF && !(flags & SOLVE) && nmovesfrombook <= 3) {
+
+   /* Don't look up moves in book in opponents time, think instead */
+
+   if (bookmode != BOOKOFF && !(flags & SOLVE) && !(flags & PONDER) && nmovesfrombook <= 3) {
      if (BookQuery(0) == BOOK_SUCCESS) {
        nmovesfrombook = 0;
        wasbookmove = 1;
@@ -149,7 +151,7 @@ void Iterate (void)
      } else
        nmovesfrombook++;
    } else
-     nmovesfrombook++;
+   nmovesfrombook++;
 
 
 /* mcriley - was 2 * searchtime */
@@ -161,6 +163,8 @@ void Iterate (void)
      printf ("Phase = %d ", phase);
    }
    if (ofp != stdout) {
+     fprintf (ofp, "Entered Iterate() for %s.\n",
+		     flags & PONDER ? "pondering" : "analyzing");
      fprintf (ofp,"Root = %d\t", score);
      fprintf (ofp,"Phase = %d\t", phase);
    }
@@ -238,10 +242,12 @@ void Iterate (void)
       if (abs(score) + Idepth >= MATE + 1) 
          SET (flags, TIMEOUT);
 
-      if (Idepth == SearchDepth*DEPTH) 
+      if (!(flags & PONDER) && Idepth == SearchDepth*DEPTH) 
          break; 
    }
 
+   /* For the moment, just bail out if pondering after search */
+   if (flags & PONDER) return;
 /***************************************************************************
  *
  *  We've finish the search.  Do things like update the game history,
@@ -286,12 +292,12 @@ void Iterate (void)
    else
    {
       if (!wasbookmove) {
-        fprintf (ofp,"\nTime = %.1f Rate=%lu Nodes=[%lu/%lu/%lu] GenCnt=%lu\n", 
+        fprintf (ofp,"\nTime = %.1f Rate=%ld Nodes=[%ld/%ld/%ld] GenCnt=%ld\n", 
 	  et, et > 0 ? (unsigned long)((NodeCnt+QuiesCnt)/et) : 0, 
 	  NodeCnt, QuiesCnt, NodeCnt+QuiesCnt, GenCnt);
-        fprintf (ofp,"Eval=[%lu/%lu] RptCnt=%lu NullCut=%lu FutlCut=%lu\n",
+        fprintf (ofp,"Eval=[%ld/%ld] RptCnt=%ld NullCut=%ld FutlCut=%ld\n",
           EvalCnt, EvalCall, RepeatCnt, NullCutCnt, FutlCutCnt);
-        fprintf (ofp,"Ext: Chk=%lu Recap=%lu Pawn=%lu OneRep=%lu Horz=%lu Mate=%lu KThrt=%lu\n",
+        fprintf (ofp,"Ext: Chk=%ld Recap=%ld Pawn=%ld OneRep=%ld Horz=%ld Mate=%ld KThrt=%ld\n",
           ChkExtCnt, RcpExtCnt, PawnExtCnt, OneRepCnt, HorzExtCnt, ThrtExtCnt,
 	  KingExtCnt);
         fprintf (ofp,"Material=[%d/%d : %d/%d] ", 

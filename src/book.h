@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 #define BOOKSRC "book.src"
 
@@ -28,9 +29,8 @@
  * BookQuery() tries the following filenames in order to find
  * a valid opening book. The array must be NULL-terminated.
  */
-static const char * bookbin[] = {
+static char const * bookbin[] = {
    "book.dat",
-   "/usr/share/games/gnuchess/book.dat",
    "/usr/lib/games/gnuchess/book.dat",
    NULL
 };

@@ -21,14 +21,15 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 
 #include <stdio.h>
 
 #include "common.h"
 
-const int raybeg[7] = { 0, 0, 0, 0, 4, 0, 0 };
-const int rayend[7] = { 0, 0, 0, 4, 8, 8, 0 };
+const short raybeg[7] = { 0, 0, 0, 0, 4, 0, 0 };
+const short rayend[7] = { 0, 0, 0, 4, 8, 8, 0 };
 
 static leaf *node;
 
@@ -46,7 +47,7 @@ static leaf *node;
     ADDMOVE (a, b, BISHOPPRM);    \
   } while (0)
 
-static inline void BitToMove (int f, BitBoard b)
+static inline void BitToMove (short f, BitBoard b)
 /***************************************************************************
  *
  *  Convert a bitboard into a list of moves.  These are stored
@@ -66,7 +67,7 @@ static inline void BitToMove (int f, BitBoard b)
 
 
 
-void GenMoves (int ply)
+void GenMoves (short ply)
 /****************************************************************************
  *
  *  My bitboard move generator.  Let's see how fast we can go!
@@ -299,7 +300,7 @@ void GenMoves (int ply)
 }
 
 
-void GenNonCaptures (int ply)
+void GenNonCaptures (short ply)
 /****************************************************************************
  *
  *  Here I generate only non-captures.  Promotions are considered
@@ -443,7 +444,7 @@ void GenNonCaptures (int ply)
 }
 
 
-void GenCaptures (int ply)
+void GenCaptures (short ply)
 /****************************************************************************
  *
  *  This routine generates captures.  En passant and pawn promotions
@@ -620,7 +621,7 @@ void GenCaptures (int ply)
 }
 
 
-void GenCheckEscapes (int ply)
+void GenCheckEscapes (short ply)
 /**************************************************************************
  *
  *  The king is in check, so generate only moves which get the king out
@@ -751,7 +752,7 @@ void GenCheckEscapes (int ply)
 }
 
 
-void FilterIllegalMoves (int ply)
+void FilterIllegalMoves (short ply)
 /**************************************************************************
  *
  *  All the illegal moves in the current ply is removed.

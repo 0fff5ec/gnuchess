@@ -21,25 +21,19 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
-/*
- *
- */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <unistd.h>
+
 #include "common.h"
 #include "version.h"
 
-#ifdef HAVE_READLINE_H
-#include <history.h>
-#elif HAVE_READLINE_READLINE_H
-#include <readline/history.h>
-#endif
-
-void Initialize ()
+void Initialize (void)
 /**************************************************************************
  *
  *  The main initialization driver.
@@ -58,20 +52,16 @@ void Initialize ()
    InitBitCount ();
    InitRotAtak ();
    InitRandomMasks ();
-
    InitDistance ();
    InitVars ();
    InitHashCode ();
    InitHashTable ();
    CalcHashKey ();
-
-#ifdef HAVE_LIBREADLINE
-   using_history();
-#endif
+   InitInput ();
 }
 
 
-void InitFICS ()
+void InitFICS (void)
 {
    if (flags & XBOARD) {
      printf ("tellics shout Greetings from %s %s. Ready for a game.\n", PROGRAM, VERSION);
@@ -82,7 +72,7 @@ void InitFICS ()
 
 #define NBITS 16
 
-void InitLzArray ()
+void InitLzArray (void)
 /***************************************************************************
  *
  *  The lzArray is created.  This array is used when the position
@@ -105,7 +95,7 @@ void InitLzArray ()
 }
 
 
-void InitBitPosArray ()
+void InitBitPosArray (void)
 /***************************************************************************
  *
  *  BitPosArray[i] returns the bitboard whose ith bit is set to 1 
@@ -161,7 +151,7 @@ static const int map[120] =
 };
 
 
-void InitMoveArray ()
+void InitMoveArray (void)
 /***************************************************************************
  * 
  *  Generate the move bitboards.  For e.g. the bitboard for all
@@ -194,7 +184,7 @@ void InitMoveArray ()
 }
 
 
-void InitRay ()
+void InitRay (void)
 /**************************************************************************
  *
  *  For each square, there are 8 rays.  The first 4 rays are diagonals 
@@ -236,7 +226,7 @@ void InitRay ()
 }
 
 
-void InitFromToRay ()
+void InitFromToRay (void)
 /***************************************************************************
  *
  *  The FromToRay[b2][f6] gives the diagonal ray from c3 to f6;
@@ -274,7 +264,7 @@ void InitFromToRay ()
 }
 
 
-void InitRankFileBit ()
+void InitRankFileBit (void)
 /***************************************************************************
  *
  *  RankBit[2] has all the bits on the 3rd rank 1 and others 0.
@@ -303,7 +293,7 @@ void InitRankFileBit ()
 }
 
 
-void InitRandomMasks ()
+void InitRandomMasks (void)
 {
   mask_kr_trapped_w[0]=BitPosArray[H2];
   mask_kr_trapped_w[1]=BitPosArray[H1]|BitPosArray[H2];
@@ -319,7 +309,7 @@ void InitRandomMasks ()
   mask_qr_trapped_b[2]=BitPosArray[A8]|BitPosArray[B8]|BitPosArray[A7];
 }
 
-void InitPassedPawnMask ()
+void InitPassedPawnMask (void)
 /**************************************************************************
  *
  *  The PassedPawnMask variable is used to determine if a pawn is passed.
@@ -356,7 +346,7 @@ void InitPassedPawnMask ()
 }
 
 
-void InitIsolaniMask ()
+void InitIsolaniMask (void)
 /**************************************************************************
  *
  *  The IsolaniMask variable is used to determine if a pawn is an isolani.
@@ -378,7 +368,7 @@ void InitIsolaniMask ()
 }
 
 
-void InitSquarePawnMask ()
+void InitSquarePawnMask (void)
 /**************************************************************************
  *
  *  The SquarePawnMask is used to determine if a king is in the square of
@@ -423,7 +413,7 @@ void InitSquarePawnMask ()
 }
 
  
-void InitBitCount ()
+void InitBitCount (void)
 /**************************************************************************
  *
  *  The BitCount array returns the no. of bits present in the 16 bit
@@ -446,7 +436,7 @@ void InitBitCount ()
 } 
 
 
-void InitRotAtak ()
+void InitRotAtak (void)
 /**************************************************************************
  *
  *  The attack tables for a normal chessboard and the rotated chess board
@@ -544,7 +534,7 @@ void InitRotAtak ()
 }
 
 
-void InitDistance ()
+void InitDistance (void)
 /**************************************************************************
  *
  *  There are two arrays dealing with distances.  The distance[s1][s2]
@@ -586,7 +576,7 @@ void InitDistance ()
 }
 
 
-void InitVars ()
+void InitVars (void)
 /***************************************************************************
  *
  *  Initialize various variables, especially for new game.
@@ -703,7 +693,7 @@ void InitVars ()
 }
 
 
-void InitHashCode ()
+void InitHashCode (void)
 /***************************************************************************
  *
  *  The hash code for the various pieces standing on the various squares
@@ -735,7 +725,7 @@ void InitHashCode ()
 }
 
 
-void InitHashTable ()
+void InitHashTable (void)
 /****************************************************************************
  *
  *  Allocate memory for our transposition tables.  By default, the
@@ -765,7 +755,7 @@ void InitHashTable ()
    } while (0);
    size = (HashSize * 2 * sizeof (HashSlot)) >> 10;
    if (!(flags & XBOARD)) {
-     printf ("Transposition table:  Entries=%uK Size=%uK\n", 
+     printf ("Transposition table:  Entries=%dK Size=%dK\n", 
              HashSize>>10, size);
    }
 
@@ -781,13 +771,13 @@ void InitHashTable ()
    } else {
       size = (PAWNSLOTS * 2 * sizeof (PawnSlot)) >> 10;
       if (!(flags & XBOARD))
-	printf ("Pawn hash table: Entries=%dK Size=%uK\n",
+	printf ("Pawn hash table: Entries=%dK Size=%dK\n",
 		PAWNSLOTS >> 10, size);
    }
 }
 
 
-void NewPosition ()
+void NewPosition (void)
 /****************************************************************************
  *
  *  Reset some flags for a new game/position.

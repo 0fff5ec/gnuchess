@@ -1,17 +1,25 @@
 New in gnuchess 5.05:
 
-- Security fixes: Fixed potential buffer overflows in pgn.c and epd.c.
-- The opening book book.dat can now be in the working directory,
-  /usr/share/games/gnuchess/ or /usr/lib/games/gnuchess/. The first
-  of these directories which contains a valid book.dat is chosen.
+- Added code for pondering and analysis mode.
+- Fixed a potential buffer overflow in pgn.c.
+- General code cleanups, bug fixes, and probably introduction
+  of new bugs, especially in pondering related code
+- The opening book is now looked for in 
+  /usr/lib/games/gnuchess/book.dat if it is not found in the
+  working directory.
 - Changes for easing compilation with MSVC
-- The support for Novag Universal board was removed from code
-- Numerous bug fixes, and minor enhancements to algorithmns
+- Removed support for the Novag Universal Board. The recommended
+  alternative is to use the winboard driver for this board, which
+  is linked to on http://www.tim-mann.org/extensions.html
+
+[ Could we rewrite history for the older versions, too? I like to
+  have NEWS give a quick overview of what has changed between versions,
+  only user-visible stuff. That is the recommended purpose of NEWS. 
+  However, the following is not yet accurate and complete. ]
 
 New in gnuchess 5.04:
 - Bug fixes (as always)
-- Hint feature implemented using ht
-- Book command now has options "worst", "best" ,"prefer".
+- ???
 
 New in gnuchess 5.03:
 - Bug fixes (The infamous "illegal move" bug should be dead by now.)

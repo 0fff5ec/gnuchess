@@ -1,10 +1,9 @@
-/*
- * inlines.h - static inline version of performance-critical
- * functions. Is included by common.h unless NO_INLINE is
- * defined.
- */
 /* GNU Chess 5.0 - inlines.h - static inline functions
-   Copyright (c) 2002 Free Software Foundation, Inc.
+
+   This file constains static inline version of performance-critical
+   functions. Is included by common.h unless NO_INLINE is defined.
+
+   Copyright (c) 1999-2002 Free Software Foundation, Inc.
 
    GNU Chess is based on the two research programs 
    Cobalt by Chua Kong-Sian and Gazebo by Stuart Cracraft.
@@ -26,12 +25,14 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
+     lukas@debian.org
 */
 
 #ifndef INLINES_H
 #define INLINES_H
 
-static inline int leadz (BitBoard b)
+static inline unsigned char leadz (BitBoard b)
 /**************************************************************************
  *
  *  Returns the leading bit in a bitboard.  Leftmost bit is 0 and
@@ -46,7 +47,7 @@ static inline int leadz (BitBoard b)
 }
 
 
-static inline int nbits (BitBoard b)
+static inline unsigned char nbits (BitBoard b)
 /***************************************************************************
  *
  *  Count the number of bits in b.

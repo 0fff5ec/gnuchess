@@ -18,6 +18,7 @@ Table of Contents
   Book
   Hash Table
   Auxillary File Formats (PGN, EPD)
+  Universal Board
   Caveats
   Compilers
   Internet
@@ -287,16 +288,18 @@ highly recommended to do this since the resulting two files that match
 in a monotonically-increasing extension numbered suffix may be used for
 reporting bugs and keeping track of your games.
 
+
 COMPILERS
 
   We like GNU C in all its various forms. For Unix and Linux, use GNU C.
 
-  For the PC, use GNU C in the following forms: 
-  For use on ICS, use CYGNUS 32-BIT. For regular PC
+  For the PC, use GNU C in the following forms: for use with Universal,
+  use DJGPP GNU C. For use on ICS, use CYGNUS 32-BIT. For regular PC
   use, either will do.
 
   Versions of the code that compile under Microsoft Visual C have been
   contributed. This may be supported in future, contact the developers.
+
 
 INTERNET
 
@@ -304,6 +307,10 @@ INTERNET
   Servers (freechess.org) with Winboard which is included along with various
   scripts we use. We made no attempt to have these immediately user-ready
   but you could tinker around with it if you're an hobbyist.
+
+  One caveat: you must use CYGNUS 32-BIT GNU C under WINBOARD. Do not try
+  to use DJGPP as that will fail (last time we tried.)
+
 
 XBOARD/WINBOARD
 

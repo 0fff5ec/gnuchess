@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 
 /****************************************************************************
@@ -39,8 +40,8 @@
 int LoneKing (int, int);
 int ScoreKBNK (int, int);
 int KPK (int);
-int BishopTrapped (int);
-int DoubleQR7 (int);
+int BishopTrapped (short);
+int DoubleQR7 (short);
 
 BitBoard passed[2];
 BitBoard weaked[2];
@@ -87,7 +88,7 @@ static const BitBoard brank67[2] = { ULL(0x0000000000FFFF00),
 static const BitBoard brank58[2] = { ULL(0x00000000FFFFFFFF),
 				     ULL(0xFFFFFFFF00000000) };
 
-int ScoreP (int side)
+int ScoreP (short side)
 /***************************************************************************
  *
  *  Pawn evaluation is based on the following factors (which is being
@@ -354,7 +355,7 @@ static const int Outpost[2][64] =
 };
 
 
-static inline int CTL(int sq, int piece __attribute__ ((unused)), int side)
+static inline int CTL(short sq, short piece __attribute__ ((unused)), short side)
 /***************************************************************************
  *
  *  Return a score corresponding to the number of squares in the bitboard
@@ -393,7 +394,7 @@ static inline int CTL(int sq, int piece __attribute__ ((unused)), int side)
   return (s);
 }
 
-int ScoreN (int side)
+int ScoreN (short side)
 /***************************************************************************
  *
  *  1.  central knight - distance from enemy king.
@@ -453,7 +454,7 @@ int ScoreN (int side)
 }
 
 
-int ScoreB (int side)
+int ScoreB (short side)
 /****************************************************************************
  *
  *  1.  double bishops.
@@ -534,7 +535,7 @@ int ScoreB (int side)
 }
 
 
-int BishopTrapped (int side)
+int BishopTrapped (short side)
 /****************************************************************************
  *
  *  Check for bishops trapped at A2/H2/A7/H7
@@ -565,7 +566,7 @@ int BishopTrapped (int side)
    return (s);
 }
 
-int ScoreR (int side)
+int ScoreR (short side)
 /****************************************************************************
  *
  *  1.  rook on 7th rank and Enemy king on 8th rank or pawns on 7th rank.
@@ -640,7 +641,7 @@ int ScoreR (int side)
    return (s);
 }
 
-int DoubleQR7 (int side)
+int DoubleQR7 (short side)
 /***************************************************************************
  *
  *  This code just check to see if there is a QQ or QR or RR combo on the
@@ -661,7 +662,7 @@ int DoubleQR7 (int side)
       return (0);
 }
 
-int ScoreQ (int side)
+int ScoreQ (short side)
 /***************************************************************************
  *
  *  1. queen centralization.
@@ -740,7 +741,7 @@ static const int EndingKing[64] =
 static int pawncover[9] = { -60, -30, 0, 5, 30, 30, 30, 30, 30 };
 static const int factor[9] = { 7, 8, 8, 7, 6, 5, 4, 2, 0, };
 
-int ScoreK (int side)
+int ScoreK (short side)
 /***************************************************************************
  *
  *  1.  king in the corner. ?? SRW 2002-08-02 Unclear if implemented
@@ -1196,7 +1197,7 @@ int ScoreKBNK (int side, int loser)
 static const BitBoard nn[2] = { ULL(0x4200000000000000), ULL(0x0000000000000042) };
 static const BitBoard bb[2] = { ULL(0x2400000000000000), ULL(0x0000000000000024) };
 
-int ScoreDev (int side)
+int ScoreDev (short side)
 /***************************************************************************
  *
  *  Calculate the development score for side (for opening only).
@@ -1279,7 +1280,7 @@ int ScoreDev (int side)
 
 
 /*  Array of pointer to functions  */
-static int (*ScorePiece[7]) (int) =
+static int (*ScorePiece[7]) (short) =
 { NULL, ScoreP, ScoreN, ScoreB, ScoreR, ScoreQ, ScoreK };
 
 
@@ -1428,7 +1429,7 @@ next:
 }
 
 
-int EvaluateDraw ()
+short EvaluateDraw (void)
 /***************************************************************************
  *
  *  This routine is called by search() and quiesce() before anything else

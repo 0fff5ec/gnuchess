@@ -21,10 +21,8 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
-/*
- *
- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,26 +37,24 @@
 #define FUTSCORE        (MATERIAL+fdel)
 #define GETNEXTMOVE  (InChk[ply] ? PhasePick1 (&p, ply) : PhasePick (&p, ply))
 
-inline void ShowThinking (leaf *, int);
-inline void ShowThinking (leaf *p, int ply)
+static inline void ShowThinking (leaf *p, uint8_t ply)
 {
    if (flags & XBOARD)
       return;
    if (!(flags & POST))
       return;
    if (NodeCnt < 500000 && (flags & SOLVE)) {
-      /* printf("NodeCnt = %d\n",NodeCnt); getchar(); */
       return;
    }
    SANMove (p->move, ply);
-   fprintf (stderr, "\r%2d.         %2d/%2d%10s    ", Idepth/DEPTH, 
+   printf ("\r%2d.         %2d/%2d%10s    ", Idepth/DEPTH, 
       (int) (p-TreePtr[ply]+1), (int) (TreePtr[ply+1]-TreePtr[ply]), SANmv);
-   fflush (stderr);
+   fflush (stdout);
 }
 
 static int ply1score;
 
-int SearchRoot (int depth, int alpha, int beta)
+int SearchRoot (short depth, int alpha, int beta)
 /**************************************************************************
  *
  *  This perform searches at ply=1.  For ply>1, it calls the more generic
@@ -69,8 +65,8 @@ int SearchRoot (int depth, int alpha, int beta)
  **************************************************************************/
 {
    int best, score, savealpha;
-   int side, xside;
-   int ply, nodetype;
+   uint8_t side, xside, ply;
+   short nodetype;
    leaf *p, *pbest;
 
    ply = 1; 
@@ -156,11 +152,18 @@ int SearchRoot (int depth, int alpha, int beta)
 
       if (SearchDepth == 0 && (NodeCnt & TIMECHECK) == 0)
       {
-         GetElapsed ();
-         if ((et >= SearchTime && (rootscore == -INFINITY-1 || 
-		ply1score > lastrootscore - 25 || flags & SOLVE)) ||
-	     et >= maxtime)
-	    SET (flags, TIMEOUT);        
+	 if (flags & PONDER) {
+	    if (input_status != INPUT_NONE)
+	       SET(flags, TIMEOUT);
+	 } else {
+	    GetElapsed ();
+	    if ((et >= SearchTime && (
+		    rootscore == -INFINITY-1 
+		    || ply1score > lastrootscore - 25 
+		    || flags & SOLVE))
+		|| et >= maxtime)
+	       SET (flags, TIMEOUT);
+	 }
       }
 
       if (MATE+1 == best+1)
@@ -187,7 +190,7 @@ done:
 }
 
 
-int Search (int ply, int depth, int alpha, int beta, int nodetype)
+int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
 /**************************************************************************
  *
  *  The basic algorithm for this search routine came from Anthony 
@@ -278,7 +281,7 @@ int Search (int ply, int depth, int alpha, int beta, int nodetype)
    else if (g0 & PROMOTION)
    {
       PawnExtCnt++;
-      depth += DEPTH;
+      depth += DEPTH; /* Not reached, but why?! */
       extend = true;
    }
    /* Recapture extension */
@@ -333,14 +336,14 @@ int Search (int ply, int depth, int alpha, int beta, int nodetype)
    upperbound = INFINITY;
    if (flags & USEHASH)
    {
-      rc = TTGet (side, depth, ply, alpha, beta, &score, &g1);
+      rc = TTGet (side, depth, ply, &score, &g1);
       if (rc)
       {
          Hashmv[ply] = g1 & MOVEMASK;
          switch (rc)
          {
-            case POORDRAFT  :  break;
-	    case EXACTSCORE :  return (score);
+	 case POORDRAFT  :  /* Not reached */ break;
+	 case EXACTSCORE :  /* Not reached */ return (score);
             case UPPERBOUND :  beta = MIN (beta, score);
 			       upperbound = score;
 			       donull = false;
@@ -535,6 +538,7 @@ int Search (int ply, int depth, int alpha, int beta, int nodetype)
 	    }
          }
       }
+
       UnmakeMove (xside, &p->move);
 
 /*  Perform threat extensions code */
@@ -547,6 +551,7 @@ int Search (int ply, int depth, int alpha, int beta, int nodetype)
 	    threatply = ply;
 	    threatmv  = p->move;
             MakeNullMove (side);
+
             nullscore = -Search(ply+1, depth-1-R, -alpha+THREATMARGIN, 
 			-alpha+THREATMARGIN+1, nodetype);
             UnmakeNullMove (xside); 
@@ -580,12 +585,18 @@ int Search (int ply, int depth, int alpha, int beta, int nodetype)
       }
 
       if (SearchDepth == 0 && (NodeCnt & TIMECHECK) == 0)
-      {
-         GetElapsed ();
-         if ((et >= SearchTime && (rootscore == -INFINITY-1 || 
-		ply1score > lastrootscore - 25 || flags & SOLVE)) ||
-	     et >= maxtime)
-	    SET (flags, TIMEOUT);        
+      {	
+	 if (flags & PONDER) {
+	    if (input_status != INPUT_NONE)
+	       SET(flags, TIMEOUT);
+	 } else {
+	    GetElapsed ();
+	    if ((et >= SearchTime && 
+		 (rootscore == -INFINITY-1 || 
+		  ply1score > lastrootscore - 25 || flags & SOLVE)) ||
+		et >= maxtime)
+	       SET (flags, TIMEOUT);        
+	 }
       }
 
 /*  The following line should be explained as I occasionally forget too :) */
@@ -608,8 +619,13 @@ done:
 */
 
    /*  Save the best move inside the transposition table  */
-   if (flags & USEHASH)
-      TTPut (side, depth, ply, savealpha, beta, best, pbest->move); 
+   if (flags & USEHASH){
+// Nasty temporary hack to try and work around timeout problem
+// If we are pondering and timeout don't save incomplete answers
+// Must look at failure of TIMEOUT condition more carefully!
+	if ( !(flags & TIMEOUT))
+          TTPut (side, depth, ply, savealpha, beta, best, pbest->move); 
+      }
 
    /*  Update history  */
    if (best > savealpha)
@@ -658,45 +674,45 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
 
    /*
     * What is the reason for these different output formats, in
-    * particular for et?
+    * particular for et? --Lukas
     */
    if (flags & XBOARD) {
      if (score > MATE-255) {
-       printf ("%d%c Mat%d %d %lu\t", Idepth/DEPTH, c,
+       printf ("%d%c Mat%d %d %ld\t", Idepth/DEPTH, c,
                 (int)(MATE+2-abs(score))/2, (int)(et*100), NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10lu\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else if (score < -MATE+255) {
-       printf ("%d%c -Mat%2d %d %lu\t", Idepth/DEPTH, c,
+       printf ("%d%c -Mat%2d %d %ld\t", Idepth/DEPTH, c,
                 (int)(MATE+2-abs(score))/2, (int)(et*100), NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"%2d%c%7.2f -Mat%02d%10lu\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else {
-	 printf ("%d%c %d %d %lu\t", Idepth/DEPTH, c, (int)score, 
+	 printf ("%d%c %d %d %ld\t", Idepth/DEPTH, c, (int)score, 
 		 (int)(et*100), NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
-	   fprintf (ofp,"%2d%c%7.2f%7d%10lu\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
+	   fprintf (ofp,"%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
        }
    }
    else {
      if (score > MATE-255) {
-       printf ("\r%2d%c%7.2f  Mat%02d%10lu\t", Idepth/DEPTH, c, et,
+       printf ("\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"\r%2d%c%7.2f  Mat%02d%10lu\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else if (score < -MATE+255) {
-       printf ("\r%2d%c%7.2f -Mat%02d%10lu\t", Idepth/DEPTH, c, et,
+       printf ("\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
 	     (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"\r%2d%c%7.2f -Mat%02d%10lu\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else {
-	 printf ("\r%2d%c%7.2f%7d%10lu\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);
+	 printf ("\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
-	   fprintf (ofp,"\r%2d%c%7.2f%7d%10lu\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
+	   fprintf (ofp,"\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
       }
    }
 

@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 /*
  *
@@ -29,7 +30,7 @@
 #include <stdio.h>
 #include "common.h"
 
-uint32_t Rand32 ()
+uint32_t Rand32 (void)
 /****************************************************************************
  *
  *  A 32 bit random number generator.  An implementation in C of the 
@@ -122,7 +123,7 @@ uint32_t Rand32 ()
    return (ul);
 }
 
-HashType Rand64 ()
+HashType Rand64 (void)
 {
   HashType b;
 

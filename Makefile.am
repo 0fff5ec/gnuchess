@@ -3,4 +3,4 @@
 SUBDIRS = src
 EXTRA_DIST = book/README doc/ChangeLog doc/INSTALL doc/README TODO
 
-DISTCLEANFILES = *~
+DISTCLEANFILES = *~ src/GCint.h

@@ -21,6 +21,8 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
+     lukas@debian.org
 */
 
 #include <stdio.h>
@@ -361,12 +363,11 @@ int BookBuilderOpen(void)
  * in order to actually write the book to disk.
  */
 
-int BookBuilder(int result, int side)
+int BookBuilder(short result, uint8_t side)
 {
   uint32_t i;
   
   /* Only first BOOKDEPTH moves */
-  /* BOOKDEPTH is 20, so it is in fact a half-move count */
   if (GameCnt > BOOKDEPTH) 
     return BOOK_EMIDGAME;
   CalcHashKey();
@@ -484,7 +485,7 @@ int BookQuery(int BKquery)
   } r[MAXMOVES];
   FILE *rfp = NULL;
   leaf *p;
-  int side,xside,temp;
+  short side,xside,temp;
   uint32_t booksize;
   int res;
 
@@ -493,7 +494,7 @@ int BookQuery(int BKquery)
     return BOOK_ENOBOOK;
   }
   if (!bookloaded) {
-    const char * const *booktry;
+    char const * const *booktry;
 
     bookloaded = 1;
     for (booktry = bookbin; *booktry ; booktry++) {
@@ -612,9 +613,9 @@ fini:
           tot = r[matches[i]].wins+r[matches[i]].draws+r[matches[i]].losses;
 	  fprintf(ofp," %s(%2.0f/%d/%d/%d) ",SANmv,
 		100.0*(r[matches[i]].wins+(r[matches[i]].draws/2.0))/tot,
-		(int) r[matches[i]].wins,
-		(int) r[matches[i]].losses,
-		(int) r[matches[i]].draws);
+		r[matches[i]].wins,
+		r[matches[i]].losses,
+		r[matches[i]].draws);
           if ((i+1) % 4 == 0) fputc('\n',ofp);
 	}
       }

@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 
 #ifndef COMMON_H
@@ -32,67 +33,97 @@
 # define __attribute__(x)
 #endif
 
- /*
-  * Include "uint64_t" and similar types using the ac_need_stdint_h ac macro
-  */
+/*
+ * Include "uint64_t" and similar types using the ac_need_stdint_h ac macro
+ */
+
 #include "GCint.h"
+
+#include <stdio.h>
+#include <sys/types.h>
 
  /*
   * Define macro for declaring 64bit constants for compilers not using ULL
   */
+
 #ifdef _MSC_VER
    #define ULL(x) ((uint64_t)(x))
 #else
    #define ULL(x) x ## ULL
 #endif
 
+/*
+ * BitBoard is a key data type.  It is a 64-bit value, in which each
+ * bit represents a square on the board as defined by "enum Square".
+ * Thus, bit position 0 represents a fact about square a1, and bit
+ * position 63 represents a fact about square h8.  For example, the
+ * bitboard representing "white rook" positions will have a bit set
+ * for every position occupied on the board by a white rook.
+ */
+
 typedef uint64_t BitBoard;
 typedef uint64_t HashType;
 typedef uint32_t KeyType;
 
+/*
+ * Board represents an entire board's state, and is structured to
+ * simplify analysis:
+ */
+
 typedef struct 
 {
-   BitBoard b[2][7];
-   BitBoard friends[2];
+   BitBoard b[2][7];      /* piece/pawn positions by side (0=white, 1=black)
+                             and then by piece (1=pawn..6=king). For example,
+                             b[white][knight] has bits set for every board
+                             position occupied by a White Knight. */
+   BitBoard friends[2];   /* Friendly (this side's) pieces */
    BitBoard blocker;
-   BitBoard blockerr90;
-   BitBoard blockerr45;
-   BitBoard blockerr315;
-   int ep;
-   int flag;
-   int side;
-   int material[2];
-   int pmaterial[2];
-   int castled[2];
-   int king[2];
+   BitBoard blockerr90;   /* rotated 90 degrees */
+   BitBoard blockerr45;   /* rotated 45 degrees */
+   BitBoard blockerr315;  /* rotated 315 degrees */
+   short ep;              /* Location of en passant square */
+   short flag;            /* Flags related to castle privileges */
+   short side;            /* Color of side on move: 0=white, 1=black */
+   short material[2];     /* Total material by side not inc. king */
+   short pmaterial[2];    /* Total pawn material by side not inc. king */
+   short castled[2];      /* True (1) if side is castled */
+   short king[2];         /* Location of king 0 - a1 .. 63 - h8 */
 } Board; 
 
-typedef struct
-{
-   int move;
-   int score; 
-} leaf;
+/* leaf describes a leaf-level analysis result */
 
 typedef struct
 {
-   int move;
-   int epsq; 
-   int bflag;
-   int Game50;
-   int mvboard;
-   float et;
+   int move;   /* the move that produced this particular board */
+   int score;  /* the scored value of this leaf */
+} leaf;
+
+/*
+ * GameRec records an individual move made in the game; an entire
+ * Game is a set of GameRec's:
+ */
+
+typedef struct
+{
+   int move;    /* The actual move made; this is NOT the move count! */
+   short epsq;  /* en passant square */
+   short bflag; /* Flags for castle privs, see Board.flag */
+   short Game50; /* The last value of GameCnt (a count of half-moves)
+                    that castled, captured, or moved a pawn */
+   short mvboard;
+   float et;     /* elapsed time */
    HashType hashkey;
    HashType phashkey;
-   char SANmv[8];
+   char SANmv[8];  /* The move in SAN notation */
 } GameRec;
 
 typedef struct
 {
-   KeyType key; 
-   int move;
-   int score;
-   int flag;
-   int depth;
+   HashType key;    /* Full 64 bit hash */
+   int move;        /* Best move */
+   int score;       /* Estimated score, may be lower or upper bound */
+   uint8_t flag;    /* Is this alpha, beta, quiescent or exact? */
+   uint8_t depth;   /* Search depth */
 } HashSlot;   
 
 typedef struct
@@ -149,11 +180,37 @@ typedef struct
 #define ROW(i) ((i) & 7)
 #define trailz(b) (leadz ((b) & ((~b) + 1)))
 
+/* Move Descriptions (moves) are represented internally as integers.
+ * The lowest 6 bits define the destination ("TO") square, and
+ * the next lowest 6 bits define the source ("FROM") square,
+ * using the values defined by "enum Square" (0=a1, 63=h8).
+ * Upper bits are used to identify other move information such as
+ * a promotion (and to what), a capture (and of what),
+ * CASTLING moves, and ENPASSANT moves; see the "constants for
+ * move description" below for more information on these upper bits.
+ */
 #define PROMOTEPIECE(a) ((a >> 12) & 0x0007)
 #define CAPTUREPIECE(a) ((a >> 15) & 0x0007)
 #define TOSQ(a)         ((a) & 0x003F)
 #define FROMSQ(a)       ((a >> 6) & 0x003F)
 #define MOVE(a,b)       (((a) << 6) | (b))
+
+/* constants for move description */
+#define KNIGHTPRM     0x00002000
+#define BISHOPPRM     0x00003000 
+#define ROOKPRM       0x00004000
+#define QUEENPRM      0x00005000
+#define PROMOTION     0x00007000
+#define PAWNCAP       0x00008000
+#define KNIGHTCAP     0x00010000 
+#define BISHOPCAP     0x00018000
+#define ROOKCAP       0x00020000 
+#define QUEENCAP      0x00028000 
+#define CAPTURE       0x00038000 
+#define NULLMOVE      0x00100000 
+#define CASTLING      0x00200000 
+#define ENPASSANT     0x00400000
+#define MOVEMASK      (CASTLING | ENPASSANT | PROMOTION | 0x0FFF)
 
 #define white  0
 #define black  1
@@ -181,22 +238,6 @@ typedef struct
 #define ValueQ   1100
 #define ValueK   2000
 
-/* constants for move description */
-#define KNIGHTPRM     0x00002000
-#define BISHOPPRM     0x00003000 
-#define ROOKPRM       0x00004000
-#define QUEENPRM      0x00005000
-#define PROMOTION     0x00007000
-#define PAWNCAP       0x00008000
-#define KNIGHTCAP     0x00010000 
-#define BISHOPCAP     0x00018000
-#define ROOKCAP       0x00020000 
-#define QUEENCAP      0x00028000 
-#define CAPTURE       0x00038000 
-#define NULLMOVE      0x00100000 
-#define CASTLING      0x00200000 
-#define ENPASSANT     0x00400000
-#define MOVEMASK      (CASTLING | ENPASSANT | PROMOTION | 0x0FFF)
 
 /*  Some special BitBoards  */
 #define NULLBITBOARD  ( ULL(0x0000000000000000))
@@ -220,6 +261,8 @@ typedef struct
 #define XBOARD  0x0400
 #define TIMECTL 0x0800
 #define POST    0x1000
+#define PONDER  0x2000 /* We are in pondering (during search) */
+#define HARD    0x4000 /* Pondering is turned on */
 
 /*  Node types  */ 
 #define PV  0
@@ -265,15 +308,13 @@ typedef struct
 
 #define DEPTH	12
 
-#define INPUT_SIZE 128
-
-extern int distance[64][64];
-extern int taxicab[64][64];
-extern int lzArray[65536];
-extern int Shift00[64];
-extern int Shift90[64];
-extern int Shift45[64];
-extern int Shift315[64];
+extern short distance[64][64];
+extern short taxicab[64][64];
+extern unsigned char lzArray[65536];
+extern short Shift00[64];
+extern short Shift90[64];
+extern short Shift45[64];
+extern short Shift315[64];
 extern BitBoard DistMap[64][8];
 extern BitBoard BitPosArray[64];
 extern BitBoard NotBitPosArray[64];
@@ -300,8 +341,8 @@ extern BitBoard mask_qr_trapped_w[3];
 extern BitBoard mask_qr_trapped_b[3];
 extern BitBoard boardhalf[2];
 extern BitBoard boardside[2];
-extern int directions[64][64];
-extern int BitCount[65536];
+extern short directions[64][64];
+extern unsigned char BitCount[65536];
 extern leaf Tree[MAXTREEDEPTH];
 extern leaf *TreePtr[MAXPLYDEPTH];
 extern int RootPV;
@@ -382,21 +423,23 @@ extern int hunged[2];
 extern int phase;
 extern int Hashmv[MAXPLYDEPTH];
 extern int Debugmv[MAXPLYDEPTH];
-extern int Debugmvl;
-extern int RootPieces;
-extern int RootPawns;
-extern int RootMaterial;
-extern int RootAlpha;
-extern int RootBeta;
-extern int pickphase[MAXPLYDEPTH];
-extern int InChk[MAXPLYDEPTH];
-extern int KingThrt[2][MAXPLYDEPTH];
-extern int threatmv;
-extern int threatply;
-extern int KingSafety[2];
+extern short Debugmvl;
+extern short Debugline;
+extern short RootPieces;
+extern short RootPawns;
+extern short RootMaterial;
+extern short RootAlpha;
+extern short RootBeta;
+extern short pickphase[MAXPLYDEPTH];
+extern short InChk[MAXPLYDEPTH];
+extern short KingThrt[2][MAXPLYDEPTH];
+extern short threatmv;
+extern uint8_t threatply;
+extern short KingSafety[2];
+extern short pscore[64];
 
-extern int bookmode;
-extern int bookfirstlast;
+extern short bookmode;
+extern short bookfirstlast;
 
 extern int range[8];
 extern int ptype[2];
@@ -476,12 +519,16 @@ void InitHashCode (void);
 void InitHashTable (void);
 void NewPosition (void);
 void InitFICS (void);
+void InitInput (void);
+
+/* Cleanup routines */
+void CleanupInput(void);
 
 /*  The book routines */
-void MakeBinBook (char *, int);
+void MakeBinBook (char *, short);
 int BookQuery (int);
 int BookBuilderOpen(void);
-int BookBuilder (int result, int side);
+int BookBuilder (short result, uint8_t side);
 int BookBuilderClose(void);
 
 /*
@@ -500,11 +547,11 @@ enum {
 };
  
 /*  The move generation routines  */
-void GenMoves (int);
-void GenCaptures (int);
-void GenNonCaptures (int);
-void GenCheckEscapes (int);
-void FilterIllegalMoves (int);
+void GenMoves (short);
+void GenCaptures (short);
+void GenNonCaptures (short);
+void GenCheckEscapes (short);
+void FilterIllegalMoves (short);
 
 /*  The move routines  */
 void MakeMove (int, int *);
@@ -518,7 +565,7 @@ int IsLegalMove (int);
 char *AlgbrMove (int);
 
 /*  The attack routines  */
-int SqAtakd (int, int);
+short SqAtakd (short sq, short side);
 void GenAtaks (void);
 BitBoard AttackTo (int, int);
 BitBoard AttackXTo (int, int);
@@ -533,7 +580,7 @@ int SwapOff (int);
 void AddXrayPiece (int, int, int, BitBoard *, BitBoard *);
 
 /*  The EPD routines  */
-int ReadEPDFile (const char *, int);
+short ReadEPDFile (const char *, short);
 int ParseEPD (char *);
 void LoadEPD (char *);
 void SaveEPD (char *);
@@ -542,24 +589,13 @@ void SaveEPD (char *);
 enum {
    EPD_SUCCESS,
    EPD_ERROR
-};            
-
-/*  The command routines */
-void InputCmd (void);
-void ShowCmd (char *);
-void TestCmd (char *);
-
-/*  Some utility routines  */
-#ifdef NO_INLINE
-int int leadz (BitBoard);
-int nbits (BitBoard);
-#endif
+};
 
 void UpdateFriends (void);
 void UpdateCBoard (void);
 void UpdateMvboard (void);
 void EndSearch (int);
-int ValidateBoard (void);
+short ValidateBoard (void);
 
 /*  PGN routines  */
 void PGNSaveToFile (const char *, const char *);
@@ -571,33 +607,36 @@ void CalcHashKey (void);
 void ShowHashKey (HashType);
 
 /*  The evaluation routines  */
-int ScoreP (int);
-int ScoreN (int);
-int ScoreB (int);
-int ScoreR (int);
-int ScoreQ (int);
-int ScoreK (int);
-int ScoreDev (int);
+int ScoreP (short);
+int ScoreN (short);
+int ScoreB (short);
+int ScoreR (short);
+int ScoreQ (short);
+int ScoreK (short);
+int ScoreDev (short);
 int Evaluate (int, int);
-int EvaluateDraw (void);
+short EvaluateDraw (void);
 
 /*  Hung routines  */
 int EvalHung (int);
 
 /*  The search routines  */
 void Iterate (void);
-int Search (int, int, int, int, int);
-int SearchRoot (int, int, int);
-int Quiesce (int, int, int);
-void pick (leaf *, int);
-int Repeat (void);
+int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype);
+int SearchRoot (short depth, int alpha, int beta);
+int Quiesce (uint8_t ply, int alpha, int beta);
+void pick (leaf *, short);
+short Repeat (void);
 void ShowLine (int, int, char);
 void GetElapsed (void);
 
 /*  The transposition table routies */
-void TTPut (int, int, int, int, int, int, int);
-int TTGet (int, int, int, int, int, int *, int *);
-int TTGetPV (int, int, int, int *);
+void TTPut (uint8_t side, uint8_t depth, uint8_t ply, 
+	    int alpha, int beta, int score, int move);
+/* Returns flag if it finds an entry, 0 otherwise */
+uint8_t TTGet (uint8_t side, uint8_t depth, uint8_t ply,
+	     int *score, int *move);
+short TTGetPV (uint8_t side, uint8_t ply, int score, int *move);
 void TTClear (void);
 void PTClear (void);
 
@@ -649,7 +688,123 @@ int DBSearchPlayer (const char *player);
 void DBUpdatePlayer (const char *player, const char *resultstr);
 void DBTest (void);
 
-#ifndef NO_INLINE
+/* Input thread and thread function */
+extern pthread_t input_thread;
+void *input_func(void *);
+
+/*
+ * Status variable used by the input thread to signal
+ * pending input. Thought about using flags for this
+ * but this can be refined and is conceptually different
+ * from flags.
+ */
+enum {
+  INPUT_NONE,
+  INPUT_AVAILABLE
+};
+extern volatile int input_status;
+
+/*
+ * Function to wake up the input thread, should be called after
+ * input has been parsed.
+ */
+void input_wakeup(void);
+
+/* Wait for input. */
+
+void wait_for_input(void);
+
+/*
+ * Input routine, initialized to one of the specific
+ * input routines. The given argument is the prompt.
+ */
+void (*getline) (char *);
+
+#define MAXSTR 128
+extern char inputstr[MAXSTR];
+
+/* Input parser */
+void parse_input(void);
+
+/* Pondering */
+void ponder(void);
+
+/*  The command subroutines */
+void ShowCmd (char *);
+void BookCmd (char *);
+void TestCmd (char *);
+
+/* Commands from the input engine */
+void cmd_accepted(void);
+void cmd_activate(void); 
+void cmd_analyze(void);
+void cmd_bk(void);
+void cmd_black(void);
+void cmd_book(void);
+void cmd_computer(void);
+void cmd_debug(void);
+void cmd_debugdepth(void);
+void cmd_debugnode(void);
+void cmd_debugply(void);
+void cmd_depth(void);
+void cmd_draw(void);
+void cmd_easy(void);
+void cmd_edit(void); 
+void cmd_epd(void);
+void cmd_force(void);
+void cmd_go(void);
+void cmd_hard(void);
+void cmd_hash(void);
+void cmd_hashsize(void);
+void cmd_help (void);
+void cmd_hint(void);
+void cmd_level(void);
+void cmd_list(void);
+void cmd_load(void);
+void cmd_manual(void);
+void cmd_movenow(void);
+void cmd_name(void);
+void cmd_new(void);
+void cmd_nopost(void);
+void cmd_null(void);
+void cmd_otim(void);
+void cmd_pgnload(void);
+void cmd_pgnsave(void);
+void cmd_ping(void);
+void cmd_post(void);
+void cmd_protover(void);
+void cmd_quit(void);
+void cmd_random(void);
+void cmd_rating(void);
+void cmd_rejected(void);
+void cmd_remove(void);
+void cmd_result(void);
+void cmd_save(void);
+void cmd_setboard(void);
+void cmd_show (void);
+void cmd_solve(void);
+void cmd_st(void); 
+void cmd_switch(void);
+void cmd_test (void);
+void cmd_time(void);
+void cmd_undo(void);
+void cmd_variant(void);
+void cmd_version(void);
+void cmd_white(void);
+void cmd_xboard(void);
+
+/*
+ * Define NO_INLINE only if you really must, implementations will be
+ * provided by the corresponding *.c files. The better solution is to
+ * not define it, in which case inlines.h will be included which
+ * provides static inline version of these functions.
+ */
+
+/*  Some utility routines  */
+#ifdef NO_INLINE
+unsigned char leadz (BitBoard);
+unsigned char nbits (BitBoard);
+#else
 # include "inlines.h"
 #endif
 

@@ -1,25 +1,77 @@
-2002-10-30 Simon Waters <simon@wretched.demon.co.uk>
+2002-12-16  Simon Waters <simon@wretched.demon.co.uk>
 
-	* Remove nominal support for UNIVERSAL board from code.
+	* The main development version reverts to Lukas's
+	  version as of 2002-10-05
 
-2002-10-30 Based on patch from Lukas Geyer
+	* epd.c merged from 5.05
 
-	* Cosmetic changes, e-mail addr. / Copyright etc
+	* book random in help change merged from 5.05
 
-2002-10-21 Based on patch from Lukas Geyer
+	* Fix to not store score in hashtable when time
+	  expired, as score has special value.
 
-	* Fix buffer overflows in epd.c and pgn.c
+2002-10-05  Lukas Geyer  <lukas@debian.org>
 
-	* Rewrite EPD parsing.
+	* Added copyright and license notices to ponder.c, input.c,
+	  updated copyright years to 1999-2002 in all source files.
 
-2002-09-07 Simon Waters <simon@wretched.demon.co.uk>
+	* Updated NEWS file to really list user-visible changes
+	  between releases, still not complete.
 
-	* Add "book random" to command line help text
+	* Updated my email address.
 
-	* Remove redundant code, and update documentation for release.
+	* version.c: Removed as obsolete.
+
+	* pgn.c: Fixed potential buffer overflow. (Thanks to David
+	  Wheeler for this one.)
+
+	* common.h: Added comments by David A. Wheeler.
+
+	* cmd.c: Added support for "easy" and "hard" (disable/enable
+	  pondering)
+
+	* main.c: Default to "nopost".
+
+	* common.h: Added #include <sys/types>, needed for some
+	  pthread implementations, it seems.
+
+2002-08-25  Lukas Geyer  <lukas@debian.org>
+
+	* Merged Simon's and my version, reverted some stuff like changing
+	  all the types to int before I know better justification.
+
+2002-08-25 Lukas Geyer  <geyer@math.uni-dortmund.de>
+
+	* Various cleanups, some documentation and comment updates,
+	  nothing really changed
+
+2002-08-25 Lukas Geyer  <geyer@math.uni-dortmund.de>
+
+	* configure.ac: Added support for --without-readline, cleaned
+	  up by removing even more unneeded tests.
+
+	* INSTALL: Updated (was not quite accurate anymore)
+
+	* TODO: Updated (some things have been done now...)
+
+	* cmd.c: Changed input parser to use method table, changed token
+	  separation algorithm, the tokens are now only pointers to the
+	  beginning of tokens in inputstr. Changed move.c accordingly that
+	  it does not get confused by whitespace.
+	  
+	* Moved input code to src/input.c (new file), in a separate thread.
+	  Changed other files accordingly (common.h, main.c, cmd.c, 
+	  Makefile.am, configure.ac).
+
+	* Removed all code related to the Novag Universal Board. (The
+	  code was mostly in cmd.c.)
+	  
+	* common.h, ttable.c: Changed the HashSlot structure to make
+	  persistent transposition tables possible.
+
+	* ponder.c (new file): Added prototype of pondering.
 
 2002-08-17 Simon Waters <simon@wretched.demon.co.uk>
-
 	* Bug code bug introduced in development version
 	  that breaks if no book is present in XBOARD
 	  version.

@@ -21,6 +21,7 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
+     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 /*
  *
@@ -29,7 +30,7 @@
 #include <stdio.h>
 #include "common.h"
 
-void ShowTime ()
+void ShowTime (void)
 /**************************************************************************
  *
  *  Print out the time settings.
@@ -62,7 +63,7 @@ void ShowMoveList (int ply)
 } 
 
 
-void ShowSmallBoard ()     
+void ShowSmallBoard (void)     
 /*****************************************************************************
  *
  *  Display the board.  Not only that but display some useful information
@@ -155,7 +156,7 @@ void ShowBitBoard (BitBoard *b)
 }
 
 
-void ShowBoard ()     
+void ShowBoard (void)     
 /*****************************************************************************
  *
  *  Display the board.  Not only that but display some useful information
@@ -221,7 +222,7 @@ void ShowBoard ()
    fprintf (ofp, "\n");
 }
 
-void ShowCBoard ()
+void ShowCBoard (void)
 /*****************************************************************************
  *
  *
@@ -242,7 +243,7 @@ void ShowCBoard ()
 }
 
 
-void ShowMvboard ()
+void ShowMvboard (void)
 /*****************************************************************************
  *
  *  Print the Mvboard[] array.
