@@ -277,21 +277,19 @@ void cmd_hashsize(void)
 /* Give a possible move for the player to play */
 void cmd_hint(void)
 {
-  /* Find next move in PV, ignore if none available */
-  /* Code belongs in search.c with ShowLine ? */
-  
-  int pvar[2];
-  if ((flags & USEHASH)) {
-    if (TTGetPV(board.side,2,rootscore,&pvar[2])) {
-      /* Find all moves for ambiguity checks */
-      /* Otherwise xboard complains at ambiguous hints */
-      GenMoves(2); 
-      
-      SANMove(pvar[2],2);
+  if ( flags & ENDED ){
+    printf("The game is over.\n");
+  } else {
+    int HintMove;
+    HintMove = TreePtr[1]->move; /* Pick first move in tree */
+    if (IsLegalMove(HintMove)){
+      SANMove(TreePtr[1]->move,2);
       printf("Hint: %s\n", SANmv);
-      fflush(stdout);
+    } else {
+      printf("No hint available at this time\n");
     }
   }
+  fflush(stdout);
 }
 
 void cmd_level(void)

@@ -8,6 +8,8 @@
 
 	* Add option --hashsize
 
+	* Rework hint to use first move in Tree
+
 2003-01-27 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Stop output of result in iterate if game has ended already.
