@@ -31,7 +31,6 @@
 
 #define WINDOW	75
 
-static struct timeval t1, t2;
 short InChkDummy, terminal;
 
 void Iterate (void)
@@ -45,6 +44,7 @@ void Iterate (void)
    uint8_t side;
    int score, RootAlpha, RootBeta;
 
+   dbg_printf("Entered iterate().\n");
    side = board.side;
 
    /* Note computer is playing side we are making move for. */
@@ -66,7 +66,8 @@ void Iterate (void)
 		RootPawns;
    RootMaterial = MATERIAL;
    RepeatCnt = 0;
-   et = 0.0;
+   ElapsedTime = 0.0;
+   StartTime = StartTiming();
    memset (ChkCnt, 0, sizeof (ChkCnt));
    memset (ThrtCnt, 0, sizeof (ThrtCnt));
    memset (history, 0, sizeof (history));
@@ -115,7 +116,7 @@ void Iterate (void)
    GenMoves (1);
    FilterIllegalMoves (1); 
    SortRoot ();
-   gettimeofday (&t1, NULL);
+   
    InChk[1] = SqAtakd (board.king[side], 1^side);
 
    /*  Are there any legal moves? */
@@ -144,6 +145,7 @@ void Iterate (void)
    /* Don't look up moves in book in opponents time, think instead */
 
    if (bookmode != BOOKOFF && !(flags & SOLVE) && !(flags & PONDER) && nmovesfrombook <= 3) {
+     dbg_printf("Doing book lookup.\n");
      if (BookQuery(0) == BOOK_SUCCESS) {
        nmovesfrombook = 0;
        wasbookmove = 1;
@@ -236,7 +238,7 @@ void Iterate (void)
 
       /* See if we have time to start another iteration */
       /* mcriley - was 2 * S / 3 */
-      if (SearchDepth == 0 && (flags & TIMECTL) && et >= 2 * SearchTime / 3)
+      if (SearchDepth == 0 && (flags & TIMECTL) && ElapsedTime >= 2 * SearchTime / 3)
          SET (flags, TIMEOUT);
 
       if (abs(score) + Idepth >= MATE + 1) 
@@ -256,7 +258,7 @@ void Iterate (void)
  ***************************************************************************/
    SANMove (RootPV, 1);
    strcpy (Game[GameCnt+1].SANmv, SANmv);
-   Game[GameCnt+1].et = et;
+   Game[GameCnt+1].et = ElapsedTime;
    MakeMove (side, &RootPV);
    if (flags & TIMECTL)
    {
@@ -269,7 +271,7 @@ void Iterate (void)
  	printf("TimeLimit is %f\n",TimeLimit[side]);
       } else
 	MoveLimit[side]--;
-      TimeLimit[side] -= (float) et;
+      TimeLimit[side] -= ElapsedTime;
       if (TCinc != 0)
 	TimeLimit[side] += TCinc;
       if (MoveLimit[side] == 0)
@@ -293,8 +295,9 @@ void Iterate (void)
    {
       if (!wasbookmove) {
         fprintf (ofp,"\nTime = %.1f Rate=%ld Nodes=[%ld/%ld/%ld] GenCnt=%ld\n", 
-	  et, et > 0 ? (unsigned long)((NodeCnt+QuiesCnt)/et) : 0, 
-	  NodeCnt, QuiesCnt, NodeCnt+QuiesCnt, GenCnt);
+		 ElapsedTime, ElapsedTime > 0 ? 
+		 (unsigned long)((NodeCnt + QuiesCnt) / ElapsedTime) : 0, 
+		 NodeCnt, QuiesCnt, NodeCnt+QuiesCnt, GenCnt);
         fprintf (ofp,"Eval=[%ld/%ld] RptCnt=%ld NullCut=%ld FutlCut=%ld\n",
           EvalCnt, EvalCall, RepeatCnt, NullCutCnt, FutlCutCnt);
         fprintf (ofp,"Ext: Chk=%ld Recap=%ld Pawn=%ld OneRep=%ld Horz=%ld Mate=%ld KThrt=%ld\n",
@@ -347,12 +350,19 @@ void Iterate (void)
       fflush(stdout); 
       SET (flags, ENDED);
    }
-   return;
 } 
 
 
-void GetElapsed (void)
+double GetElapsed (Timer start)
 {
-   gettimeofday (&t2, NULL);
-   et = (t2.tv_sec - t1.tv_sec) + (t2.tv_usec - t1.tv_usec)/1000000.0;
+   struct timeval t;
+   gettimeofday (&t, NULL);
+   return t.tv_sec - start.tv_sec + (t.tv_usec - start.tv_usec) / 1e6;
+}
+
+Timer StartTiming (void)
+{
+   Timer t;
+   gettimeofday (&t, NULL);
+   return t;
 }

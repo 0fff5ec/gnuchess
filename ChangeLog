@@ -1,3 +1,15 @@
+2003-01-09  Lukas Geyer  <lukas@debian.org>
+
+	* rename et ElapsedTime
+	
+	* Clean up timer code
+
+	* Further changes on pondering and input handling
+
+2003-01-09 Simon Waters <Simon@wretched.demon.co.uk>
+
+	* Change version ID to 5.06
+
 2002-12-30  Lukas Geyer  <lukas@debian.org>
 
 	* Corrected threading code to consume input correctly

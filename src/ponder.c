@@ -40,6 +40,9 @@ void ponder(void)
    /* Save flags and clear the time control bit for pondering */
    const unsigned int saved_flags = flags;
 
+   /* Save number of moves out of book */
+   const int nmfb = nmovesfrombook;
+
    CLEAR(flags, TIMECTL);
    SET(flags, PONDER);
 
@@ -49,4 +52,6 @@ void ponder(void)
 
    /* Restore flags, will also clear the PONDER flag */
    flags=saved_flags;
+
+   nmovesfrombook = nmfb;
 }

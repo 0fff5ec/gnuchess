@@ -140,8 +140,16 @@ typedef struct
 
 #define MAX(a,b)     ((a) > (b) ? (a) : (b))
 #define MIN(a,b)     ((a) < (b) ? (a) : (b))
-#define SET(a,b)     (a |= b)
-#define CLEAR(a,b)   (a &= ~b)
+#define SET(a,b)                     \
+  do {                               \
+    (a) |= (b);                      \
+    dbg_printf("Set   0x%x\n", (b)); \
+  } while (0)
+#define CLEAR(a,b)                   \
+  do {                               \
+    (a) &= ~(b);                     \
+    dbg_printf("Clear 0x%x\n", (b)); \
+  } while (0)
 #define	DRAWSCORE    (computerplays == board.side ? (opprating - myrating) / 4 : (myrating - opprating ) / 4)
 #define MATERIAL     (board.material[side] - board.material[1^side])
 #define PHASE	     (8 - (board.material[white]+board.material[black]) / 1150)
@@ -408,12 +416,6 @@ extern int ChkCnt[MAXPLYDEPTH];
 extern int ThrtCnt[MAXPLYDEPTH];
 extern char id[32];
 extern char solution[64];
-/*
- * XXX: This variable et also exists as a local variable somewhere and
- * to complete the confusion, this came up in three different
- * flavours: long, float and double.
- */
-extern double et;
 extern float SearchTime;
 extern int SearchDepth;
 extern int MoveLimit[2];
@@ -630,7 +632,17 @@ int Quiesce (uint8_t ply, int alpha, int beta);
 void pick (leaf *, short);
 short Repeat (void);
 void ShowLine (int, int, char);
-void GetElapsed (void);
+
+/*
+ * Set up a timer by first calling StartTiming(), saving
+ * the return value and feeding it to GetElapsed() for
+ * timings in seconds.
+ */
+typedef struct timeval Timer;
+extern double ElapsedTime;
+extern Timer StartTime;
+Timer StartTiming (void);
+double GetElapsed (Timer start);
 
 /*  The transposition table routies */
 void TTPut (uint8_t side, uint8_t depth, uint8_t ply, 
@@ -827,5 +839,12 @@ int dbg_printf(const char *fmt, ...);
 
 /* Closes the debugging log, if it is not stderr */
 int dbg_close(void);
+
+# ifdef DEBUG
+#  include <assert.h>
+#  define ASSERT(x) assert(x)
+# else
+#  define ASSERT(x)
+# endif
 
 #endif /* !COMMON_H */

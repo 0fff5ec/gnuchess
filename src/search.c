@@ -146,22 +146,23 @@ int SearchRoot (short depth, int alpha, int beta)
       if (flags & TIMEOUT)
       {
 	/* XXX: It seems that ply == 1 always at this point */
+         ASSERT( ply == 1);
          best = (ply & 1 ? rootscore : -rootscore );
 	 return (best);
       }
 
-      if (SearchDepth == 0 && (NodeCnt & TIMECHECK) == 0)
+      if (((flags & PONDER) || SearchDepth == 0) && (NodeCnt & TIMECHECK) == 0)
       {
 	 if (flags & PONDER) {
 	    if (input_status != INPUT_NONE)
 	       SET(flags, TIMEOUT);
 	 } else {
-	    GetElapsed ();
-	    if ((et >= SearchTime && (
+	    ElapsedTime = GetElapsed (StartTime);
+	    if ((ElapsedTime >= SearchTime && (
 		    rootscore == -INFINITY-1 
 		    || ply1score > lastrootscore - 25 
 		    || flags & SOLVE))
-		|| et >= maxtime)
+		|| ElapsedTime >= maxtime)
 	       SET (flags, TIMEOUT);
 	 }
       }
@@ -584,17 +585,17 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
 	 return (best);
       }
 
-      if (SearchDepth == 0 && (NodeCnt & TIMECHECK) == 0)
+      if (((flags & PONDER) || SearchDepth == 0) && (NodeCnt & TIMECHECK) == 0)
       {	
 	 if (flags & PONDER) {
 	    if (input_status != INPUT_NONE)
 	       SET(flags, TIMEOUT);
 	 } else {
-	    GetElapsed ();
-	    if ((et >= SearchTime && 
+	    ElapsedTime = GetElapsed (StartTime);
+	    if ((ElapsedTime >= SearchTime && 
 		 (rootscore == -INFINITY-1 || 
 		  ply1score > lastrootscore - 25 || flags & SOLVE)) ||
-		et >= maxtime)
+		ElapsedTime >= maxtime)
 	       SET (flags, TIMEOUT);        
 	 }
       }
@@ -670,7 +671,7 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
       return;
    if (rootscore == -INFINITY-1)
       return;
-   GetElapsed ();
+   ElapsedTime = GetElapsed (StartTime);
 
    /*
     * What is the reason for these different output formats, in
@@ -679,40 +680,43 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
    if (flags & XBOARD) {
      if (score > MATE-255) {
        printf ("%d%c Mat%d %d %ld\t", Idepth/DEPTH, c,
-                (int)(MATE+2-abs(score))/2, (int)(et*100), NodeCnt+QuiesCnt);
+                (int)(MATE+2-abs(score))/2, (int)(ElapsedTime*100), NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else if (score < -MATE+255) {
        printf ("%d%c -Mat%2d %d %ld\t", Idepth/DEPTH, c,
-                (int)(MATE+2-abs(score))/2, (int)(et*100), NodeCnt+QuiesCnt);
+                (int)(MATE+2-abs(score))/2, (int)(ElapsedTime*100), NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+       fprintf (ofp,"%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else {
 	 printf ("%d%c %d %d %ld\t", Idepth/DEPTH, c, (int)score, 
-		 (int)(et*100), NodeCnt+QuiesCnt);
+		 (int)(ElapsedTime*100), NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
-	   fprintf (ofp,"%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
+	   fprintf (ofp,"%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, 
+		    ElapsedTime, score, NodeCnt+QuiesCnt);	 
        }
    }
    else {
-     if (score > MATE-255) {
-       printf ("\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
-                (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
-       if (ofp != stdout)
-	 fprintf (ofp,"\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
-                (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
-     } else if (score < -MATE+255) {
-       printf ("\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
-	     (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
-       if (ofp != stdout)
-	 fprintf (ofp,"\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+      if (score > MATE-255) {
+	 printf ("\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
-     } else {
-	 printf ("\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);
+	 if (ofp != stdout)
+	    fprintf (ofp,"\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+		     (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
+      } else if (score < -MATE+255) {
+	 printf ("\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
+	 if (ofp != stdout)
+	    fprintf (ofp,"\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+		     (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
+      } else {
+	 printf ("\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+		 score, NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
-	   fprintf (ofp,"\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
+	    fprintf (ofp,"\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+		    score, NodeCnt+QuiesCnt);	 
       }
    }
 
