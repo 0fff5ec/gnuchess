@@ -387,6 +387,7 @@ extern short n; 		/* Last mobility returned by CTL */
 extern short ExchCnt[2];
 extern int newpos, existpos;		/* For book statistics */
 extern short bookloaded;
+extern int BKRequested;	/* BKRequested 1 xboard issued bk 0 not */
 
 enum Piece { empty, pawn, knight, bishop, rook, queen, king, bpawn };
 

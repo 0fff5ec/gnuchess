@@ -464,8 +464,9 @@ void InputCmd ()
    else if (strcmp (cmd, "bk") == 0)
    {
 	/* Implement Basic Book function for Xboard */
-	printf (" GNU Chess Opening Book is built using the\n");
-	printf (" 'book add file.pgn' command\n");
+	BKRequested=1;
+	BookQuery();
+	BKRequested=0;
 	printf ("\n");
         fflush(stdout);
    }

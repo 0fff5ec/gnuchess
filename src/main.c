@@ -173,6 +173,7 @@ float maxtime;		/* Max time for the next searched move */
 short n;		/* Last mobility returned by CTL */
 short ExchCnt[2];	/* How many exchanges? */
 short bookloaded = 0;  	/* Is the book loaded already into memory? */
+int BKRequested ;
 
 short slider[8] = { 0, 0, 0, 1, 1, 1, 0, 0 };
 short Value[7] = { 0, ValueP, ValueN, ValueB, ValueR, ValueQ, ValueK};

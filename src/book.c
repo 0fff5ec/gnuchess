@@ -214,23 +214,24 @@ int BookQuery()
     }
   }
 fini:  
-  if (!(flags & XBOARD))
+  if (!(flags & XBOARD) || BKRequested == 1)
   {
-    fprintf(ofp,"Opening database: %d book positions.\n",bigbookcnt);
-    fprintf(ofp,"In this position, %d move%c %s book moves%c\n\n",
+    fprintf(ofp," Opening database: %d book positions.\n",bigbookcnt);
+    fprintf(ofp," In this position, %d move%c %s book moves%c\n",
 	mcnt+1,mcnt+1!=1?'s':(char)NULL,mcnt+1!=1?"are":"is",mcnt+1>0?':':'.');
+    fprintf(ofp,"  notation: move(percentage,wins,draws,losses) \n \n");
   }
   /* No book moves */
   if (mcnt == -1) {return(0); }
   k = 0;
   if (bookmode == BOOKPREFER) best = -INFINITY;
   if (mcnt+1) {
-    if ( !(flags & XBOARD)) {
+    if ( !(flags & XBOARD) || BKRequested == 1) {
       for (i = 0; i <= mcnt; i++) {
-	if (!(flags & XBOARD)) {
+	if (!(flags & XBOARD) || BKRequested == 1) {
 	  SANMove(m[matches[i]].move,1);
           tot = r[matches[i]].wins+r[matches[i]].draws+r[matches[i]].losses;
-	  fprintf(ofp,"%s(%2.0f/%d/%d/%d) ",SANmv,
+	  fprintf(ofp," %s(%2.0f/%d/%d/%d) ",SANmv,
 		100.0*(r[matches[i]].wins+(r[matches[i]].draws/2))/tot,
 		r[matches[i]].wins,
 		r[matches[i]].losses,
@@ -238,8 +239,8 @@ fini:
           if ((i+1) % 4 == 0) fputc('\n',ofp);
 	}
       }
-      if (!(flags & XBOARD))
-        if (i % 4 != 0) fprintf(ofp,"\n\n");
+      if (!(flags & XBOARD) || BKRequested == 1)
+        if (i % 4 != 0) fprintf(ofp," \n\n");
     }
     if (bookmode == BOOKRAND) {
       k = rand();

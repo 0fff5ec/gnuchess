@@ -685,6 +685,8 @@ void InitVars ()
    SETBIT (rings[3], G8);
    SETBIT (rings[3], H8);
 
+   BKRequested = 0;
+
    boardhalf[white] = RankBit[0]|RankBit[1]|RankBit[2]|RankBit[3];
    boardhalf[black] = RankBit[4]|RankBit[5]|RankBit[6]|RankBit[7];
    boardside[ks] = FileBit[4]|FileBit[5]|FileBit[6]|FileBit[7];
