@@ -128,29 +128,12 @@ int SearchRoot (short depth, int alpha, int beta)
          {
             if (alpha < score && score < beta)
 	    {
-#ifdef DEBUG
-               if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	   		NodeCnt+QuiesCnt <= DebugNode)
-	          printf ("Re-search p=%d s=%d [%d/%d] %s\n", ply, score, 
-				alpha, beta, AlgbrMove (p->move));
-#endif
 	       nodetype = PV;
                score = -Search (2, depth-DEPTH, -beta, -score, nodetype);
 	    }
          }
       }
       UnmakeMove (xside, &p->move);
-#ifdef DEBUG
-      if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	  NodeCnt+QuiesCnt <= DebugNode)
-      {
-         SANMove (p->move, 1);
-         printf ("p%d %d d=%d %s n->s=%d s=%d b=%d %s [%d, %d] %ld\n",ply, 
-		(int) (p-TreePtr[ply]), depth/DEPTH, SANmv, p->score, score, best, 
-		ntype[nodetype], savealpha, beta, NodeCnt+QuiesCnt);
-         fflush (stdout);
-      }
-#endif
 
       ply1score = p->score = score;
       if (score > best)
@@ -307,10 +290,6 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
       depth += DEPTH;
       extend = true;
    }
-/* OLD
-   else if (depth <= DEPTH && cboard[t0] == pawn && (RANK(t0) == rank7[xside]))
-   else if (depth <= DEPTH && cboard[t0] == pawn && (BitPosArray[t0] & brank67[xside]) != NULLBITBOARD)
-*/
    /* 6th or 7th rank extension */
    else if (depth <= DEPTH && cboard[t0] == pawn && (RANK(t0) == rank7[xside] || RANK(t0) == rank6[xside]))
    {
@@ -339,10 +318,6 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
  *  form of selectivity here.
  *
  **************************************************************************/
-/*
-   if (nodetype != PV && !extend && !(g1 & CAPTURE) && cboard[t0] != pawn)
-      depth -= DEPTH>>1;
-*/
 
    if (depth <= 0)
       return (Quiesce (ply, alpha, beta)); 
@@ -409,18 +384,6 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
       MakeNullMove (side);
       nullscore = -Search (ply+1, depth-DEPTH-R, -beta, -beta+1, nodetype);
       UnmakeNullMove (xside); 
-#ifdef DEBUG
-      if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	  NodeCnt+QuiesCnt <= DebugNode)
-      {
-         for (i=2; i<=ply; i++)
-            printf ("   "); 
-         printf ("p%d %d d=%d null n->s=%d s=%d b=-32768 %s [%d, %d] %ld\n",
-		ply, 0, depth/DEPTH, 0, nullscore, ntype[nodetype], alpha, beta,
-		NodeCnt+QuiesCnt);
-         fflush (stdout);
-      }
-#endif
       if (nullscore >= beta)
       {
          NullCutCnt++;
@@ -564,12 +527,6 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
 	       nodetype = PV;
             if (alpha < score && score < beta)
 	    {
-#ifdef DEBUG
-               if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	          NodeCnt+QuiesCnt <= DebugNode)
-	          printf ("Re-search p=%d s=%d [%d/%d] %s\n", ply, score, 
-				alpha, beta, AlgbrMove (p->move));
-#endif
                score = -Search (ply+1, depth-DEPTH, -beta, -score, nodetype);
 	    } 
 	    if (nodetype == PV && score <= alpha &&
@@ -590,11 +547,6 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
 	 {
 	    threatply = ply;
 	    threatmv  = p->move;
-#ifdef notdef
-            if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	       NodeCnt+QuiesCnt <= DebugNode)
-	    printf ("Threat ply=%d mv=%s\n", ply, AlgbrMove (threatmv));
-#endif
             MakeNullMove (side);
             nullscore = -Search(ply+1, depth-1-R, -alpha+THREATMARGIN, 
 			-alpha+THREATMARGIN+1, nodetype);
@@ -606,11 +558,6 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
 	 {
 	    ThrtExtCnt++;
             ThrtCnt[ply+1]++;
-#ifdef DEBUG
-            if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	       NodeCnt+QuiesCnt <= DebugNode)
-	    printf ("Threat ext ply=%d mv=%s\n", ply, AlgbrMove (p->move));
-#endif
             MakeMove (side, &p->move);
             score = -Search (ply+1, depth, -beta, -alpha, nodetype);
             UnmakeMove (xside, &p->move);
@@ -619,21 +566,6 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
       }	
 #endif
       
-#ifdef DEBUG
-      if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	  NodeCnt+QuiesCnt <= DebugNode)
-      {
-         short i;
-         SANMove (p->move, ply); 
-         for (i=2; i<=ply; i++)
-            printf ("   "); 
-         printf ("p%d %d d=%d %s n->s=%d s=%d b=%d %s [%d, %d] %ld %d\n",
-		ply, (int)(p-TreePtr[ply]), depth/DEPTH, SANmv, p->score, score, 
-		best, ntype[nodetype], alpha, beta, NodeCnt+QuiesCnt,
-		KingThrt[side][ply+1]);
-         fflush (stdout);
-      }
-#endif
       if (score > best)
       {
          best = score;
@@ -710,10 +642,6 @@ void ShowLine (int move, int score, char c)
    short i, len;
    int pvar[MAXPLYDEPTH];
 
-/* SMC
-   if (flags & XBOARD)
-      return;
-*/
    /* SMC */
    if (!(flags & POST))
      return;

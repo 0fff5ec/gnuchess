@@ -74,15 +74,6 @@ void TTPut (short side, short depth, short ply, int alpha, int beta,
       t->score = score + ( score > 0 ? ply : -ply);
    else
       t->score = score;
-
-#ifdef DEBUG
-   if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-       NodeCnt+QuiesCnt <= DebugNode)
-   {
-      printf ("HASHPUT p=%d d=%d key=%lx s=%d [%d %d] f=%d %s\n", ply, depth, 
-	  t->key, score, alpha, beta, t->flag, AlgbrMove (move));
-   }
-#endif
 }
 
 
@@ -114,14 +105,6 @@ short TTGet (short side, short depth, short ply, int alpha, int beta,
       return (POORDRAFT);
    if (MATESCORE(*score))
       *score -= (*score > 0 ? ply : -ply);
-#ifdef DEBUG
-   if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	NodeCnt+QuiesCnt <= DebugNode)
-   {
-      printf ("HASHGET p=%d d=%d hd=%d key=%lx s=%d [%d %d] f=%d %s\n", ply, 
-	depth, t->depth, Key, *score, alpha, beta, t->flag, AlgbrMove (*move));
-   }
-#endif
    return (t->flag);
 }
 

@@ -183,13 +183,6 @@ void InitMoveArray ()
             } while (range[piece] && t != -1);
          }
       }
-#ifdef DEBUG1
-      for (f = 0; f < 64; f++)
-      {
-         printf ("%d %d\n", piece, f); 
-         ShowBitBoard (&MoveArray[piece][f]); 
-      }
-#endif
    }
 }
 
@@ -233,16 +226,6 @@ void InitRay ()
          }
       }
    }
-#ifdef DEBUG2
-   for (f = 0; f < 64; f++)
-   {
-      for (ray = 0; ray < 8; ray++)
-      {
-         printf ("Ray = %d  square = %s\n", ray, algbr[f]);
-         ShowBitBoard (&Ray[f][ray]);
-      }
-   }
-#endif
 }
 
 
@@ -281,16 +264,6 @@ void InitFromToRay ()
          }
       }
    }
-#ifdef DEBUG3
-   for (f = 0; f < 64; f++)
-   {
-      for (t = 0; t < 64; t++)
-      {
-         printf ("%d %d\n", f, t);
-         ShowBitBoard (&FromToRay[f][t]); 
-      }
-   }
-#endif
 }
 
 
@@ -320,14 +293,6 @@ void InitRankFileBit ()
       FileBit[i] = b;
       b <<= 1;
    }
-
-#ifdef DEBUG4
-   for (i = 0; i < 8; i++)
-      ShowBitBoard (&RankBit[i]);
-
-   for (i = 0; i < 8; i++)
-      ShowBitBoard (&FileBit[i]);
-#endif
 }
 
 
@@ -381,13 +346,6 @@ void InitPassedPawnMask ()
       if (FILE(sq) != 7)
          PassedPawnMask[black][sq] |= Ray[sq+1][4];
    }
-
-#ifdef DEBUG5
-   for (sq = 0; sq < 64; sq++)
-      ShowBitBoard (&PassedPawnMask[white][sq]);
-   for (sq = 0; sq < 64; sq++)
-      ShowBitBoard (&PassedPawnMask[black][sq]);
-#endif
 }
 
 
@@ -455,15 +413,6 @@ void InitSquarePawnMask ()
       SquarePawnMask[white][sq] = SquarePawnMask[white][sq+8];
    for (sq = A7; sq <= H7; sq++)
       SquarePawnMask[black][sq] = SquarePawnMask[black][sq-8];
-
-#ifdef DEBUG6
-   for (sq = 0; sq < 64; sq++)
-   {
-      printf ("Square = %s\n", algbr[sq]);
-      ShowBitBoard (&SquarePawnMask[white][sq]);
-      ShowBitBoard (&SquarePawnMask[black][sq]);
-   }
-#endif
 }
 
  
@@ -513,10 +462,6 @@ void InitRotAtak ()
 	 Rook90Atak[rot1[sq]][map] = 0;
 	 Bishop45Atak[rot2[sq]][map] = 0;
 	 Bishop315Atak[rot3[sq]][map] = 0;
-/*
-         if (cmap[sq] & map)
-         {
-*/
 	    sq1 = sq2 = sq;
 	    while (sq1 > 0)
 	    {
@@ -539,24 +484,6 @@ void InitRotAtak ()
 	    Bishop315Atak[rot3[sq]][map] =
 		FromToRay[rot3[sq]][rot3[sq1]] |
 		FromToRay[rot3[sq]][rot3[sq2]];
-#ifdef DEBUG7
-	    {
-	       short i;
-	       printf ("%x\t", map);
-	       for (i = 0; i < 8; i++)
-	          printf ("%d ", cmap[i] & map ? 1 : 0);
-	       printf ("\n%s : %s %s\n", algbr[sq], algbr[sq1], algbr[sq2]);
-/*
-	       ShowBitBoard (&Rook00Atak[sq][map]);
-	       ShowBitBoard (&Rook90Atak[rot1[sq]][map]);
-	       ShowBitBoard (&Bishop45Atak[rot2[sq]][map]);
-	       ShowBitBoard (&Bishop315Atak[rot3[sq]][map]);
-*/
-	    }
-#endif
-/*
-	 }
-*/
       }
    } 
 

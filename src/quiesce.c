@@ -72,7 +72,6 @@ int Quiesce (short ply, int alpha, int beta)
    savealpha = alpha;
    pbest = NULL;
    alpha = MAX(best, alpha);
-/*   delta = alpha - 350 - best; */
    delta = MAX (alpha - 150 - best, 0);
 
    for (p = TreePtr[ply]; p < TreePtr[ply+1]; p++)
@@ -84,11 +83,6 @@ int Quiesce (short ply, int alpha, int beta)
          continue;
 
       /* If capture cannot bring score near alpha, give up */
-/*
-      if (Value[cboard[TOSQ(p->move)]] + Value[PROMOTEPIECE(p->move)] 
-	 		< delta)
-	 continue; 
-*/
       if (p->score == -INFINITY)
 	 continue;
 
@@ -113,19 +107,6 @@ int Quiesce (short ply, int alpha, int beta)
       }
       score = -Quiesce (ply+1, -beta, -alpha);
       UnmakeMove (xside, &p->move);
-#ifdef DEBUG
-      if (flags & DEBUGG && ply <= DebugPly && Idepth >= DebugDepth &&
-	  NodeCnt+QuiesCnt <= DebugNode)
-      {
-         SANMove (p->move, ply);
-         for (i = 2; i <= ply; i++)
-            printf ("   ");
-         printf ("p%d %d Q %s n->s=%d s=%d b=%d [%d, %d] %ld\n", ply,
-		(int)(p-TreePtr[ply]), SANmv, p->score, score, best, 
-		savealpha, beta, NodeCnt+QuiesCnt);
-	 fflush (stdout);
-      }
-#endif
       if (score > best)
       {
          best = score;
