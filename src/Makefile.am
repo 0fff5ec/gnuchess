@@ -7,6 +7,8 @@ gnuchess_SOURCES = atak.c book.c cmd.c debug.c epd.c eval.c genmove.c hash.c\
  pgn.c ponder.c quiesce.c random.c repeat.c search.c solve.c sort.c\
  swap.c test.c ttable.c util.c common.h book.h eval.h inlines.h version.h
 
-AM_CFLAGS = -D_REENTRANT
+AM_CFLAGS = -D_REENTRANT $(PTHREAD_CFLAGS)
+
+LDFLAGS = $(PTHREAD_LDFLAGS)
 
 DISTCLEANFILES = *~

@@ -83,7 +83,9 @@ gnuchess_SOURCES = atak.c book.c cmd.c debug.c epd.c eval.c genmove.c hash.c\
  swap.c test.c ttable.c util.c common.h book.h eval.h inlines.h version.h
 
 
-AM_CFLAGS = -D_REENTRANT
+AM_CFLAGS = -D_REENTRANT $(PTHREAD_CFLAGS)
+
+LDFLAGS = $(PTHREAD_LDFLAGS)
 
 DISTCLEANFILES = *~
 subdir = src
@@ -110,7 +112,6 @@ gnuchess_LDFLAGS =
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I.
 CPPFLAGS = @CPPFLAGS@
-LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 @AMDEP_TRUE@DEP_FILES = $(DEPDIR)/atak.Po $(DEPDIR)/book.Po \
@@ -129,9 +130,9 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 @AMDEP_TRUE@	$(DEPDIR)/test.Po $(DEPDIR)/ttable.Po \
 @AMDEP_TRUE@	$(DEPDIR)/util.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(PTHREAD_CFLAGS)
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(PTHREAD_LIBS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(gnuchess_SOURCES)
 DIST_COMMON = ./stamp-h.in Makefile.am Makefile.in config.h.in
