@@ -422,7 +422,7 @@ int main (int argc, char *argv[])
 
   Initialize ();
 
-  if ( opt_easy = 0)
+  if ( opt_easy == 0)
    SET (flags, HARD);
 
   if (argc > 1) {
@@ -452,6 +452,7 @@ int main (int argc, char *argv[])
     RealGameCnt = GameCnt;
     RealSide = board.side;
     dbg_printf("Waking up input...\n");
+    dbg_printf("input_status = %d\n", input_status);
     input_wakeup();
     dbg_printf("input_status = %d\n", input_status);
     /* Ponder only after first move */

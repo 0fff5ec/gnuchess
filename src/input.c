@@ -98,6 +98,8 @@ static pthread_t input_thread;
 
 static pthread_mutex_t input_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t input_cond = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t wakeup_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t wakeup_cond = PTHREAD_COND_INITIALIZER;
 
 void *input_func(void *arg __attribute__((unused)) )
 {
@@ -109,46 +111,43 @@ void *input_func(void *arg __attribute__((unused)) )
 	      RealSide ? "Black" : "White", 
 	      (RealGameCnt+1)/2 + 1 );
     }
+    pthread_mutex_lock(&input_mutex);
+    input_status = INPUT_NONE;
     getline(prompt);
     input_status = INPUT_AVAILABLE;
-    pthread_mutex_lock(&input_mutex);
-    pthread_cond_wait(&input_cond, &input_mutex);
+    pthread_cond_signal(&input_cond);
     pthread_mutex_unlock(&input_mutex);
+
+    pthread_mutex_lock(&wakeup_mutex);
+    pthread_cond_wait(&wakeup_cond, &wakeup_mutex);
+    pthread_mutex_unlock(&wakeup_mutex);
   }
   return NULL;
 }
 
 void input_wakeup(void)
 {
-  pthread_mutex_lock(&input_mutex);
-  pthread_cond_signal(&input_cond);
-  input_status = INPUT_NONE;
-  pthread_mutex_unlock(&input_mutex);
+  
+  if ( pthread_mutex_trylock(&input_mutex) == 0 ){
+    if ( input_status == INPUT_AVAILABLE ){
+      input_status = INPUT_NONE;
+      pthread_mutex_unlock(&input_mutex);
+    }
+  }
+  pthread_mutex_lock(&wakeup_mutex);
+  pthread_cond_signal(&wakeup_cond);
+  pthread_mutex_unlock(&wakeup_mutex);
 }
-
-/* XXX: The following definitely needs improvement. --Lukas */
 
 void wait_for_input(void)
 {
-#ifdef HAVE_NANOSLEEP
-  struct timespec delay, remains;
-  delay.tv_sec=0;
-  delay.tv_nsec=50000000; /* 50 milliseconds */
-#else /* NO HAVE_NANOSLEEP */
-#ifdef HAVE_USLEEP 
-  unsigned long usec=50000 ; /* 50 milliseconds */
-#endif /* HAVE_USLEEP */
-#endif /* No HAVE_NANOSLEEP */
-  while (input_status == INPUT_NONE) { 
-
-#ifdef HAVE_NANOSLEEP
-    nanosleep(&delay,&remains);
-#else /* No HAVE_NANOSLEEP */
-#ifdef HAVE_USLEEP
-    usleep(usec);
-#endif /* HAVE_USLEEP */
-#endif /* No HAVE_NANOSLEEP */
-  };
+	// Read without mutex -- whoops
+  while (input_status == INPUT_NONE) {
+    pthread_mutex_lock(&input_mutex);
+    if (input_status == INPUT_NONE)
+      pthread_cond_wait(&input_cond, &input_mutex);
+    pthread_mutex_unlock(&input_mutex);
+  }
 }
 
 void InitInput(void)

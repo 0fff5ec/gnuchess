@@ -1,3 +1,13 @@
+2003-06-30 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Fix to Posix thread for readline
+	
+	* Fix to ensure "HARD" is default
+	
+2003-06-30 Mike Curtis <chess@wt.net>
+	
+	* Improve Posix thread handling
+
 2003-06-28 Mike Curtis <chess@wt.net>
 
 	* Portability fix IsTrustedPlayer

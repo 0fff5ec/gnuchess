@@ -51,7 +51,7 @@ AC_FUNC_MALLOC
 AC_FUNC_MEMCMP
 
 dnl See above, how do we treat failure here?
-AC_CHECK_FUNCS(gettimeofday strchr strcspn strstr strerror memset nanosleep usleep strdup strtol)
+AC_CHECK_FUNCS(gettimeofday strchr strcspn strstr strerror memset strdup strtol)
 
 dnl Don't Check for getopt_long 
 dnl just use bundled version like hello does
