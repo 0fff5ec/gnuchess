@@ -348,6 +348,7 @@ extern BitBoard Bishop45Atak[64][256];
 extern BitBoard Bishop315Atak[64][256];
 extern BitBoard pinned;
 extern BitBoard rings[4];
+extern BitBoard boxes[2];
 extern BitBoard stonewall[2];
 extern BitBoard pieces[2];
 extern BitBoard mask_kr_trapped_w[3];

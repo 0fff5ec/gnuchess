@@ -1,3 +1,7 @@
+2003-01-29 Anil Mungal <vagrancy@rogers.com>
+
+	* Two minor optimisations to eval.c (1% speed-up test evalspeed)
+
 2003-01-29 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Use getopt_long for option handling

@@ -228,10 +228,10 @@ int ScoreP (short side)
     n = 0;
     if (side == white)
       n = nbits((c >> 8) & board.b[xside][pawn] &
-               (rings[0]|rings[1]|rings[2]));
+               boxes[1]);
     else
       n = nbits((c << 8) & board.b[xside][pawn] &
-               (rings[0]|rings[1]|rings[2]));
+               boxes[1]);
     if (n > 1)
       s += n * LOCKEDPAWNS;
   }
@@ -376,7 +376,7 @@ static inline int CTL(short sq, short piece __attribute__ ((unused)), short side
   controlled = AttackXFrom (sq, side);
 
   /* Center control */
-  n = nbits (controlled & (rings[0]|rings[1]));
+  n = nbits (controlled & boxes[0]);
   s += 4*n;
 
   /* Attacks against enemy king */
@@ -543,6 +543,10 @@ int BishopTrapped (short side)
  ****************************************************************************/
 {
    int s = 0;
+
+   /* Don't waste time */
+   if (board.b[side][bishop] == NULLBITBOARD)
+     return (0); 
 
    if (side == white)
    {

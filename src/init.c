@@ -621,7 +621,8 @@ void InitVars (void)
    rings[2] = ULL(0x007E424242427E00);
    rings[3] = ULL(0xFF818181818181FF);
 
-
+   boxes[0] = ULL(0x00003C3C3C3C0000); /* rings[0] | rings[1] */
+   boxes[1] = ULL(0x007E7E7E7E7E7E00); /* rings[0] | rings[1] | rings[2] */
 
    boardhalf[white] = RankBit[0]|RankBit[1]|RankBit[2]|RankBit[3];
    boardhalf[black] = RankBit[4]|RankBit[5]|RankBit[6]|RankBit[7];

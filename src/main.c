@@ -55,6 +55,7 @@ BitBoard Bishop45Atak[64][256];
 BitBoard Bishop315Atak[64][256];
 BitBoard pinned;
 BitBoard rings[4];
+BitBoard boxes[2];
 BitBoard stonewall[2];
 BitBoard pieces[2];
 BitBoard mask_kr_trapped_w[3];
