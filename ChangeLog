@@ -1,6 +1,13 @@
+2002-03-02  Simon Waters <simon@wretched.demon.co.uk>
+
+	* Modified code to print "Illegal move: cmd" when
+	  an illegal move or unknown command is entered.
+
 2002-02-26  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Hacked version of ac_need_stdint_h AC macro to fix Win32 build
+
+GNU Chess 5.03 Released
 
 2002-02-12  Simon Waters <simon@wretched.demon.co.uk>
 

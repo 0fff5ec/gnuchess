@@ -551,6 +551,12 @@ void InputCmd ()
 	 SET (flags, THINK);
       }
       else {
+	/*
+	 * Must Output Illegal move to prevent Xboard accepting illegal
+	 * en passant captures and other subtle mistakes
+	 */
+	printf("Illegal move: %s\n",cmd);
+ 	fflush(stdout);
       }
    }
   done:
