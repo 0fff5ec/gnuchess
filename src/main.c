@@ -377,5 +377,7 @@ int main (int argc, char *argv[])
    /*  Some cleaning up  */
    free (HashTab[0]);
    free (HashTab[1]);
+   free (PawnTab[0]);
+   free (PawnTab[1]);
    return (0);
 }

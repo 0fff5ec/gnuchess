@@ -808,10 +808,9 @@ void InitHashTable ()
 {
    unsigned int size;
  
-   free (HashTab[0]);
-   free (HashTab[1]);
-   HashTab[0] = (HashSlot *) calloc (HashSize, sizeof (HashSlot));
-   HashTab[1] = (HashSlot *) calloc (HashSize, sizeof (HashSlot));
+   HashTab[0] = (HashSlot *) realloc (HashTab[0], HashSize * sizeof (HashSlot));
+   HashTab[1] = (HashSlot *) realloc (HashTab[1], HashSize * sizeof (HashSlot));
+//   HashTab[1] = (HashSlot *) realloc (HashSize, sizeof (HashSlot));
    if (HashTab[0] == NULL || HashTab[1] == NULL)
       printf ("Not enough memory for transposition table\n");
    else
@@ -822,8 +821,8 @@ void InitHashTable ()
 		HashSize>>10, size);
    }
 
-   PawnTab[0] = (PawnSlot *) calloc (PAWNSLOTS, sizeof (PawnSlot));
-   PawnTab[1] = (PawnSlot *) calloc (PAWNSLOTS, sizeof (PawnSlot));
+   PawnTab[0] = (PawnSlot *) realloc (PawnTab[0], PAWNSLOTS * sizeof (PawnSlot));
+   PawnTab[1] = (PawnSlot *) realloc (PawnTab[1], PAWNSLOTS * sizeof (PawnSlot));
    if (PawnTab[0] == NULL || PawnTab[1] == NULL)
       printf ("Not enough memory for pawn table\n");
    else
