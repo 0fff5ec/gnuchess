@@ -30,7 +30,7 @@ Now it is time to compile the book. Do:
 
 	ln -s ../book/book.pgn
 	./gnuchess
-	book create book.pgn
+	book add book.pgn
 	quit
 
 This will take a long, long time even on the fastest
@@ -39,7 +39,7 @@ If you don't want to wait (overnight), do this instead:
 
 	head -30000 ../book/book.pgn > smallbook.pgn
 	./gnuchess
-	book create smallbook.pgn
+	book add smallbook.pgn
 	quit
 
 This will make a much smaller book.
