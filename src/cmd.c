@@ -230,7 +230,7 @@ void InputCmd ()
 	  *x = '\000';
 	  break;
 	}
-        *x++;
+        x++;
       }
       suffix = 0;
       for (;;) {
@@ -255,7 +255,7 @@ void InputCmd ()
    }	
    else if (strcmp (cmd, "rating") == 0) {
       sscanf(inputstr,"%hd %hd",&myrating,&opprating); 
-      fprintf(ofp,"my rating = %d, opponent rating = %d\n",myrating,opprating); 
+      fprintf(ofp,"my rating = %hd, opponent rating = %hd\n",myrating,opprating); 
       /* Change randomness of book based on opponent rating. */
       /* Basically we play narrower book the higher the opponent */
       if (opprating >= 1700) bookfirstlast = 2;

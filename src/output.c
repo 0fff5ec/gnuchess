@@ -30,7 +30,6 @@
 #include <stdio.h>
 #include "common.h"
 
-void ShowTime (void);
 void ShowTime ()
 /**************************************************************************
  *
@@ -264,7 +263,6 @@ void ShowMvboard ()
    printf ("\n");
 }
    
-void ShowGame (void);
 void ShowGame (void)
 {
   short i;

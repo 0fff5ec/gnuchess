@@ -544,6 +544,9 @@ void ShowBitBoard (BitBoard *);
 void ShowCBoard (void);
 void ShowMvboard (void);
 
+void ShowGame (void);
+void ShowTime (void);
+
 /*  Random numbers routines */
 unsigned int long Rand32 (void);
 HashType Rand64 (void);

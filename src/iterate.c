@@ -32,7 +32,6 @@
 #define WINDOW	75
 
 static struct timeval t1, t2;
-static struct timezone tz;
 extern short stage;
 short InChkDummy, terminal;
 
@@ -108,7 +107,7 @@ void Iterate (void)
    GenMoves (1);
    FilterIllegalMoves (1); 
    SortRoot ();
-   gettimeofday (&t1, &tz);
+   gettimeofday (&t1, NULL);
    InChk[1] = SqAtakd (board.king[side], 1^side);
 
    /*  Are there any legal moves? */
@@ -342,7 +341,7 @@ void Iterate (void)
 
 void GetElapsed (void)
 {
-   gettimeofday (&t2, &tz);
+   gettimeofday (&t2, NULL);
    et = (t2.tv_sec - t1.tv_sec) + (double) (t2.tv_usec - t1.tv_usec)/1000000.0;
 }
 

@@ -25,6 +25,8 @@
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "common.h"
 #include "book.h"
 
@@ -44,27 +46,22 @@ typedef struct {
 playerentry playerdb[MAXPLAYERS];
 static char lname[100];
 
-int scorecompare(playerentry *, playerentry *);
-int rscorecompare(playerentry *, playerentry *);
-int namecompare(playerentry *, playerentry *);
-
-int rscorecompare(playerentry *a, playerentry *b)
+static int rscorecompare(const void *aa, const void *bb)
 {
+    const playerentry *a = (const playerentry *)aa;
+    const playerentry *b = (const playerentry *)bb;   
     float ascore, bscore;
-    /*int ascore, bscore; */
     ascore = (a->wins+(a->draws/2))/(a->wins+a->draws+a->losses);
     bscore = (b->wins+(b->draws/2))/(b->wins+b->draws+b->losses);
-/*
-    if (bscore > ascore) return(-1);
-    else if (bscore < ascore) return(1);
-*/
     if (ascore > bscore) return(-1);
     else if (bscore > ascore) return(1);
     else return(0);
 }
 
-int scorecompare(playerentry *a, playerentry *b)
+static int scorecompare(const void *aa, const void *bb)
 {
+    const playerentry *a = (const playerentry *)aa;
+    const playerentry *b = (const playerentry *)bb;   
     int ascore, bscore;
     ascore = 100*(a->wins+(a->draws/2))/(a->wins+a->draws+a->losses);
     bscore = 100*(b->wins+(b->draws/2))/(b->wins+b->draws+b->losses);
@@ -73,8 +70,10 @@ int scorecompare(playerentry *a, playerentry *b)
     else return(0);
 }
 
-int namecompare(playerentry *a, playerentry *b)
+static int namecompare(const void *aa, const void *bb)
 {
+    const playerentry *a = (const playerentry *)aa;
+    const playerentry *b = (const playerentry *)bb;   
     if (strcmp(a->player,b->player) > 0) return(1);
     else if (strcmp(a->player,b->player) < 0) return(-1);
     else return(0);
@@ -127,13 +126,6 @@ void DBWritePlayer (void)
           playerdb[i].wins,
           playerdb[i].losses,
 	  playerdb[i].draws);
-/*
-       printf("%s %d %d %d\n",
-	playerdb[i].player,
-	playerdb[i].wins,
-	playerdb[i].losses,
-	playerdb[i].draws);
-*/
      }
    }
    fclose(wfp);
@@ -183,7 +175,7 @@ void DBUpdatePlayer (char *player, char *resultstr)
     if (*p != ' ') 
       *x++ = *p++;
     else
-	*p++;
+	p++;
   } while (*p != '\0');
   *x = '\000';
   memset(playerdb,0,sizeof(playerdb[MAXPLAYERS]));

@@ -44,7 +44,6 @@ void TestMoveGenSpeed ()
 {
    unsigned long i;
    struct timeval t1, t2;
-   struct timezone tz;
    unsigned long et;
    short side, xside;
 
@@ -54,7 +53,7 @@ void TestMoveGenSpeed ()
    while (ReadEPDFile ("../test/wac.epd", 0))
    {
 */
-      gettimeofday (&t1, &tz);
+      gettimeofday (&t1, NULL);
       side = board.side;
       xside = 1^side;
       for (i = 0; i < 2000000; i++)
@@ -62,7 +61,7 @@ void TestMoveGenSpeed ()
 	 TreePtr[2] = TreePtr[1];
          GenMoves (1);
       }
-      gettimeofday (&t2, &tz);
+      gettimeofday (&t2, NULL);
       et += (t2.tv_sec - t1.tv_sec);
       printf ("Time = %ld\n", et);
 /*
@@ -88,20 +87,19 @@ void TestNonCaptureGenSpeed ()
 {
    unsigned long i;
    struct timeval t1, t2;
-   struct timezone tz;
    unsigned long et;
 
    GenCnt = 0;
    et = 0;
    while (ReadEPDFile ("../test/wac.epd", 0))
    {
-      gettimeofday (&t1, &tz);
+      gettimeofday (&t1, NULL);
       for (i = 0; i < 100000; i++)
       {
 	 TreePtr[2] = TreePtr[1];
          GenNonCaptures (1);
       }
-      gettimeofday (&t2, &tz);
+      gettimeofday (&t2, NULL);
       et += (t2.tv_sec - t1.tv_sec);
       printf ("Time = %ld\n", et);
    }
@@ -124,20 +122,19 @@ void TestCaptureGenSpeed ()
 {
    unsigned long i;
    struct timeval t1, t2;
-   struct timezone tz;
    unsigned long et;
 
    GenCnt = 0;
    et = 0;
    while (ReadEPDFile ("../test/wac.epd", 0))
    {
-      gettimeofday (&t1, &tz);
+      gettimeofday (&t1, NULL);
       for (i = 0; i < 200000; i++)
       {
 	 TreePtr[2] = TreePtr[1];
          GenCaptures (1);
       }
-      gettimeofday (&t2, &tz);
+      gettimeofday (&t2, NULL);
       et += (t2.tv_sec - t1.tv_sec);
       printf ("Time = %ld\n", et);
    }
@@ -223,18 +220,17 @@ void TestEvalSpeed ()
 {
    unsigned long i;
    struct timeval t1, t2;
-   struct timezone tz; 
 
    et = 0;
    EvalCnt = 0;
    while (ReadEPDFile ("../test/wac.epd", 0))
    {
-      gettimeofday (&t1, &tz);
+      gettimeofday (&t1, NULL);
       for (i = 0; i < NEVALS; i++)
       {
          (void) Evaluate (-INFINITY, INFINITY);
       }
-      gettimeofday (&t2, &tz);
+      gettimeofday (&t2, NULL);
       et += (t2.tv_sec - t1.tv_sec) + 
 		(double) (t2.tv_usec - t1.tv_usec)/1000000.0;
       printf ("Time = %.1f\n", et);

@@ -176,7 +176,6 @@ void BookPGNReadFromFile (char *file)
    int moveno, result, n, i, ngames = 0;
    leaf *p;
    struct timeval t1, t2;
-   struct timezone tz;
    unsigned long et;
    short playercolor, examinecolor, playerfound;
 /* Only players in the table below are permitted into the opening book 
@@ -295,7 +294,7 @@ void BookPGNReadFromFile (char *file)
   };
 
    et = 0.0;
-   gettimeofday (&t1, &tz);
+   gettimeofday (&t1, NULL);
    result = -1;
    fp = fopen (file, "r");
    if (fp == NULL)
@@ -421,7 +420,7 @@ void BookPGNReadFromFile (char *file)
    CLEAR (flags, THINK);
    myrating = opprating = 0;
 
-   gettimeofday (&t2, &tz);
+   gettimeofday (&t2, NULL);
    et += (t2.tv_sec - t1.tv_sec);
    putchar('\n');
 

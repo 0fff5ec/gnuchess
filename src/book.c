@@ -51,11 +51,10 @@ struct hashtype {
   HashType key;
 } bookpos[MAXBOOK];
 
-int compare(leaf *, leaf *);
-int compare(a, b)
-leaf *a;
-leaf *b;
+static int compare(const void *aa, const void *bb)
 {
+    const leaf *a = (const leaf *)aa;
+    const leaf *b = (const leaf *)bb;
     if (b->score > a->score) return(1);
     else if (b->score < a->score) return(-1);
     else return(0);
