@@ -49,9 +49,6 @@ void SortCaptures (short ply)
    leaf *p;
    int temp, f, t;
 
-//printf ("\n SortCaptures \n");
-//ShowBoard();
-
    for (p = TreePtr[ply]; p < TreePtr[ply+1]; p++)
    {
       f = Value[cboard[FROMSQ(p->move)]];
@@ -63,7 +60,6 @@ void SortCaptures (short ply)
          temp = SwapOff (p->move);
 	 p->score = (temp < 0 ? -INFINITY : temp);
       }
-//printf (" %s %d \n", AlgbrMove(p->move), p->score);
 
    }
 }
@@ -88,9 +84,6 @@ void SortMoves (short ply)
    side = board.side;
    xside = 1^side;
    enemyP = board.b[xside][pawn];
-
-//printf ("\n SortMoves \n");
-//ShowBoard();
 
    for (p = TreePtr[ply]; p < TreePtr[ply+1]; p++)
    {
@@ -140,8 +133,6 @@ void SortMoves (short ply)
         /* Look at pushing Passed pawns first */
         if ( (enemyP & PassedPawnMask[side][t]) == NULLBITBOARD )
            p->score +=50;
-
-//printf (" %s %d \n", AlgbrMove(p->move), p->score);
       } 
   }
 }
@@ -169,7 +160,6 @@ void SortRoot (void)
       f = Value[cboard[FROMSQ(p->move)]];
       if (cboard[TOSQ(p->move)] != 0 || (p->move & PROMOTION))
       {
-         f = Value[cboard[FROMSQ(p->move)]];
          t = Value[cboard[TOSQ(p->move)]];
          if (f < t)
             p->score = -1000 + t - f;
