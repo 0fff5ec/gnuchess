@@ -149,11 +149,11 @@ void SortRoot ()
       else 
          p->score = -3000 + SwapOff (p->move);
 
-      p->score += taxicab[f][D5] - taxicab[t][E4];
+      p->score += taxicab[FROMSQ(p->move)][D5] - taxicab[TOSQ(p->move)][E4];
 
-      if ( cboard[f] == pawn ) {
+      if ( f == pawn ) {
         /* Look at pushing Passed pawns first */
-        if ( (enemyP & PassedPawnMask[side][t]) == NULLBITBOARD )
+        if ( (enemyP & PassedPawnMask[side][TOSQ(p->move)]) == NULLBITBOARD )
            p->score +=50;
       } 
 
@@ -275,7 +275,7 @@ short PhasePick (leaf **p1, short ply)
          for (p2 = p[ply]; p2 < TreePtr[ply+1]; p2++)
 	 {
             p2->score = history[side][(p2->move & 0x0FFF)] + 
-				15 - taxicab[TOSQ(p2->move)][E4];
+		taxicab[FROMSQ(p2->move)][D5]  - taxicab[TOSQ(p2->move)][E4];
 	    if (p2->move & CASTLING)
 	       p2->score += CASTLINGSCORE;
          }
