@@ -387,6 +387,7 @@ COMMAND LIST
 
   easy 
 	Disables thinking on opponent's time
+	(Same as "gnuchess --easy").
 
   hard
 	Enables thinking on opponent's time

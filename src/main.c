@@ -301,7 +301,7 @@ int main (int argc, char *argv[])
    */
  
   int c;
-  int opt_help = 0, opt_version = 0, opt_post = 0, opt_xboard = 0, opt_hash = 0;
+  int opt_help = 0, opt_version = 0, opt_post = 0, opt_xboard = 0, opt_hash = 0, opt_easy = 0;
   char *endptr;
 
   progname = argv[0]; /* Save in global for cmd_usage */
@@ -315,6 +315,7 @@ int main (int argc, char *argv[])
         {"help", 0, 0, 'h'},
         {"xboard", 0, 0, 'x'},
         {"post", 0, 0, 'p'},
+        {"easy", 0, 0, 'e'},
         {0, 0, 0, 0}
     };
  
@@ -347,6 +348,9 @@ int main (int argc, char *argv[])
        break;
      case 'p':
        opt_post = 1;
+       break;
+     case 'e':
+       opt_easy = 1;
        break;
      case 's':    
        if  ( optarg == NULL ){ /* we have error such as two -s */
@@ -413,8 +417,8 @@ int main (int argc, char *argv[])
 
   Initialize ();
 
-  /* Default to enable pondering */
-  SET (flags, HARD);
+  if ( opt_easy = 0)
+   SET (flags, HARD);
 
   if (argc > 1) {
     for (i = 0; i < argc; i++) {
