@@ -1,5 +1,5 @@
 /* GNU Chess 5.0 - iterate.c - iterative deepening code
-   Copyright (c) 1999 Free Software Foundation, Inc.
+   Copyright (c) 1999-2002 Free Software Foundation, Inc.
 
    GNU Chess is based on the two research programs 
    Cobalt by Chua Kong-Sian and Gazebo by Stuart Cracraft.
@@ -21,7 +21,6 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
-     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,7 +103,7 @@ void Iterate (void)
 
       if (TCinc != 0)
         if (SearchTime < TCinc) {
-	  char *color[2] = { "White", "Black" };
+	  const char *color[2] = { "White", "Black" };
           printf("TimeLimit[%s] = %6.2f\n",color[side],TimeLimit[side]);
           if (TimeLimit[side] > 30) {   /* Only if > 15 seconds left */
             SearchTime = TCinc;

@@ -10,32 +10,43 @@ AC_PROG_AWK
 AC_PROG_LN_S
 AC_STRUCT_TM
 
-dnl Checks for libraries.
-dnl AC_CHECK_LIB(m, sqrt)
-AC_CHECK_LIB(ncurses, tputs)
-AC_CHECK_LIB(readline, readline)
+dnl --with and --enable things
+AC_ARG_WITH(readline, 
+	AC_HELP_STRING([--with-readline],
+		[use readline library if available (default is YES)]),
+	ac_cv_use_readline=$withval,
+	ac_cv_use_readline=yes)
+
+dnl Check for readline library _and_ headers
+if test x"$ac_cv_use_readline" = "xyes"; then
+	AC_CHECK_LIB(ncurses, tputs)
+	AC_CHECK_LIB(readline, readline)
+	AC_CHECK_HEADERS(readline/readline.h readline/history.h)
+fi
 
 dnl Checks for header files.
 AC_HEADER_STDC
 
-AC_CHECK_HEADERS(fcntl.h time.h sys/file.h sys/ioctl.h sys/time.h unistd.h \
- errno.h readline/readline.h readline/history.h)
+dnl Either we should make these checks fail with an
+dnl AC_MSG_ERROR or we should treat missing headers
+dnl with #ifdef somehow. (As it stands, it still gives
+dnl valuable debugging info for bug reports, but not more.)
+AC_CHECK_HEADERS(time.h sys/time.h unistd.h errno.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
-AC_CHECK_SIZEOF(long)
 AC_NEED_STDINT_H(src/GCint.h)
-dnl AC_C_BIGENDIAN
 
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_MALLOC
 AC_FUNC_MEMCMP
-AC_CHECK_FUNCS(alarm gettimeofday strchr strcspn \
-  strstr strtol strtoul strerror memset)
+
+dnl See above, how do we treat failure here?
+AC_CHECK_FUNCS(gettimeofday strchr strcspn strstr strerror memset alarm)
 
 AC_CONFIG_FILES(Makefile src/Makefile)
 AC_OUTPUT

@@ -1,3 +1,7 @@
+2002-10-30 Based on patch from Lukas Geyer
+
+	* Cosmetic changes, e-mail addr. / Copyright etc
+
 2002-10-21 Based on patch from Lukas Geyer
 
 	* Fix buffer overflows in epd.c and pgn.c

@@ -1,5 +1,5 @@
 /* GNU Chess 5.0 - book.h - book symbolic definitions
-   Copyright (c) 1999 Free Software Foundation, Inc.
+   Copyright (c) 1999-2002 Free Software Foundation, Inc.
 
    GNU Chess is based on the two research programs 
    Cobalt by Chua Kong-Sian and Gazebo by Stuart Cracraft.
@@ -21,7 +21,6 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
-     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 #define BOOKSRC "book.src"
 
@@ -29,8 +28,9 @@
  * BookQuery() tries the following filenames in order to find
  * a valid opening book. The array must be NULL-terminated.
  */
-static char * const bookbin[] = {
+static const char * bookbin[] = {
    "book.dat",
+   "/usr/share/games/gnuchess/book.dat",
    "/usr/lib/games/gnuchess/book.dat",
    NULL
 };

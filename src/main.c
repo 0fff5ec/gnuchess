@@ -1,5 +1,5 @@
 /* GNU Chess 5.0 - main.c - entry point
-   Copyright (c) 1999 Free Software Foundation, Inc.
+   Copyright (c) 1999-2002 Free Software Foundation, Inc.
 
    GNU Chess is based on the two research programs 
    Cobalt by Chua Kong-Sian and Gazebo by Stuart Cracraft.
@@ -21,7 +21,6 @@
 
    Contact Info: 
      bug-gnu-chess@gnu.org
-     cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 /*
  *
@@ -31,7 +30,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "common.h"
-#include "book.h"
 #include <time.h>
 #ifdef UNIVERSAL
 #include "univ.h"

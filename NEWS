@@ -1,20 +1,25 @@
-* Changed format of book.dat again, now takes less disk space. 
-  However, one bug used to cause the book building algorithm to
-  neglect a lot of positions which it was supposed to look at, so this
-  leads to more book entries with the same PGN files now.
+New in gnuchess 5.05:
 
-* Added some performance tweaks, should really run faster now.
+- Security fixes: Fixed potential buffer overflows in pgn.c and epd.c.
+- The opening book book.dat can now be in the working directory,
+  /usr/share/games/gnuchess/ or /usr/lib/games/gnuchess/. The first
+  of these directories which contains a valid book.dat is chosen.
+- Changes for easing compilation with MSVC
 
-  06 Feb 2002, Lukas Geyer <geyer@math.uni-dortmund.de>
+[ Could we rewrite history for the older versions, too? I like to
+  have NEWS give a quick overview of what has changed between versions,
+  only user-visible stuff. That is the recommended purpose of NEWS. 
+  However, the following is not yet accurate and complete. ]
 
-* We now have a portable binary format for the opening book.
-  Furthermore, the hash values should now be the same on 64bit
-  machines. (Was different before.)
+New in gnuchess 5.04:
+- Bug fixes (as always)
+- ???
 
-  02 Feb 2002, Lukas Geyer <geyer@math.uni-dortmund.de>
-
-* Converted build system to automake, cleaned up code, in particular
-  counter a nasty gcc optimization bug on PPC architecture.
-
-  30 Jan 2002, Lukas Geyer <geyer@math.uni-dortmund.de>
-
+New in gnuchess 5.03:
+- Bug fixes (The infamous "illegal move" bug should be dead by now.)
+- Architecture independent binary book. Yes, you may now move your
+  binary book around between little and big endian, 32 and 64 bit
+  machines and it should not break. 
+- Build system is now automake/autoconf, should ease porting gnuchess
+  to your favorite strange architecture. (Hell, what about gnuchess on
+  cellphones...?)

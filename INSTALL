@@ -45,21 +45,20 @@ than /usr/local, replace the first line by
 	./configure --prefix=/my/favourite/dir 
 
 You can build an opening book which may enhance the value
-of gnuchess quite a lot. In order to do so, get the file
-book.pgn (see book/README for instructions on how to get it)
-and type the following.
+of gnuchess quite a lot. In order to do so, get the opening
+book from ftp://ftp.gnu.org/pub/gnu/chess/book_1.00.pgn.gz.
+Unpack it with gunzip, run gnuchess and type the following.
 
-	ln -s ../book/book.pgn
-	./gnuchess
 	book add book.pgn
 	quit
 
-This will take a long, long time even on the fastest
-machines. The book is quite large (180,000 master games).
-If you don't want to wait (overnight), do this instead:
+This will take some time, even on fast machines. 
+If you are impatient, do this instead:
 
-	head -30000 ../book/book.pgn > smallbook.pgn
-	./gnuchess
+	head -30000 book.pgn > smallbook.pgn
+
+Then run gnuchess and type
+
 	book add smallbook.pgn
 	quit
 
@@ -73,7 +72,4 @@ March, 2001
 
 Modifications:
 
-Lukas Geyer <geyer@math.uni-dortmund.de>
-
-[ Update: The book building now takes 245 seconds on
-  an Athlon 1GHz computer with a 100MB book.pgn ]
+Lukas Geyer <lukas@debian.org>
