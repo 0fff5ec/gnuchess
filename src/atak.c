@@ -80,8 +80,8 @@ int SqAtakd (int sq, int side)
    return (false);
 }
 
-extern int raybeg[];
-extern int rayend[];
+extern const int raybeg[];
+extern const int rayend[];
 
 void GenAtaks ()
 /*************************************************************************
