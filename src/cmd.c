@@ -408,7 +408,7 @@ void InputCmd ()
     }
   }
 #endif /* UNIVERSAL */
-   else if (strcmp (cmd, "depth") == 0) {
+   else if (strcmp (cmd, "depth") == 0 || strcmp (cmd, "sd") == 0) {
       SearchDepth = atoi (inputstr);
       printf("Search to a depth of %d\n",SearchDepth);
    }
@@ -525,6 +525,39 @@ void InputCmd ()
 	printf("\n"); /* Blank line */
         fflush(stdout);
    }
+   /* List commands we don't implement to avoid illegal moving them */
+   /* Play variant, we instruct interface in protover we play normal */
+   else if (strcmp (cmd, "variant") == 0)
+	;
+   /* accepted and rejected refers to protocol requests */
+   else if (strcmp (cmd, "accepted") == 0)
+	;
+   else if (strcmp (cmd, "rejected") == 0)
+	;
+   /* Set total time for move to be N seconds is "st N" */
+   else if (strcmp (cmd, "st") == 0)
+	;
+   /* Ignore draw offers */
+   else if (strcmp (cmd, "draw") == 0)
+	;
+   /* Predecessor to setboard */
+   else if (strcmp (cmd, "edit") == 0)
+	;
+   /* Give a possible move for the player to play */
+   else if (strcmp (cmd, "hint") == 0)
+	;
+   /* Move now, not applicable */
+   else if (strcmp (cmd, "?") == 0)
+	;
+   /* Enter analysis mode */
+   else if (strcmp (cmd, "analyze") == 0)
+	;
+   /* Enter analysis mode */
+   else if (strcmp (cmd, "analyze") == 0)
+	;
+   /* Our opponent is a computer */
+   else if (strcmp (cmd, "computer") == 0)
+	;
 
    /* everything else must be a move */
    else

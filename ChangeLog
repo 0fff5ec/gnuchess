@@ -1,5 +1,12 @@
 2002-03-02  Simon Waters <simon@wretched.demon.co.uk>
 
+	* Added unknown protocol commands to
+	  avoid "Illegal move: <unknown command>"
+
+	* sd synonym for depth
+
+2002-03-02  Simon Waters <simon@wretched.demon.co.uk>
+
 	* Modified code to print "Illegal move: cmd" when
 	  an illegal move or unknown command is entered.
 
