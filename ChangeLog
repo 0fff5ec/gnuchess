@@ -3,6 +3,10 @@
 	* Changes to lexpgn.l to handle some special
 	  cases.
 
+	* Fix trailing "/" in FEN causes
+	  buffer overflow issues. Trailing "/" is
+	  kept for compatibility reasons with 5.04
+
 2003-06-19 Mike Curtis <chess@wt.net>
 
 	* Portability fix to lexpgn.l

@@ -196,6 +196,15 @@ int ParseEPD (char *p)
         c += (*p - '0');
      else
         c++;
+
+     /* 
+      * Special case, a trailing "/" is accepted on the
+      * end of the board settings.
+      */
+
+     if (r == -8 && p[1] == ' ')
+	     r = 0;
+
      if (r < 0 || c > 8) return EPD_ERROR;
      if (c == 8 && p[1] != '/' && p[1] != ' ') return EPD_ERROR;
      p++;
