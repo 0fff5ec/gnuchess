@@ -202,7 +202,6 @@ NONSPACE	[^ \t\n\r\f]
 
 	/* We start at first " in tag, and must match
 	   till we reach an unprotected " or end of line */
-        /* pattern modified SRW to eat all data till " */
 
 	BEGIN(tagend);
 	/* TODO: if DEST_GAME, store tag symbol and data for later saving */
@@ -265,6 +264,7 @@ NONSPACE	[^ \t\n\r\f]
 			   parsing routine still has to check to make sure
 			   its input don't force it to walk off the end
 			   of any arrays. Still, it helps as a sanity check. */
+			/* printf("FEN tag encountered \"%s\"\n",yytext); */
 			if (yyleng > 82) {
 				printf("Error: FEN too long: %s\n", yytext);
 				return 1;
@@ -272,6 +272,8 @@ NONSPACE	[^ \t\n\r\f]
 			/* Doesn't return failure/success; just
 			   do the best you can */
 			ParseEPD(yytext);
+			/* Remember it can be black to move now */
+			side = board.side;
 			if (data_dest == DEST_GAME) {
 				append_str(&pgn_othertags, "[FEN \"");
 				append_str(&pgn_othertags, yytext);
