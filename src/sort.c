@@ -118,6 +118,8 @@ void SortRoot ()
 
    for (p = TreePtr[1]; p < TreePtr[2]; p++)
    {
+      f = Value[cboard[FROMSQ(p->move)]];
+      t = Value[cboard[TOSQ(p->move)]];
       if (cboard[TOSQ(p->move)] != 0 || (p->move & PROMOTION))
       {
          f = Value[cboard[FROMSQ(p->move)]];
@@ -129,6 +131,9 @@ void SortRoot ()
       }
       else 
          p->score = -3000 + SwapOff (p->move);
+
+      p->score += taxicab[f][D5] - taxicab[t][E4];
+
    }
 }
 
