@@ -407,6 +407,9 @@ int main (int argc, char *argv[])
 
   dbg_open(NULL);
 
+
+  HashSize = 0 ; /* Set HashSize zero */
+
   if ( opt_hash != 0){
     /* 
      * This code should be refactored from here, cmd.c, and init.c

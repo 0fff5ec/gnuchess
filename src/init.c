@@ -672,14 +672,16 @@ void InitVars (void)
    phase = PHASE;
 
 /*  Calculate the ttable hashmask & pawntable hashmask */
-   i = HASHSLOTS;
-   TTHashMask = 0;
-   while ((i>>=1) > 0)
-   {
-      TTHashMask <<= 1;
-      TTHashMask |= 1;
+   if ( HashSize == 0 ){
+     i = HASHSLOTS;
+     TTHashMask = 0;
+     while ((i>>=1) > 0)
+     {
+        TTHashMask <<= 1;
+        TTHashMask |= 1;
+     }
+     HashSize = TTHashMask + 1; 
    }
-   HashSize = TTHashMask + 1; 
    i = PAWNSLOTS;
    PHashMask = 0;
    while ((i>>=1) > 0)
