@@ -148,7 +148,7 @@ void PGNReadFromFile (const char *file)
       c = fgetc(fp);
       if (c == '*') break;
       ungetc (c, fp);
-      fscanf (fp, "%d. %s %s ", &moveno, wmv, bmv);
+      fscanf (fp, "%d. %8s %8s ", &moveno, wmv, bmv);
       p = ValidateMove (wmv);
       if (!p)
       {
