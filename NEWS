@@ -1,3 +1,9 @@
+New in gnuchess 5.07:
+
+- New PGN parser handles annotated PGN when creating opening book
+- Additional command line options
+- gnuchessx script added
+
 New in gnuchess 5.06:
 
 - Added code for pondering and analysis mode

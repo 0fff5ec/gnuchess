@@ -25,6 +25,7 @@ large... I like the TODO of xboard...)
   performance, but maybe not a big deal. Or maybe try to set some
   profiles like "aggressive", "positional" (well, that would be
   difficult), "passive" etc.
+  (A patch has been submitted by Xen Gregg)
 
 - Make gnuchess win against crafty (seems difficult to impossible...)
 
@@ -35,13 +36,4 @@ large... I like the TODO of xboard...)
   programs use to put these things (in the registry?). I would consider
   also moving the list of chess players allowed in the book to some
   configuration file.
-  (A patch has been submitted for an RC file)
-
-- Improve PGN parser to accept "Import style PGN"? Would reduce
-  performance slightly, but one could grab PGN files from all over the
-  net...
-  (Dave Wheeler has submitted a PGN parser patch)
-
-- The book could in fact be built of several PGN files now, maybe one
-  should separate book add (for really adding a book) and book create
-  for compiling a new book from scratch.
+  (A patch has been submitted by Donald McGee)

@@ -18,13 +18,14 @@ Test gnuchess by typing
 
 	./gnuchess.exe (or ./gnuchess on Linux/Unix)
 	easy
+	new
 	post
 	depth 8
 	go
 	quit
 
 You should see an 8-ply search. Most machines these
-days should finish it within a minute or two. If not,
+days should finish it within a few seconds. If not,
 Control-C out, and do 
 
 	depth 6

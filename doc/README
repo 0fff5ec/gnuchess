@@ -72,7 +72,7 @@ them.)
 We don't like messages asking us to implement features. Everybody
 has a list a mile long. Instead, contribute by writing code or pointing
 out very clearly a bug. To report a bug, tell us the version number
-of the program (version.h).
+of the program ("./gnuchess --version").
 
 The code is provided for the purpose of encouraging you to do the
 programming.  If you lack the programming skills to do so, try
@@ -306,7 +306,7 @@ COMPILERS
 
   Whilst GCC is the supported compiler, a key goal is portability. If
   you experience problems compiling GNU Chess with a modern C compiler
-  please let the developer know.
+  please let the developers know.
 
 INTERNET
 
