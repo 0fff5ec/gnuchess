@@ -1,0 +1,74 @@
+TODO for gnuchess-5.03-patch-version: (Items are in
+random order, mostly chronological, the important ones are
+marked IMPORTANT, so that you can grep for them if this
+gets too large... I like the TODO of xboard...)
+
+- Make the location of opening books runtime-configurable
+  (IMPORTANT)
+
+- General cleanups (convert types to explicit ones like
+  uint32_t where needed, recheck global variables like et
+  and much more...)
+
+- Clean up user interface, give some error for unknown
+  commands, split input function mess into functions for
+  UNIVERSAL, readline and plain.
+
+- Benchmark alternatives for the ubiquitous method used to
+  traverse bits, a la (currently)
+	
+	while (b) {
+		sq = leadz(b);
+		CLEARBIT(b, sq);
+		do_something();
+	}
+
+  I do not believe that the current technique is fastest.
+
+- Debianize it.
+
+- Add pondering (may be difficult, use pthreads or some low-level
+  select() stuff?). That would be very close to implementing
+  analysis mode.
+
+- Fix losing on clock (this is something which I always wondered
+  about, made gnuchess somewhat more "human"). (IMPORTANT)
+
+- In some situations, illegal moves seem to be generated. Try to
+  find the reason and fix it. It happened at least twice in situations
+  where gnuchess' position was hopeless anyway. (IMPORTANT)
+  UPDATE: It seems to always happen in lost positions and it seems that
+  gnuchess just repeats its last move.
+
+- Add "offer draw" feature, both active and passive, add resign
+
+- How about making certain weights user-definable, maybe through
+  some run-time interface? It would certainly cost a little
+  performance, but maybe not a big deal. Or maybe try to set some
+  profiles like "aggressive", "positional" (well, that would be
+  difficult), "passive" etc.
+
+- Make gnuchess win against crafty (seems difficult to impossible...)
+
+- Adapt size of opening book hash to the size of the book. This
+  requires the book format to get some record count in the header,
+  in order not to realloc() like hell. If one adds another book, it
+  may have to be realloced, but that is acceptable. It is a bit annoying
+  that gnuchess event without book and with minimal hash tables has a
+  memory footprint of ~18MB. (or MiB?) (IMPORTANT)
+
+- Get some idea for a global gnuchess configuration file gnuchessrc, 
+  which would maybe contain location of the book, size of hash tables
+  and other stuff. I would suggest /etc/gnuchessrc and $HOME/.gnuchessrc
+  as default locations on Unix-like systems, don't know where Windows
+  programs use to put these things (in the registry?). I would consider
+  also moving the list of chess players allowed in the book to some
+  configuration file.
+
+- Improve PGN parser to accept "Import style PGN"? Would reduce
+  performance slightly, but one could grab PGN files from all over the
+  net...
+
+- The book could in fact be built of several PGN files now, maybe one
+  should separate book add (for really adding a book) and book create
+  for compiling a new book from scratch.

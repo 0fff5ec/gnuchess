@@ -23,27 +23,31 @@
      bug-gnu-chess@gnu.org
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
-/*
- *
- */
 
 #include <stdio.h>
-#include "common.h"
 
+#include "common.h"
 
 const short raybeg[7] = { 0, 0, 0, 0, 4, 0, 0 };
 const short rayend[7] = { 0, 0, 0, 4, 8, 8, 0 };
 
 static leaf *node;
 
-#define ADDMOVE(a,b,c) 	node->move = MOVE(a,b) | c, \
-			node++;
-#define ADDPROMOTE(a,b) ADDMOVE (a, b, KNIGHTPRM); \
-            		ADDMOVE (a, b, BISHOPPRM); \
-            		ADDMOVE (a, b, ROOKPRM); \
-            		ADDMOVE (a, b, QUEENPRM); 
+#define ADDMOVE(a,b,c)            \
+  do {                            \
+    node->move = MOVE(a,b) | (c); \
+    node++;                       \
+  } while (0)
 
-inline void BitToMove (short f, BitBoard b)
+#define ADDPROMOTE(a,b)           \
+  do {                            \
+    ADDMOVE (a, b, KNIGHTPRM);    \
+    ADDMOVE (a, b, BISHOPPRM);    \
+    ADDMOVE (a, b, ROOKPRM);      \
+    ADDMOVE (a, b, QUEENPRM);     \
+  } while (0)
+
+static inline void BitToMove (short f, BitBoard b)
 /***************************************************************************
  *
  *  Convert a bitboard into a list of moves.  These are stored

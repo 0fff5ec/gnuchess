@@ -34,6 +34,11 @@
 #include "common.h"
 #include "version.h"
 
+#ifdef HAVE_READLINE_H
+#include <history.h>
+#elif HAVE_READLINE_READLINE_H
+#include <readline/history.h>
+#endif
 
 void Initialize ()
 /**************************************************************************
@@ -60,7 +65,10 @@ void Initialize ()
    InitHashCode ();
    InitHashTable ();
    CalcHashKey ();
- 
+
+#ifdef HAVE_LIBREADLINE
+   using_history();
+#endif
 }
 
 
@@ -684,8 +692,6 @@ void InitVars ()
    SETBIT (rings[3], F8);
    SETBIT (rings[3], G8);
    SETBIT (rings[3], H8);
-
-   BKRequested = 0;
 
    boardhalf[white] = RankBit[0]|RankBit[1]|RankBit[2]|RankBit[3];
    boardhalf[black] = RankBit[4]|RankBit[5]|RankBit[6]|RankBit[7];

@@ -90,7 +90,7 @@ static const BitBoard brank67[2] = { 0x0000000000FFFF00ULL,
 static const BitBoard brank58[2] = { 0x00000000FFFFFFFFULL,
 				     0xFFFFFFFF00000000ULL };
 
-inline int ScoreP (short side)
+int ScoreP (short side)
 /***************************************************************************
  *
  *  Pawn evaluation is based on the following factors (which is being
@@ -360,8 +360,7 @@ static const short Outpost[2][64] =
 };
 
 
-inline int CTL(short , short , short);
-inline int CTL(short sq, short piece, short side)
+static inline int CTL(short sq, short piece __attribute__ ((unused)), short side)
 /***************************************************************************
  *
  *  Return a score corresponding to the number of squares in the bitboard
@@ -400,7 +399,7 @@ inline int CTL(short sq, short piece, short side)
   return (s);
 }
 
-inline int ScoreN (short side)
+int ScoreN (short side)
 /***************************************************************************
  *
  *  1.  central knight - distance from enemy king.
@@ -460,7 +459,7 @@ inline int ScoreN (short side)
 }
 
 
-inline int ScoreB (short side)
+int ScoreB (short side)
 /****************************************************************************
  *
  *  1.  double bishops.
@@ -540,7 +539,7 @@ inline int ScoreB (short side)
 }
 
 
-inline int BishopTrapped (short side)
+int BishopTrapped (short side)
 /****************************************************************************
  *
  *  Check for bishops trapped at A2/H2/A7/H7
@@ -571,7 +570,7 @@ inline int BishopTrapped (short side)
    return (s);
 }
 
-inline int ScoreR (short side)
+int ScoreR (short side)
 /****************************************************************************
  *
  *  1.  rook on 7th rank and Enemy king on 8th rank or pawns on 7th rank.
@@ -647,7 +646,7 @@ inline int ScoreR (short side)
    return (s);
 }
 
-inline int DoubleQR7 (short side)
+int DoubleQR7 (short side)
 /***************************************************************************
  *
  *  This code just check to see if there is a QQ or QR or RR combo on the
@@ -668,7 +667,7 @@ inline int DoubleQR7 (short side)
       return (0);
 }
 
-inline int ScoreQ (short side)
+int ScoreQ (short side)
 /***************************************************************************
  *
  *  1. queen centralization.
@@ -748,7 +747,7 @@ static const short factor[9] = { 7, 8, 8, 7, 6, 5, 4, 2, 0, };
 static const BitBoard Corner[2] = { 0xC3C3000000000000ULL,
 				    0x000000000000C3C3ULL };
 
-inline int ScoreK (short side)
+int ScoreK (short side)
 /***************************************************************************
  *
  *  1.  king in the corner.
@@ -1206,7 +1205,7 @@ static const BitBoard bb[2] = { 0x2400000000000000ULL, 0x0000000000000024ULL };
 static const BitBoard rr[2] = { 0x8100000000000000ULL, 0x0000000000000081ULL };
 static const BitBoard corner = 0xC3C300000000C3C3ULL;
 
-inline int ScoreDev (short side)
+int ScoreDev (short side)
 /***************************************************************************
  *
  *  Calculate the development score for side (for opening only).

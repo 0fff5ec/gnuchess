@@ -29,7 +29,7 @@
 #include "common.h"
 
 
-inline short SqAtakd (short sq, short side)
+short SqAtakd (short sq, short side)
 /**************************************************************************
  *
  *  To determine if sq is attacked by any pieces from side.

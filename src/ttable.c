@@ -77,8 +77,10 @@ void TTPut (short side, short depth, short ply, int alpha, int beta,
 }
 
 
-short TTGet (short side, short depth, short ply, int alpha, int beta, 
-     	int *score, int *move)
+short TTGet (short side, short depth, short ply, 
+	     int alpha __attribute__ ((unused)),
+	     int beta  __attribute__ ((unused)), 
+	     int *score, int *move)
 /*****************************************************************************
  *
  *  Probe the transposition table.  There are 2 entries to be looked at as

@@ -28,6 +28,7 @@
  */
 
 #include <stdio.h>
+
 #include "common.h"
 
 #define WEIGHT  12
@@ -116,7 +117,7 @@ void SortMoves (short ply)
 }
 
 
-void SortRoot ()
+void SortRoot (void)
 /*****************************************************************************
  *
  *  Sort the moves at the root.  The heuristic is simple.  Try captures/

@@ -24,16 +24,31 @@
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 /*
- *
+ * Endianness is now detected by configure. Actually, if we really
+ * want this stuff inline, then we have to include things instead
+ * of compiling separately. Make the function static inline to detect
+ * errors. However, this means that the code _has_ to be compiled with
+ * inlining enabled, 
  */
 
 
 #include <stdio.h>
 #include <string.h>
-#include "common.h"
 #include <signal.h>
 
-inline short leadz (BitBoard b)
+#include "common.h"
+
+/*
+ * We actually do not have this configuration variable yet,
+ * should be manually added when inlining is not possible.
+ * If inlining is possible, these functions have now moved
+ * to util.h which must be included by all callers of
+ * leadz() and nbits().
+ */
+
+#ifdef NO_INLINE
+
+short leadz (BitBoard b)
 /**************************************************************************
  *
  *  Returns the leading bit in a bitboard.  Leftmost bit is 0 and
@@ -48,7 +63,7 @@ inline short leadz (BitBoard b)
    } a;
 
    a.bitboard = b;
-#if (BYTE_ORDER == LITTLE_ENDIAN)
+#ifndef WORDS_BIGENDIAN
    if (a.v[3] != 0)
       return (lzArray[a.v[3]]);
    if (a.v[2] != 0)
@@ -66,12 +81,12 @@ inline short leadz (BitBoard b)
       return (lzArray[a.v[2]] + 32);
    if (a.v[3] != 0)
       return (lzArray[a.v[3]] + 48);
-#endif
+#endif /* WORDS_BIGENDIAN */
    return (-1);
 }
 
 
-inline short nbits (BitBoard b)
+short nbits (BitBoard b)
 /***************************************************************************
  *
  *  Count the number of bits in b.
@@ -90,8 +105,9 @@ inline short nbits (BitBoard b)
 
 }
 
+#endif /* NO_INLINE */
 
-inline void UpdateFriends ()
+void UpdateFriends (void)
 /***************************************************************************
  *
  *  Update friend and enemy bitboard.
@@ -110,7 +126,7 @@ inline void UpdateFriends ()
 }
    
 
-void UpdateCBoard ()
+void UpdateCBoard (void)
 /**************************************************************************
  *
  *  Updates cboard[].  cboard[i] returns the piece on square i.
@@ -165,7 +181,7 @@ void UpdateMvboard ()
 }
 
 
-void EndSearch (int sig)
+void EndSearch (int sig __attribute__ ((unused)) )
 /***************************************************************************
  *
  *  User has pressed Ctrl-C.  Just set flags TIMEOUT to be true.
@@ -177,7 +193,7 @@ void EndSearch (int sig)
 }
 
 
-short ValidateBoard ()
+short ValidateBoard (void)
 /***************************************************************************
  *
  *  Check the board to make sure that its valid.  Some things to check are

@@ -29,11 +29,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <errno.h>
+
 #include "common.h"
 #include "version.h"
 #include "book.h"
 
-void PGNSaveToFile (char *file, char *resultstr)
+void PGNSaveToFile (const char *file, const char *resultstr)
 /****************************************************************************
  *
  *  To save a game into PGN format to a file.  If the file does not exist,
@@ -43,8 +45,7 @@ void PGNSaveToFile (char *file, char *resultstr)
 {
    FILE *fp;
    char s[100];
-   char r[10];
-   char *rp;
+   int len;
    char *p;
    short i;
    time_t secs;
@@ -75,12 +76,10 @@ void PGNSaveToFile (char *file, char *resultstr)
      fprintf (fp, "[Black \"%s\"]\n",name);
    fprintf (fp, "[WhiteELO \"%d\"]\n",computer==white?myrating:opprating);
    fprintf (fp, "[BlackELO \"%d\"]\n",computer==white?opprating:myrating);
-   p = resultstr;
-   rp = r;
-   while (*p != '{' && *p != '\000' && *p != ' ')
-     *rp++ = *p++;
-   *rp = '\000';
-   fprintf (fp, "[Result \"%s\"]\n",r);
+
+   /* Revive the little-known standard functions! */
+   len = strcspn(resultstr," {");
+   fprintf (fp, "[Result \"%.*s\"]\n", len, resultstr);
    fprintf (fp, "\n");
 
    s[0] = '\0';
@@ -104,7 +103,7 @@ void PGNSaveToFile (char *file, char *resultstr)
 }      
 
 
-void PGNReadFromFile (char *file)
+void PGNReadFromFile (const char *file)
 /****************************************************************************
  *
  *  To read a game from a PGN file.
@@ -163,7 +162,7 @@ void PGNReadFromFile (char *file)
    return;
 }
 
-void BookPGNReadFromFile (char *file)
+void BookPGNReadFromFile (const char *file)
 /****************************************************************************
  *
  *  To read a game from a PGN file and store out the hash entries to book.
@@ -171,13 +170,16 @@ void BookPGNReadFromFile (char *file)
  ****************************************************************************/
 {
    FILE *fp;
-   char s[100], c, wmv[8], bmv[8];
+   char s[100], wmv[8], bmv[8];
+   int c;
+   unsigned int i;
    char header[2000];
-   int moveno, result, n, i, ngames = 0;
+   int moveno, result, ngames = 0;
    leaf *p;
-   struct timeval t1, t2;
-   unsigned long et;
-   short playercolor, examinecolor, playerfound;
+   time_t t1, t2;
+   double et;
+   short examinecolor, playerfound[2];
+
 /* Only players in the table below are permitted into the opening book 
    from the PGN files. Please expand the table as needed. Generally,
    I would recommend only acknowledged GM's and IM's and oneself, but
@@ -185,8 +187,9 @@ void BookPGNReadFromFile (char *file)
    will eventually be eliminated through automatic play as long as
    you feed the games the program plays back to itself with "book add pgnfile"
 */
-#define MAXPLAYERS 103
-  char *player[MAXPLAYERS] = {
+/* XXX: Is it really a good idea to have a list like this hardcoded? */
+
+const char *const player[] = {
   "Alekhine",
   "Adams",
   "Anand",
@@ -255,7 +258,7 @@ void BookPGNReadFromFile (char *file)
   "Mieses",
   "Miles",
   "Morphy",
-  "Mueller",
+  "Mueller",     /* Every other German has this name... */
   "Nimzowitsch",
   "Nunn",
   "Opocensky",
@@ -294,112 +297,124 @@ void BookPGNReadFromFile (char *file)
   };
 
    et = 0.0;
-   gettimeofday (&t1, NULL);
+   t1 = time(NULL);
    result = -1;
    fp = fopen (file, "r");
    if (fp == NULL)
    {
-      printf ("Cannot open file %s\n", file);
-      return;
+     fprintf(stderr, "Cannot open file %s: %s\n", 
+	     file, strerror(errno));
+     return;
    }
 
-   BookBuilder(-1,-1, -1, -1);
+   /* Maybe add some more clever error handling later */
+   if (BookBuilderOpen() != BOOK_SUCCESS)
+     return;
    newpos = existpos = 0;
 
-   nextgame:
 
-   memset(header,0,sizeof(header));
+ nextgame:
+
+   header[0] = 0;
    InitVars ();
    NewPosition ();
    CLEAR (flags, MANUAL);
    CLEAR (flags, THINK);
    myrating = opprating = 0;
 
-   playerfound = 0;
-   examinecolor = -1;
-   playercolor = -1;
+   playerfound[black] = playerfound[white] = 0;
+
    /* Skip all the tags */
-   do
-   {
-      if ((c = fgetc (fp)) == '[') {
-         fgets (s, 100, fp);
-	 strcat(header,s);
-      }
-      if (strncmp(s,"White ",6) == 0) { examinecolor = white; ngames++; }
-      if (strncmp(s,"Black ",6) == 0) examinecolor = black;
-      for (i = 0; i < MAXPLAYERS; i++)
- 	if (strstr(s,player[i]) != NULL) {
-	  playerfound = 1;
-          playercolor = examinecolor;
-	  break;
- 	}
-      if (strncmp(s,"Result \"1-0",10) == 0)
-	result = R_WHITE_WINS;
-      else if (strncmp(s,"Result \"0-1",10) == 0)
-	result = R_BLACK_WINS;
-      else if (strncmp(s,"Result \"1/2-1/2",10) == 0)
-	result = R_DRAW;
-      else if (strncmp(s,"Result",6) == 0)
-	result = R_NORESULT;
-   } while (c == '[');
+   /*
+    * XXX: This has two problems: 1) Leading whitespace leads to
+    * undefined stuff in s, and completely confuses the program.
+    * 2) If there is a game between two players in the list, only
+    * the moves of the white player will be added.
+    */
 
-   while (1)
-   {
-      /* Bare newline terminates a game */
-      c = fgetc(fp);
-      if (c == '\n') { break; }
-      ungetc (c, fp);
-
-      memset(wmv,0,sizeof(wmv));
-      memset(bmv,0,sizeof(bmv));
-
-      n = fscanf (fp, "%d. %s %s ", &moveno, wmv, bmv);
-      if (strcmp(bmv,"1-0") == 0 || strcmp(bmv,"0-1") == 0 ||
-	  strcmp(bmv,"1/2-1/2") == 0 || strcmp(bmv,"[Event") == 0 ||
- 	  strcmp(bmv,"*") == 0)
-        n = 2;
-
-      if (n == 0 || n == 1) break;
-
-
-      if (n > 2) {
-       p = ValidateMove (wmv);
-       if (!p)
-       {
-	 puts(header);
-	 ShowBoard();
-	 printf ("Illegal move %d. %s\n", moveno, wmv);
-
-
-	 break;
-       }
-       MakeMove (white, &p->move);
-       if (playercolor == white )
-        BookBuilder (0, 0, result, white);
-       strcpy (Game[GameCnt].SANmv, wmv);
-       if (n == 3) {
-        p = ValidateMove (bmv);
-        if (!p)
-        {
-	  puts (header);
-	  ShowBoard();
-	  printf ("Illegal move %d. ... %s\n", moveno, bmv);
-
-
-	  break;
-        }
-        MakeMove (black, &p->move);
-        if (playercolor == black )
-          BookBuilder (0, 0, result, black);
-        strcpy (Game[GameCnt].SANmv, bmv);
-      }
+   /* Skip whitespace */
+   while ((c=fgetc(fp)) != EOF) {
+     if (c != ' ' && c != '\t' && c != '\n') {
+       ungetc(c, fp);
+       break;
      }
-      if (GameCnt/2+1 > BOOKDEPTH || n < 3 || feof(fp) ) break;
    }
+   
+   while ((c=fgetc(fp)) == '[') {
+     ungetc(c, fp);
+     fgets(s, 100, fp);
+     strcat(header,s);
+     if (strncmp(s+1, "White ",6) == 0) {
+       examinecolor = white;
+       ngames++;
+     } else if (strncmp(s+1, "Black ",6) == 0) {
+       examinecolor = black;
+     } else if (strncmp(s+1, "Result", 6) == 0) {
+       if (strncmp(s+7," \"1-0",5) == 0) {
+	 result = R_WHITE_WINS;
+       } else if (strncmp(s+7," \"0-1",5) == 0) {
+	 result = R_BLACK_WINS;
+       } else if (strncmp(s+7," \"1/2-1/2",9) == 0) {
+	 result = R_DRAW;
+       } else {
+	 result = R_NORESULT;
+       }
+       continue;
+     } else continue;
+     /*
+      * We get only here if White or Black matched, it is ugly but it 
+      * works. Attention: If at some point we want to put this array
+      * of authorized players in some external file, we have to keep
+      * track of the size of that array in some other way.
+      */
+     for (i = 0; i < (sizeof(player) / sizeof(*player)); i++) {
+       if (strstr(s+7, player[i]) != NULL) {
+	 playerfound[examinecolor] = 1;
+       }
+     }
+   }
+   ungetc(c, fp);
+   while (1) {
+     if (fscanf(fp, "%d. %7s ", &moveno, wmv) < 2) break;
+
+     if (wmv[0] == '1' || wmv[0] == '[' || wmv[0] == '*'
+	 || strcmp(wmv, "0-1") == 0) break;
+     
+     p = ValidateMove (wmv);
+     if (!p) {
+       puts(header);
+       ShowBoard();
+       printf ("Illegal move %d. %s\n", moveno, wmv);
+       break;
+     }
+     MakeMove (white, &p->move);
+     if (playerfound[white]) {
+       if (BookBuilder (result, white) != BOOK_SUCCESS) break;
+     }
+     strcpy (Game[GameCnt].SANmv, wmv);
+     
+     if (fscanf(fp, "%7s ", bmv) < 1) break;
+     if (bmv[0] == '1' || bmv[0] == '[' || bmv[0] == '*'
+	 || strcmp(bmv, "0-1")  == 0) break;
+
+     p = ValidateMove (bmv);
+     if (!p) {
+       puts (header);
+       ShowBoard();
+       printf ("Illegal move %d. ... %s\n", moveno, bmv);
+       break;
+     }
+     MakeMove (black, &p->move);
+     if (playerfound[black] ) {
+       if (BookBuilder (result, black) != BOOK_SUCCESS) break;
+     }
+     strcpy (Game[GameCnt].SANmv, bmv);
+   }
+
    /* Read to end of game but don't parse */
    while (!feof(fp)) {
-      fgets(s,100,fp);
-      if (strncmp(s,"\n",1) == 0) break;
+     fgets(s,100,fp);
+     if (s[0] == '\n') break;
    }
    /* printf ("%d(%d)\n", GameCnt,BOOKDEPTH); */
    if (!feof(fp)) {
@@ -409,29 +424,29 @@ void BookPGNReadFromFile (char *file)
    }
 
    fclose (fp);
-   BookBuilder(-2,-2, -2, -2);
+   BookBuilderClose();
 
    /* Reset the board otherwise we leave the last position in the book
       on the board. */
-   memset(header,0,sizeof(header));
+   header[0] = 0;
    InitVars ();
    NewPosition ();
    CLEAR (flags, MANUAL);
    CLEAR (flags, THINK);
    myrating = opprating = 0;
 
-   gettimeofday (&t2, NULL);
-   et += (t2.tv_sec - t1.tv_sec);
+   t2 = time(NULL);
+   et += difftime(t2, t1);
    putchar('\n');
 
    /* Handle divide-by-zero problem */
-   if (et == 0.0) { et = 1.0; };
+   if (et < 0.5) { et = 1.0; };
 
-   printf ("Time = %ld\n", et);
+   printf("Time = %.0f seconds\n", et);
    printf("Games compiled: %d\n",ngames);
-   printf("Games per second: %f\n",ngames/(double)et);
+   printf("Games per second: %f\n",ngames/et);
    printf("Positions scanned: %d\n",newpos+existpos);
+   printf("Positions per second: %f\n",(newpos+existpos)/et);
    printf("New & unique added: %d positions\n",newpos);
    printf("Duplicates not added: %d positions\n",existpos);
-   return;
 }

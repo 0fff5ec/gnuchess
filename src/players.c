@@ -79,7 +79,7 @@ static int namecompare(const void *aa, const void *bb)
     else return(0);
 }
 
-void DBSortPlayer (char *style)
+void DBSortPlayer (const char *style)
 {
   if (strncmp(style,"score",5) == 0) {
     qsort(&playerdb,totalplayers,sizeof(playerentry),scorecompare);
@@ -90,7 +90,7 @@ void DBSortPlayer (char *style)
   }
 }
 
-void DBListPlayer (char *style)
+void DBListPlayer (const char *style)
 {
   int i;
 	
@@ -149,7 +149,7 @@ void DBReadPlayer (void)
    }
 }
 
-int DBSearchPlayer (char *player)
+int DBSearchPlayer (const char *player)
 {
   int index = -1;
   int i;
@@ -163,10 +163,13 @@ int DBSearchPlayer (char *player)
   return (index);
 }
 
-void DBUpdatePlayer (char *player, char *resultstr)
+void DBUpdatePlayer (const char *player, const char *resultstr)
 {
-  char *p, *x;
-  int index,result;
+  const char *p;
+  char *x;
+  int index;
+  int result = R_NORESULT;
+
   memset(lname,0,sizeof(lname));
   p = player;
   x = lname;
@@ -203,6 +206,7 @@ void DBUpdatePlayer (char *player, char *resultstr)
       (computerplays == black && result == R_WHITE_WINS))
     playerdb[index].losses++;
   else
+    /* Shouln't one check for draw here? Broken PGN files surely exist */
     playerdb[index].draws++;
   DBWritePlayer ();
 }

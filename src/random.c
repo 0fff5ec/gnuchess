@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include "common.h"
 
-unsigned int Rand32 ()
+uint32_t Rand32 ()
 /****************************************************************************
  *
  *  A 32 bit random number generator.  An implementation in C of the 
@@ -45,7 +45,7 @@ unsigned int Rand32 ()
  *  SeedRandom = 1;
  *  Table[Random[Integer, {0, 2^32 - 1}]
  */
-   static unsigned long x[55] =  
+   static uint32_t x[55] =  
    {
 	1410651636UL,
 	3012776752UL,
@@ -104,9 +104,9 @@ unsigned int Rand32 ()
 	2393861397UL
    };
    static int init = true;
-   static unsigned long y[55];
+   static uint32_t y[55];
    static int j, k;
-   unsigned long ul;
+   uint32_t ul;
 
    if (init)
    {
@@ -124,13 +124,10 @@ unsigned int Rand32 ()
 }
 
 HashType Rand64 ()
-/*
- *
- */
 {
   HashType b;
 
-  b = Rand32 ();
+  b = Rand32();
   b = b << 32;
   b |= Rand32 ();
   return (b);

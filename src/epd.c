@@ -34,7 +34,7 @@
 
 #define EPDCLOSE 1
 
-short ReadEPDFile (char *file, short op)
+short ReadEPDFile (const char *file, short op)
 /****************************************************************************
  *
  *  Reads in an EPD file.  The first call will read the first EPD line,

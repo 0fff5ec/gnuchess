@@ -1,14 +1,22 @@
-First, cd to the src directory.
+The usual procedure should apply. After you have unpacked
+the sources, type (in the sources top-level directory)
 
-Run autoconf to build configure from configure.in
+	./configure
+	make
 
-Then run configure to build Makefile from Makefile.in.
+You may also pass several other options such as compiler options
+to configure, just type ./configure --help for advice. In particular,
+you may experiment with compiler optimization flags, which are added
+easily as (assuming you have a bourne-type shell)
 
-Now run "make" to build gnuchess.exe
+CFLAGS="-O3 -ffast-math" ./configure
 
-Test it by typing
+The build should work with gcc, it also works with the Sun Workshop
+compiler and maybe others.
 
-	./gnuchess.exe
+Test gnuchess by typing
+
+	./gnuchess.exe (or ./gnuchess on Linux/Unix)
 	post
 	depth 8
 	go
@@ -26,7 +34,20 @@ instead.
 
 If you got this far, congratulations.
 
-Now it is time to compile the book. Do:
+If you want to install the software in some global directory,
+by default /usr/local, become root and type
+
+	make install
+
+If you want to install the sources in some other directory
+than /usr/local, replace the first line by
+
+	./configure --prefix=/my/favourite/dir 
+
+You can build an opening book which may enhance the value
+of gnuchess quite a lot. In order to do so, get the file
+book.pgn (see book/README for instructions on how to get it)
+and type the following.
 
 	ln -s ../book/book.pgn
 	./gnuchess
@@ -44,6 +65,15 @@ If you don't want to wait (overnight), do this instead:
 
 This will make a much smaller book.
 
+Original Author:
+
 Stuart Cracraft
 Laguna Niguel, CA
 March, 2001
+
+Modifications:
+
+Lukas Geyer <geyer@math.uni-dortmund.de>
+
+[ Update: The book building now takes 245 seconds on
+  an Athlon 1GHz computer with a 100MB book.pgn ]

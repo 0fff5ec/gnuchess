@@ -365,7 +365,7 @@ COMMAND LIST
 	Produces a help blurb corresponding to this list of commands.
 
   book
-	compile - compiles book.dat from book.pgn
+	add - compiles book.dat from book.pgn
 	on - enables use of book
 	off - disables use of book
 

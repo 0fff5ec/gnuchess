@@ -23,13 +23,29 @@
      bug-gnu-chess@gnu.org
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
-/*
- *
- */
 
-typedef unsigned long long BitBoard;
-typedef unsigned long long HashType;
-typedef unsigned long KeyType;
+#ifndef COMMON_H
+#define COMMON_H
+
+#include <config.h>
+
+#ifndef __GNUC__
+# define __attribute__(x)
+#endif
+
+#if HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+#endif
+#if HAVE_STDINT_H
+#  include <stdint.h>
+#endif
+#if HAVE_INTTYPES_H
+#  include <inttypes.h>
+#endif
+
+typedef uint64_t BitBoard;
+typedef uint64_t HashType;
+typedef uint32_t KeyType;
 
 typedef struct 
 {
@@ -110,8 +126,18 @@ typedef struct
 
 
 /*  Some bit macros  */
-#define SETBIT(b,i) ((b) |= BitPosArray[i])
-#define CLEARBIT(b,i) ((b) &= NotBitPosArray[i])
+
+/*
+ * gcc 2.95.4 completely screws up the macros with lookup tables 
+ * with -O2 on PPC, maybe this check has to be refined.
+ */
+#ifdef __PPC__
+#  define SETBIT(b,i)   ((b) |=  ((1ULL<<63)>>(i)))
+#  define CLEARBIT(b,i) ((b) &= ~((1ULL<<63)>>(i)))
+#else
+#  define SETBIT(b,i)   ((b) |= BitPosArray[i])
+#  define CLEARBIT(b,i) ((b) &= NotBitPosArray[i])
+#endif
 
 #define RANK(i) ((i) >> 3)
 #define ROW(i) ((i) & 7)
@@ -331,6 +357,11 @@ extern short ChkCnt[MAXPLYDEPTH];
 extern short ThrtCnt[MAXPLYDEPTH];
 extern char id[32];
 extern char solution[64];
+/*
+ * XXX: This variable et also exists as a local variable somewhere and
+ * to complete the confusion, this came up in three different
+ * flavours: long, float and double.
+ */
 extern double et;
 extern float SearchTime;
 extern short SearchDepth;
@@ -387,7 +418,6 @@ extern short n; 		/* Last mobility returned by CTL */
 extern short ExchCnt[2];
 extern int newpos, existpos;		/* For book statistics */
 extern short bookloaded;
-extern int BKRequested;	/* BKRequested 1 xboard issued bk 0 not */
 
 enum Piece { empty, pawn, knight, bishop, rook, queen, king, bpawn };
 
@@ -408,6 +438,15 @@ enum File { A_FILE, B_FILE, C_FILE, D_FILE, E_FILE, F_FILE, G_FILE, H_FILE };
  *  in which they are defined.
  *
  ****************************************************************************/
+
+/*
+ * Explanation of the #ifdef NO_INLINE conditionals:
+ *
+ * Define NO_INLINE only if you really must, implementations will be
+ * provided by the corresponding *.c files. The better solution is to
+ * not define it, in which case inlines.h will be included which
+ * provides static inline version of these functions.
+ */
 
 /*  The initialization routines  */
 void Initialize (void);
@@ -430,17 +469,32 @@ void InitHashTable (void);
 void NewPosition (void);
 void InitFICS (void);
 
-/*  The book routines  */
+/*  The book routines */
 void MakeBinBook (char *, short);
 int BookQuery (void);
-void BookBuilder (short, int, short, short);
+int BookBuilderOpen(void);
+int BookBuilder (short result, short side);
+int BookBuilderClose(void);
 
+/*
+ * Return values (errorcodes) for the book routines,
+ * maybe one should have a global enum of errorcodes
+ */
+enum {
+  BOOK_SUCCESS,
+  BOOK_EFORMAT,  /* Wrong format (e.g. produced by older version) */
+  BOOK_EMIDGAME, /* Move is past the opening book's move limit */ 
+  BOOK_EIO,      /* I/O error, e.g. caused by wrong permissions */
+  BOOK_EFULL,    /* Book hash is full, new position was not added. */
+  BOOK_ENOBOOK,  /* No book present */
+  BOOK_ENOMOVES  /* No moves found (in BookQuery() only) */
+};
+ 
 /*  The move generation routines  */
 void GenMoves (short);
 void GenCaptures (short);
 void GenNonCaptures (short);
 void GenCheckEscapes (short);
-void BitToMove (short, BitBoard);
 void FilterIllegalMoves (short);
 
 /*  The move routines  */
@@ -470,7 +524,7 @@ short SwapOff (int);
 void AddXrayPiece (short, short, short, BitBoard *, BitBoard *);
 
 /*  The EPD routines  */
-short ReadEPDFile (char *, short);
+short ReadEPDFile (const char *, short);
 void ParseEPD (char *);
 void LoadEPD (char *);
 void SaveEPD (char *);
@@ -482,8 +536,11 @@ void BookCmd (char *);
 void TestCmd (char *);
 
 /*  Some utility routines  */
+#ifdef NO_INLINE
 short leadz (BitBoard);
 short nbits (BitBoard);
+#endif
+
 void UpdateFriends (void);
 void UpdateCBoard (void);
 void UpdateMvboard (void);
@@ -491,9 +548,9 @@ void EndSearch (int);
 short ValidateBoard (void);
 
 /*  PGN routines  */
-void PGNSaveToFile (char *, char *);
-void PGNReadFromFile (char *);
-void BookPGNReadFromFile (char *);
+void PGNSaveToFile (const char *, const char *);
+void PGNReadFromFile (const char *);
+void BookPGNReadFromFile (const char *);
 
 /*  The hash routines  */
 void CalcHashKey (void);
@@ -567,13 +624,19 @@ void TestEval (void);
 
 /*  Miscellaneous routines  */
 void ShowVersion (void);
-void ShowHelp (void);
+void ShowHelp (const char *);
 
 /* Player database */
-void DBSortPlayer (char *style);
-void DBListPlayer (char *style); 	
+void DBSortPlayer (const char *style);
+void DBListPlayer (const char *style); 	
 void DBReadPlayer (void);	
 void DBWritePlayer (void);
-int DBSearchPlayer (char *player);
-void DBUpdatePlayer (char *player, char *resultstr);
+int DBSearchPlayer (const char *player);
+void DBUpdatePlayer (const char *player, const char *resultstr);
 void DBTest (void);
+
+#ifndef NO_INLINE
+# include "inlines.h"
+#endif
+
+#endif /* !COMMON_H */

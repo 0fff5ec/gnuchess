@@ -77,6 +77,8 @@ void Iterate (void)
    CLEAR (flags, TIMEOUT);
    if (flags & TIMECTL)
    {
+      /* XXX: The comments and the code seem not to match here... */
+
       /* Time for a move is just total time remaining divided by moves left */
       /* mcriley - was no # */
 
@@ -146,7 +148,7 @@ void Iterate (void)
       
    wasbookmove = 0;
    if (bookmode != BOOKOFF && !(flags & SOLVE) && nmovesfrombook <= 3) {
-     if (BookQuery()) {
+     if (BookQuery() == BOOK_SUCCESS) {
        nmovesfrombook = 0;
        wasbookmove = 1;
        SET (flags, TIMEOUT);
@@ -170,9 +172,11 @@ void Iterate (void)
    }
    if (SearchDepth == 0) {
       if (ofp != stdout) 
-        fprintf (ofp,"\nTime = %.2f, Max = %.2f, Left = %.2f, Moves= %d\n", SearchTime,maxtime,TimeLimit[side],MoveLimit[side]);
+        fprintf (ofp,"\nTime = %.2f, Max = %.2f, Left = %.2f, Moves= %d\n", 
+		 SearchTime,maxtime,TimeLimit[side],MoveLimit[side]);
       if (flags & POST) 
-        printf ("\nTime = %.2f, Max = %.2f, Left = %.2f, Moves = %d\n", SearchTime,maxtime,TimeLimit[side],MoveLimit[side]);
+        printf ("\nTime = %.2f, Max = %.2f, Left = %.2f, Moves = %d\n", 
+		SearchTime,maxtime,TimeLimit[side],MoveLimit[side]);
    } else {
       if (ofp != stdout)
         fprintf (ofp,"Depth = %d\n", SearchDepth);
@@ -223,6 +227,7 @@ void Iterate (void)
           rootscore = -INFINITY-1;
 	  RootBeta = RootAlpha;
 	  RootAlpha = -INFINITY;
+	  /* Search again? No SearchRoot() call here? */
         }
       }
 
@@ -299,7 +304,11 @@ void Iterate (void)
         fprintf (ofp,"Ext: Chk=%ld Recap=%ld Pawn=%ld OneRep=%ld Horz=%ld Mate=%ld KThrt=%ld\n",
           ChkExtCnt, RcpExtCnt, PawnExtCnt, OneRepCnt, HorzExtCnt, ThrtExtCnt,
 	  KingExtCnt);
-        fprintf (ofp,"Material=[%d/%d : %d/%d] ", board.pmaterial[white], board.pmaterial[black], board.material[white], board.material[black]);
+        fprintf (ofp,"Material=[%d/%d : %d/%d] ", 
+		 board.pmaterial[white], 
+		 board.pmaterial[black], 
+		 board.material[white], 
+		 board.material[black]);
       fprintf (ofp,"Lazy=[%d/%d] ", lazyscore[white], lazyscore[black]);
       fprintf (ofp,"MaxPosnScore=[%d/%d]\n",maxposnscore[white],maxposnscore[black]);
         fprintf (ofp,"Hash: Success=%ld%% Collision=%ld%% Pawn=%ld%%\n",
@@ -354,6 +363,5 @@ void Iterate (void)
 void GetElapsed (void)
 {
    gettimeofday (&t2, NULL);
-   et = (t2.tv_sec - t1.tv_sec) + (double) (t2.tv_usec - t1.tv_usec)/1000000.0;
+   et = (t2.tv_sec - t1.tv_sec) + (t2.tv_usec - t1.tv_usec)/1000000.0;
 }
-

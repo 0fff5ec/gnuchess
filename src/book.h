@@ -24,9 +24,13 @@
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 #define BOOKSRC "book.src"
-#define BOOKBIN "book.bin"
+
+/* The book which BookQuery() uses */
+#define BOOKBIN "book.dat"
+
+/* The book which BookBuilder() uses */
 #define BOOKRUN "book.dat"
-#define BOOKRUNT "book.tmp"
+
 #define R_WHITE_WINS 1
 #define R_BLACK_WINS 2
 #define R_DRAW 3

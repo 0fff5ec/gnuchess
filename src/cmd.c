@@ -38,10 +38,27 @@
 char fromboard[10];
 #endif
 
+#if HAVE_LIBREADLINE
+# if HAVE_READLINE_READLINE_H
+#  include <readline/readline.h>
+#  include <readline/history.h>
+# else
+extern char* readline(char *);
+extern void add_history(char *);
+# endif
+#endif
+
 #define prompt ':'
 
 extern short stage, InChkDummy, terminal;
-static char inputstr[128], cmd[128], file[128], s[128], logfile[128], 
+
+#ifdef HAVE_LIBREADLINE
+static char *inputstr;
+#else
+static char inputstr[128];
+#endif
+
+static char cmd[128], file[128], s[128], logfile[128], 
             gamefile[128],userinput[128];
 
 char subcmd[128],setting[128],subsetting[128];
@@ -78,9 +95,18 @@ void InputCmd ()
 #endif
 
    CLEAR (flags, THINK);
-  memset(userinput,0,sizeof(userinput));
-  memset(cmd,0,sizeof(cmd));
-  memset(inputstr,0,sizeof(inputstr));
+   memset(userinput,0,sizeof(userinput));
+   memset(cmd,0,sizeof(cmd));
+#ifndef HAVE_LIBREADLINE /* Why is this necessary anyway? */
+   memset(inputstr,0,sizeof(inputstr));
+#endif
+
+/*
+ * XXX: This is terroristic coding style, and furthermore
+ * there seems to be a bug somewhere in the UNIVERSAL codepath
+ * mixing up userinput and inputstr. Should be fixed.
+ */
+
 #ifdef UNIVERSAL
   if (1) {
     if (flags & UNIV) {
@@ -102,19 +128,45 @@ void InputCmd ()
 	fromboard[0] = '\0';
       }
       if (strlen(userinput) != 0) {
-#else
+#else /* !UNIVERSAL */
+#ifdef HAVE_LIBREADLINE
+	 if (isatty(STDIN_FILENO)) {
+	    sprintf(s,"%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
+	    inputstr = readline(s);
+	    if (inputstr == NULL) return;
+	    if (*inputstr) {
+	       add_history(inputstr);
+	    }
+	    if (strlen(inputstr) > 63) {
+	       printf("Warning: Input line truncated to 63 characters.\n");
+	       inputstr[63] = 0;
+	    }
+	 } else {
+	    inputstr = malloc(128);
+	    if (inputstr == NULL) {
+	       perror("InputCmd");
+	       exit(EXIT_FAILURE);
+	    }
+	    fgets(inputstr, 64, stdin);
+	    if (inputstr[0]) {
+	       inputstr[strlen(inputstr)-1] = 0;
+	    }
+	 }
+#else /* !HAVE_LIBREADLINE */
 	if (!(flags & XBOARD)) {
 	  printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
 	  fflush(stdout);
         }
 	if (fgets (inputstr, 64, stdin) && inputstr[0])
 	    inputstr[strlen(inputstr)-1] = '\000';
+#endif /* HAVE_LIBREADLINE */
+
 	cmd[0] = '\n';
 	strcpy(userinput,inputstr);
 	sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
 	if (cmd[0] == '\n')
-	  return;
-#endif
+	  goto done;
+#endif /* UNIVERSAL */
 	cmd[0] = subcmd[0] = setting[0] = subsetting[0] = '\0';
         ncmds = sscanf (userinput,"%s %s %s %[^\n]",
 			cmd,subcmd,setting,subsetting);
@@ -131,7 +183,7 @@ void InputCmd ()
       ncmds = sscanf (userinput,"%s %s %s %s",cmd,subcmd,setting,subsetting);
     }
   }
-#endif
+#endif /* UNIVERSAL */
 
    /* Put options after command back in inputstr - messy */
    sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting);
@@ -143,7 +195,7 @@ void InputCmd ()
    if (strcmp (cmd, "quit") == 0 || strcmp (cmd, "exit") == 0)
       SET (flags, QUIT);
    else if (strcmp (cmd, "help") == 0)
-      ShowHelp ();
+      ShowHelp (inputstr);
    else if (strcmp (cmd, "show") == 0)
       ShowCmd (inputstr);
    else if (strncmp (cmd, "book", 4) == 0) {
@@ -299,16 +351,20 @@ void InputCmd ()
    }
    else if (strcmp (cmd, "hashsize") == 0)
    {
-      i = atoi (inputstr);
-      TTHashMask = 0;
-      while ((i >>= 1) > 0)
-      {
-         TTHashMask <<= 1;
-         TTHashMask |= 1;
+      if (inputstr[0] == 0) {
+	 printf("Current HashSize is %d slots\n", HashSize);
+      } else {
+	 i = atoi (inputstr);
+	 TTHashMask = 0;
+	 while ((i >>= 1) > 0)
+	 {
+	    TTHashMask <<= 1;
+	    TTHashMask |= 1;
+	 }
+	 HashSize = TTHashMask + 1;
+	 printf ("Adjusting HashSize to %d slots\n", HashSize);
+	 InitHashTable (); 
       }
-      HashSize = TTHashMask + 1;
-      printf ("Adjusting HashSize to %d slots\n", HashSize);
-      InitHashTable (); 
    }
    else if (strcmp (cmd, "null") == 0)
    {
@@ -352,7 +408,7 @@ void InputCmd ()
       signal (SIGALRM, SIG_IGN);
     }
   }
-#endif
+#endif /* UNIVERSAL */
    else if (strcmp (cmd, "depth") == 0) {
       SearchDepth = atoi (inputstr);
       printf("Search to a depth of %d\n",SearchDepth);
@@ -461,15 +517,6 @@ void InputCmd ()
       TimeLimit[board.side] += Game[GameCnt+1].et;
       if (!(flags & XBOARD)) ShowBoard ();
    }
-   else if (strcmp (cmd, "bk") == 0)
-   {
-	/* Implement Basic Book function for Xboard */
-	BKRequested=1;
-	BookQuery();
-	BKRequested=0;
-	printf ("\n");
-        fflush(stdout);
-   }
 
    /* everything else must be a move */
    else
@@ -498,6 +545,10 @@ void InputCmd ()
       else {
       }
    }
+  done:
+#ifdef HAVE_LIBREADLINE
+   free(inputstr);
+#endif
 }
 
 
@@ -662,16 +713,163 @@ void TestCmd (char *subcmd)
       TestEvalSpeed ();
 }
 
+/*
+ * This is more or less copied from the readme, and the
+ * parser is not very clever, so the lines containing
+ * command names should not be indented, the lines with
+ * explanations following them should be indented. Do not
+ * use tabs for indentation, only spaces. CAPITALS are
+ * reserved for parameters in the command names. The
+ * array must be terminated by two NULLs.
+ */
 
-void ShowHelp ()
+static const char * const helpstr[] = {
+   "^C",
+   " Typically the interrupt key stops a search in progress,",
+   " makes the move last considered best and returns to the",
+   " command prompt",
+   "quit",
+   "exit",
+   " These quit or exit the game.",
+   "help",
+   " Produces a help blurb corresponding to this list of commands.",
+   "book",
+   " add - compiles book.dat from book.pgn",
+   " on - enables use of book",
+   " off - disables use of book",
+   "version",
+   " prints out the version of this program",
+   "pgnsave FILENAME",
+   " saves the game so far to the file from memory",
+   "pgnload FILENAME",
+   " loads the game in the file into memory",
+   "force",
+   "manual",
+   " Makes the program stop moving. You may now enter moves",
+   " to reach some position in the future.",
+   " ",
+   "white",
+   " Program plays white",
+   "black",
+   " Program plays black",
+   "go",
+   " Computer takes whichever side is on move and begins its",
+   " thinking immediately",
+   "post",
+   " Arranges for verbose thinking output showing variation, score,",
+   " time, depth, etc.",
+   "nopost",
+   " Turns off verbose thinking output",
+   "name NAME",
+   " Lets you input your name. Also writes the log.nnn and a",
+   " corresponding game.nnn file. For details please see",
+   " auxillary file format sections.",
+   "result",
+   " Mostly used by Internet Chess server.",
+   "activate",
+   " This command reactivates a game that has been terminated automatically",
+   " due to checkmate or no more time on the clock. However, it does not",
+   " alter those conditions. You would have to undo a move or two or",
+   " add time to the clock with level or time in that case.",
+   "rating COMPUTERRATING OPPONENTRATING",
+   " Inputs the estimated rating for computer and for its opponent",
+   "new",
+   " Sets up new game (i.e. positions in original positions)",
+   "time",
+   " Inputs time left in game for computer in hundredths of a second.",
+   " Mostly used by Internet Chess server.",
+   "hash",
+   " on - enables using the memory hash table to speed search",
+   " off - disables the memory hash table",
+   "hashsize N",
+   " Sets the hash table to permit storage of N positions",
+   "null",
+   " on - enables using the null move heuristic to speed search",
+   " off - disables using the null move heuristic",
+   "xboard",
+   " on - enables use of xboard/winboard",
+   " off - disables use of xboard/winboard",
+   "universal",
+   " on - enables using the universal chess board (if compiles with",
+   "      INTERFACE=-DUNIVERSAL by GNU CC on a PC with SVASYNC library",
+   " off - disables using the universal chess board",
+   "depth N",
+   " Sets the program to look N ply (half-moves) deep for every",
+   " search it performs. If there is a checkmate or other condition",
+   " that does not allow that depth, then it will not be ",
+   "level MOVES MINUTES INCREMENT",
+   " Sets time control to be MOVES in MINUTES with each move giving",
+   " an INCREMENT (in seconds, i.e. Fischer-style clock).",
+   "load",
+   "epdload",
+   " Loads a position in EPD format from disk into memory.",
+   "save",
+   "epdsave",
+   " Saves game position into EPD format from memory to disk.",
+   "switch",
+   " Switches side to move",
+   "solve FILENAME",
+   "solveepd FILENAME",
+   " Solves the positions in FILENAME",
+   "remove",
+   " Backs up two moves in game history",
+   "undo",
+   " Backs up one move in game history",
+   "show",
+   " board - displays the current board",
+   " time - displays the time settings",
+   " moves - shows all moves using one call to routine",
+   " escape - shows moves that escape from check using one call to routine",
+   " noncapture - shows non-capture moves",
+   " capture - shows capture moves",
+   " eval [or score] - shows the evaluation per piece and overall",
+   " game - shows moves in game history",
+   " pin - shows pinned pieces",
+   "test",
+   " movelist - reads in an epd file and shows legal moves for its entries",
+   " capture - reads in an epd file and shows legal captures for its entries",
+   " movegenspeed - tests speed of move generator",
+   " capturespeed - tests speed of capture move generator",
+   " eval - reads in an epd file and shows evaluation for its entries",
+   " evalspeed tests speed of the evaluator",
+   NULL,
+   NULL
+};
+
+void ShowHelp (const char * command)
 /**************************************************************************
  *
  *  Display all the help commands.
  *
  **************************************************************************/
 {
-   printf ("+-----------------------------------------------+\n");
-   printf ("|                    H E L P                    |\n");
-   printf ("+-----------------------------------------------+\n");
+   const char * const *p;
+   int count, len;
+
+   if (strlen(command)>0) {
+      for (p=helpstr, count=0; *p; p++) {
+	 if  (strncmp(*p, inputstr, strlen(command)) == 0) {
+	    puts(*p);
+	    while (*++p && **p != ' ') /* Skip aliases */ ;
+	    for (; *p && **p == ' '; p++) {
+	       puts(*p);
+	    }
+	    return;
+	 }
+      }
+      printf("Help for command %s not found\n\n", command);
+   }
+   printf("List of commands: (help COMMAND to get more help)\n");
+   for (p=helpstr, count=0; *p; p++) {
+      len = strcspn(*p, " ");
+      if (len > 0) {
+	 count += printf("%.*s  ", len, *p);
+	 if (count > 60) {
+	    count = 0;
+	    puts("");
+	 }
+      }
+   }
+   puts("");
 }
 

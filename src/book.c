@@ -27,37 +27,243 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "common.h"
-#include "book.h"
+#include <errno.h>
 #include <unistd.h>
 
-#define vcol(c) (c>='a' && c<='h')
-#define vpiece(p) (p=='N'||p=='B'||p=='R'||p=='Q'||p=='K')
+#include "common.h"
+#include "book.h"
 
 #define MAXMOVES 200
-#define MAXLINE 512
-#define MAXVAR 10
-#define MAXBOOK 900000
 #define MAXMATCH 100
-#define MAXPEEK 10
-			   
+
+/* Right now, bigbookcnt is always the same as bookcnt */			   
 static int bookcnt, bigbookcnt = 0;
 static int runningbookcnt = 0;
-HashType posshash[MAXMOVES];
-struct hashtype {
-  short wins;
-  short losses;
-  short draws;
+static HashType posshash[MAXMOVES];
+
+/*
+ * The last byte of magic_str should be the version
+ * number of the format, in case we have to change it.
+ *
+ * Format 0x01 had an index field which is now gone.
+ */
+
+#define MAGIC_LENGTH 5
+
+static const char magic_str[] = "\x42\x23\x08\x15\x02";
+
+static int check_magic(FILE *f)
+{
+  char buf[MAGIC_LENGTH];
+  int r;
+
+  r = fread(&buf, 1, MAGIC_LENGTH, f);
+  return (r == MAGIC_LENGTH &&
+	  memcmp(buf, magic_str, MAGIC_LENGTH) == 0);
+}
+
+static int write_magic(FILE *f)
+{
+  if (MAGIC_LENGTH != fwrite(&magic_str, 1, MAGIC_LENGTH, f)) {
+    return BOOK_EIO;
+  } else {
+    return BOOK_SUCCESS;
+  }
+}
+
+/*
+ * MAXBOOK now has to be a power of 2, as we use the
+ * lower bits to calculate the index of some hash in
+ * this array. NOTE: Due to this change, the binary
+ * format of book files has changed. We write some
+ * magic string in order to check if the file has the
+ * correct format.
+ */
+
+#define MAXBOOK (1UL<<20)
+#define DIGEST_BITS 20
+#define DIGEST_MASK (MAXBOOK-1)
+
+static struct hashtype {
+  uint16_t wins;
+  uint16_t losses;
+  uint16_t draws;
   HashType key;
 } bookpos[MAXBOOK];
 
+static inline int is_empty(uint32_t index)
+{
+  return 
+    bookpos[index].key    == 0 &&
+    bookpos[index].wins   == 0 &&
+    bookpos[index].draws  == 0 &&
+    bookpos[index].losses == 0;
+}
+
+/*
+ * Initial hash function, relies on the quality of the lower
+ * bits of the 64 bit hash function
+ */
+#define DIGEST_START(i,key) \
+  ((i) = (key) & DIGEST_MASK)
+
+/*
+ * See if there is already a matching entry
+ */
+#define DIGEST_MATCH(i,the_key) \
+  ((the_key) == bookpos[i].key)
+
+/*
+ * See if the entry is empty
+ */
+#define DIGEST_EMPTY(i) is_empty(i)
+
+/*
+ * Check for collision
+ */
+#define DIGEST_COLLISION(i,key) \
+  (!DIGEST_MATCH(i,key) && !DIGEST_EMPTY(i))
+
+/*
+ * The next macro is used in the case of hash collisions.
+ * We use double hashing with the higher bits of the key.
+ * In order to have the shift relatively prime to the hash
+ * size, we OR by 1.
+ */
+#define DIGEST_NEXT(i,key) \
+  ((i) = ((i) + (((key) >> DIGEST_BITS) | 1)) & DIGEST_MASK)
+
+
+/* Mainly for debugging purposes */
+static int bookhashcollisions = 0;
+
+/*
+ * This is considered to be the limit for the hash, I chose
+ * 95% because it is Monday... No, I am open for suggestions
+ * for the right value, I just don't know.
+ */
+#define BOOK_HASH_LIMIT (0.95 * MAXBOOK)
+
+/*
+ * This is the record as it will be written in the binary
+ * file in network byte order. HashType is uint64_t. To
+ * avoid endianness and padding issues, we do not read or
+ * write structs but put the values in an unsigned char array.
+ */
+
+static unsigned char buf[2+2+2+8];
+
+/* Offsets */
+static const int wins_off   = 0;
+static const int losses_off = 2;
+static const int draws_off  = 4;
+static const int key_off    = 6;
+
+static void buf_to_book(void)
+{
+  HashType key;
+  uint32_t i;
+
+  key = ((uint64_t)buf[key_off] << 56)
+    | ((uint64_t)buf[key_off+1] << 48)
+    | ((uint64_t)buf[key_off+2] << 40)
+    | ((uint64_t)buf[key_off+3] << 32)
+    | ((uint64_t)buf[key_off+4] << 24)
+    | ((uint64_t)buf[key_off+5] << 16)
+    | ((uint64_t)buf[key_off+6] << 8)
+    | ((uint64_t)buf[key_off+7]);
+  /*
+   * This is an infinite loop if the hash is 100% full,
+   * but other parts should check that this does not happen.
+   */
+  for (DIGEST_START(i, key);
+       DIGEST_COLLISION(i, key);
+       DIGEST_NEXT(i, key))
+    /* Skip */
+    bookhashcollisions++;
+
+  bookpos[i].wins   += (buf[wins_off]   << 8) | buf[wins_off  +1];
+  bookpos[i].draws  += (buf[draws_off]  << 8) | buf[draws_off +1];
+  bookpos[i].losses += (buf[losses_off] << 8) | buf[losses_off+1];
+  bookpos[i].key = key;
+}
+
+static void book_to_buf(uint32_t index)
+{
+  int k;
+
+  for (k=0; k<2; k++) {
+    buf[wins_off + k]   = ((bookpos[index].wins)   >> ((1-k)*8)) & 0xff;
+    buf[draws_off + k]  = ((bookpos[index].draws)  >> ((1-k)*8)) & 0xff;
+    buf[losses_off + k] = ((bookpos[index].losses) >> ((1-k)*8)) & 0xff;
+  }
+  for (k=0; k<8; k++) {
+    buf[key_off + k] = ((bookpos[index].key) >> ((7-k)*8)) & 0xff;
+  }
+}
+
 static int compare(const void *aa, const void *bb)
 {
-    const leaf *a = (const leaf *)aa;
-    const leaf *b = (const leaf *)bb;
-    if (b->score > a->score) return(1);
-    else if (b->score < a->score) return(-1);
-    else return(0);
+  const leaf *a = aa;
+  const leaf *b = bb;
+  
+  if (b->score > a->score) return(1);
+  else if (b->score < a->score) return(-1);
+  else return(0);
+}
+
+/* 
+ * Return values are defined in common.h
+ */
+
+int BookBuilderOpen(void)
+{
+  FILE *rfp, *wfp;
+
+  if ((rfp = fopen(BOOKRUN,"rb")) != NULL) {
+    printf("Opened existing book!\n");
+    if (!check_magic(rfp)) {
+      fprintf(stderr, 
+	      "File %s does not conform to the new format.\n"
+	      "Consider rebuilding your book.\n",
+	      BOOKRUN);
+      return BOOK_EFORMAT;
+    }
+    runningbookcnt = 0;
+    bookhashcollisions = 0;
+    while ( 1 == fread(&buf, sizeof(buf), 1, rfp) ) {
+      buf_to_book();
+      runningbookcnt++;
+    }
+    printf("Read %d book positions\n", runningbookcnt);
+    printf("Got %d hash collisions\n", bookhashcollisions);
+    fclose(rfp);
+  } else {
+    wfp = fopen(BOOKRUN,"wb");
+    if (wfp == NULL) {
+      fprintf(stderr, "Could not create %s file: %s\n",
+		 BOOKRUN, strerror(errno));
+      return BOOK_EIO;
+    }
+    if (write_magic(wfp) != BOOK_SUCCESS) {
+      fprintf(stderr, "Could not write to %s: %s\n",
+	      BOOKRUN, strerror(errno));
+      return BOOK_EIO;
+    }
+    if (fclose(wfp) != 0) {
+      fprintf(stderr, "Could not write to %s: %s\n",
+	      BOOKRUN, strerror(errno));
+      return BOOK_EIO;
+    }
+    printf("Created new book %s!\n", BOOKRUN);
+    rfp = fopen(BOOKRUN, "rb");
+    if (rfp == NULL) {
+      fprintf(stderr, "Could not open %s for reading: %s\n",
+	      BOOKRUN, strerror(errno));
+      return BOOK_EIO;
+    }
+  }
+  return BOOK_SUCCESS;
 }
 
 /*
@@ -67,76 +273,99 @@ static int compare(const void *aa, const void *bb)
  * most recent move. Lastly, after the 10th move, on 
  * the 11th move, store the data out to the running file.
  */
-void BookBuilder(short depth, int score, short result, short side)
+/*
+ * NOTE: Before you build a book, you have to call
+ * BookBuilderOpen() now, after building it BookBuilderClose()
+ * in order to actually write the book to disk.
+ */
+
+int BookBuilder(short result, short side)
 {
-  FILE *wfp,*rfp;
-  int i;
-  int targetslot, found = 0, storeit = 0;
-  if (depth == -1 && score == -1) {
-    if ((rfp = fopen(BOOKRUN,"r+b")) != NULL) {
-      printf("Opened existing book!\n");
-    } else {
-      printf("Created new book!\n");
-      wfp = fopen(BOOKRUN,"w+b");
-      fclose(wfp);
-      if ((rfp = fopen(BOOKRUN,"r+b")) == NULL) {
-        printf("Could not create %s file\n",BOOKRUN);
-	return;
-      }
-    }
-    runningbookcnt = fread(&bookpos,sizeof(struct hashtype),MAXBOOK,rfp);
-    fclose(rfp);
-    printf("Read %d book positions\n",runningbookcnt);
-    return;
-  }
+  uint32_t i;
+  
   /* Only first BOOKDEPTH moves */
-  if (GameCnt/2+1 < BOOKDEPTH) {
-    CalcHashKey();
-    for(i = 0; i < runningbookcnt; i++) {
-      /* If a match occurs, it means we've found the current game
-	 position in the running positions book */
-      if (HashKey == bookpos[i].key) {
-	found = 1;
-        break;
-      }
-    }
-    /* Now store score and depth if depth is greater */
-    if (found) {
-      targetslot = i;
-      storeit = 1;
+  if (GameCnt/2+1 >= BOOKDEPTH) 
+    return BOOK_EMIDGAME;
+  CalcHashKey();
+  for (DIGEST_START(i, HashKey);
+       ; 
+       DIGEST_NEXT(i, HashKey)) {
+    if (DIGEST_MATCH(i, HashKey)) {
       existpos++;
-    } else {
-      targetslot = runningbookcnt;
-      storeit = 1;
+      break;
+    } else if (DIGEST_EMPTY(i)) {
+      if (runningbookcnt > BOOK_HASH_LIMIT)
+	return BOOK_EFULL;
+      bookpos[i].key = HashKey;
       newpos++;
-    }
-    bookpos[i].key = HashKey;
-    if (side == white) {
-      if (result == R_WHITE_WINS)
-	  bookpos[i].wins++;
-      else if (result == R_BLACK_WINS)
-	  bookpos[i].losses++;
-      else if (result == R_DRAW)
-	  bookpos[i].draws++;
+      runningbookcnt++;
+      break;
     } else {
-      if (result == R_WHITE_WINS)
-	  bookpos[i].losses++;
-      else if (result == R_BLACK_WINS)
-	  bookpos[i].wins++;
-      else if (result == R_DRAW)
-	  bookpos[i].draws++;
+      bookhashcollisions++;
     }
-    if (!found) runningbookcnt = i+1;
   }
-  if ( (depth != 0 && score != 0) || (depth == -2 && score == -2)) {
-    wfp = fopen(BOOKRUNT,"w+b");
-    fwrite(&bookpos,sizeof(struct hashtype),runningbookcnt,wfp);
-    fclose(wfp);
-    rename(BOOKRUNT,BOOKRUN);
+  if (side == white) {
+    if (result == R_WHITE_WINS)
+      bookpos[i].wins++;
+    else if (result == R_BLACK_WINS)
+      bookpos[i].losses++;
+    else if (result == R_DRAW)
+      bookpos[i].draws++;
+  } else {
+    if (result == R_WHITE_WINS)
+      bookpos[i].losses++;
+    else if (result == R_BLACK_WINS)
+      bookpos[i].wins++;
+    else if (result == R_DRAW)
+      bookpos[i].draws++;
   }
+  return BOOK_SUCCESS;
 }
 
-int BookQuery()
+int BookBuilderClose(void)
+{
+  /*
+   * IMHO the following part needs no temporary file.
+   * If two gnuchess invocations try to write the same
+   * file at the same time, this goes wrong anyway.
+   * Please correct me if I am wrong. If you generate
+   * a temporary file, try to generate it in some writable
+   * directory.
+   */
+  FILE *wfp;
+  unsigned int i;
+  int res;
+
+  wfp = fopen(BOOKRUN, "wb");
+  if (wfp == NULL) {
+    perror("Could not open %s for writing");
+    return BOOK_EIO;
+  }
+  write_magic(wfp);
+  for (i = 0; i < MAXBOOK; i++) {
+    if (is_empty(i)) continue;
+    book_to_buf(i);
+    /* Should we check the return value here, too? */
+    fwrite(&buf, sizeof(buf), 1, wfp);
+  }
+  res = fclose(wfp);
+  if (res != 0) {
+    perror("Error writing opening book");
+    return BOOK_EIO;
+  }
+  printf("Got %d hash collisions\n", bookhashcollisions);
+  return BOOK_SUCCESS;
+}
+
+/*
+ * Return values are defined in common.h
+ * NOTE: This function now returns BOOK_SUCCESS on
+ * success, which is 0. So all the possible callers
+ * should adjust to this. (At present it is only called
+ * in iterate.c.) It used to return 1 on success before.
+ */
+
+int BookQuery(void)
 {
   int i,j,k,icnt = 0, mcnt, found, tot, maxdistribution;
   int matches[MAXMATCH], best = 0;
@@ -144,9 +373,9 @@ int BookQuery()
   leaf m[MAXMOVES];
   leaf pref[MAXMOVES];
   struct {
-    short wins;
-    short losses;
-    short draws;
+    uint16_t wins;
+    uint16_t losses;
+    uint16_t draws;
   } r[MAXMOVES];
   FILE *rfp;
   leaf *p;
@@ -156,11 +385,11 @@ int BookQuery()
   mcnt = -1;
   side = board.side;
   xside = 1^side;
-  rfp = fopen(BOOKRUN,"r+b");
+  rfp = fopen(BOOKBIN,"rb");
   if (rfp == NULL) {
     if (!(flags & XBOARD))
-      fprintf(ofp," no book (%s).\n",BOOKRUN);
-    return(0);
+      fprintf(ofp," no book (%s).\n",BOOKBIN);
+    return BOOK_ENOBOOK;
   }
   TreePtr[2] = TreePtr[1];
   GenMoves(1);
@@ -175,72 +404,99 @@ int BookQuery()
   if (!bookloaded) {
     bigbookcnt = 0;
     if (!(flags & XBOARD))
-      fprintf(ofp,"Read opening book (%s)... ",BOOKRUN);
+      fprintf(ofp,"Read opening book (%s)... ",BOOKBIN);
     fseek(rfp,0L,SEEK_SET);
-    bookcnt = fread(&bookpos,sizeof(struct hashtype),MAXBOOK,rfp);
-    fclose(rfp); 
-    bigbookcnt += bookcnt;
-    bookloaded = 1;
-  }
-  for (j = 0; j < bookcnt; j++) {
-    for (i = 0; i < icnt; i++) {
-      if (bookpos[j].key == posshash[i]) {
+    bookcnt = 0;
+    bookhashcollisions = 0;
+    if (check_magic(rfp)) {
+      while ( 1 == fread(&buf, sizeof(buf), 1, rfp) ) {
+	buf_to_book();
+	bookcnt++;
+      }
+      bigbookcnt += bookcnt;
+      bookloaded = 1;
+      fprintf(ofp,"%d hash collisions... ", bookhashcollisions);
+    } else {
+      /*
+       * The following doesn't need to exit() because the old
+       * book will not be overwritten.
+       */
+      fprintf(stderr, 
+	      "File %s does not conform to the new format.\n"
+	      "Consider rebuilding the book.\n",
+	      BOOKBIN);
+      return BOOK_EFORMAT;
+    }
+  }      
+  for (i = 0; i < icnt; i++) {
+    for (DIGEST_START(j,posshash[i]);
+	 !DIGEST_EMPTY(j);
+	 DIGEST_NEXT(j, posshash[i])) {
+      if (DIGEST_MATCH(j, posshash[i])) {
 	found = 0;
 	for (k = 0; k < mcnt; k++) 
-	    if (matches[k] == i) {
-	      found = 1;
-	      break;
-	    }
+	  if (matches[k] == i) {
+	    found = 1;
+	    break;
+	  }
 	/* Position must have at least some wins to be played by book */
 	if (!found) {
-	    matches[++mcnt] = i;
-	    pref[mcnt].move = m[matches[mcnt]].move;
-	    r[i].losses = bookpos[j].losses;
-	    r[i].wins = bookpos[j].wins;
-	    r[i].draws = bookpos[j].draws;
-
-/* by percent score starting from this book position */
-
-           pref[mcnt].score = m[i].score = 
-		100*(r[i].wins+(r[i].draws/2))/
-		   (MAX(r[i].wins+r[i].losses+r[i].draws,1)) + r[i].wins/2;
-
+	  matches[++mcnt] = i;
+	  pref[mcnt].move = m[matches[mcnt]].move;
+	  r[i].losses = bookpos[j].losses;
+	  r[i].wins = bookpos[j].wins;
+	  r[i].draws = bookpos[j].draws;
+	
+	  /* by percent score starting from this book position */
+	  
+	  pref[mcnt].score = m[i].score = 
+	    100*(r[i].wins+(r[i].draws/2))/
+	    (MAX(r[i].wins+r[i].losses+r[i].draws,1)) + r[i].wins/2;
+	  
 	}
 	if (mcnt >= MAXMATCH) {
-	    fprintf(ofp,"Too many matches in book.\n");
-	    goto fini;
+	  fprintf(ofp,"Too many matches in book.\n");
+	  goto fini;
 	}
+	break; /* If we found a match, the following positions can not match */
       }
     }
   }
+
 fini:  
-  if (!(flags & XBOARD) || BKRequested == 1)
+  if (!(flags & XBOARD))
   {
-    fprintf(ofp," Opening database: %d book positions.\n",bigbookcnt);
-    fprintf(ofp," In this position, %d move%c %s book moves%c\n",
-	mcnt+1,mcnt+1!=1?'s':(char)NULL,mcnt+1!=1?"are":"is",mcnt+1>0?':':'.');
-    fprintf(ofp,"  notation: move(percentage,wins,draws,losses) \n \n");
+    fprintf(ofp,"Opening database: %d book positions.\n",bigbookcnt);
+    if (mcnt+1 == 0) {
+      fprintf(ofp,"In this position, there is no book move.\n");
+    } else if (mcnt+1 == 1) {
+      fprintf(ofp,"In this position, there is one book move:\n");
+    } else {
+      fprintf(ofp,"In this position, there are %d book moves:\n", mcnt+1);
+    }
   }
   /* No book moves */
-  if (mcnt == -1) {return(0); }
+  if (mcnt == -1) {
+    return BOOK_ENOMOVES;
+  }
   k = 0;
   if (bookmode == BOOKPREFER) best = -INFINITY;
   if (mcnt+1) {
-    if ( !(flags & XBOARD) || BKRequested == 1) {
+    if ( !(flags & XBOARD)) {
       for (i = 0; i <= mcnt; i++) {
-	if (!(flags & XBOARD) || BKRequested == 1) {
+	if (!(flags & XBOARD)) {
 	  SANMove(m[matches[i]].move,1);
           tot = r[matches[i]].wins+r[matches[i]].draws+r[matches[i]].losses;
-	  fprintf(ofp," %s(%2.0f/%d/%d/%d) ",SANmv,
-		100.0*(r[matches[i]].wins+(r[matches[i]].draws/2))/tot,
+	  fprintf(ofp,"%s(%2.0f/%d/%d/%d) ",SANmv,
+		100.0*(r[matches[i]].wins+(r[matches[i]].draws/2.0))/tot,
 		r[matches[i]].wins,
 		r[matches[i]].losses,
 		r[matches[i]].draws);
           if ((i+1) % 4 == 0) fputc('\n',ofp);
 	}
       }
-      if (!(flags & XBOARD) || BKRequested == 1)
-        if (i % 4 != 0) fprintf(ofp," \n\n");
+      if (!(flags & XBOARD))
+        if (i % 4 != 0) fprintf(ofp,"\n\n");
     }
     if (bookmode == BOOKRAND) {
       k = rand();
@@ -284,7 +540,8 @@ fini:
       for (i = 0; i < temp; i++)
         maxdistribution += pref[i].score;
       /* Do not play moves that have only losses! */
-      if (maxdistribution == 0) return(0);
+      if (maxdistribution == 0) 
+	return BOOK_ENOMOVES;
       k = rand() % maxdistribution;
       maxdistribution = 0;
       for (i = 0; i < temp; i++) {
@@ -299,5 +556,5 @@ fini:
       }
     }
   }
-  return(1);
+  return BOOK_SUCCESS;
 }

@@ -1,0 +1,20 @@
+* Changed format of book.dat again, now takes less disk space. 
+  However, one bug used to cause the book building algorithm to
+  neglect a lot of positions which it was supposed to look at, so this
+  leads to more book entries with the same PGN files now.
+
+* Added some performance tweaks, should really run faster now.
+
+  06 Feb 2002, Lukas Geyer <geyer@math.uni-dortmund.de>
+
+* We now have a portable binary format for the opening book.
+  Furthermore, the hash values should now be the same on 64bit
+  machines. (Was different before.)
+
+  02 Feb 2002, Lukas Geyer <geyer@math.uni-dortmund.de>
+
+* Converted build system to automake, cleaned up code, in particular
+  counter a nasty gcc optimization bug on PPC architecture.
+
+  30 Jan 2002, Lukas Geyer <geyer@math.uni-dortmund.de>
+

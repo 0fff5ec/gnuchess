@@ -1,5 +1,0 @@
-#!/bin/sh
-/bin/rm -f *~ #* 
-/bin/rm -f *.exe *.a 
-/bin/rm -f config.cache config.log config.status configure 
-/bin/rm -f Makefile *.exe *.o          

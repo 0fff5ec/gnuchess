@@ -628,7 +628,7 @@ done:
 }
 
 
-void ShowLine (int move, int score, char c)
+void ShowLine (int move __attribute__ ((unused)), int score, char c)
 /*****************************************************************************
  *
  *  Print out the latest PV found during the search.
@@ -656,21 +656,26 @@ void ShowLine (int move, int score, char c)
       return;
    GetElapsed ();
 
+   /*
+    * What is the reason for these different output formats, in
+    * particular for et?
+    */
    if (flags & XBOARD) {
      if (score > MATE-255) {
        printf ("%d%c Mat%d %d %ld\t", Idepth/DEPTH, c,
-                (int)(MATE+2-abs(score))/2, (int)et*100, NodeCnt+QuiesCnt);
+                (int)(MATE+2-abs(score))/2, (int)(et*100), NodeCnt+QuiesCnt);
        if (ofp != stdout)
 	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else if (score < -MATE+255) {
        printf ("%d%c -Mat%2d %d %ld\t", Idepth/DEPTH, c,
-                (int)(MATE+2-abs(score))/2, (int)et*100, NodeCnt+QuiesCnt);
+                (int)(MATE+2-abs(score))/2, (int)(et*100), NodeCnt+QuiesCnt);
        if (ofp != stdout)
 	 fprintf (ofp,"%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else {
-	 printf ("%d%c %d %d %ld\t", Idepth/DEPTH, c, (int)score, (int)et*100, NodeCnt+QuiesCnt);
+	 printf ("%d%c %d %d %ld\t", Idepth/DEPTH, c, (int)score, 
+		 (int)(et*100), NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
 	   fprintf (ofp,"%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
        }

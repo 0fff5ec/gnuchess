@@ -23,6 +23,10 @@
      bug-gnu-chess@gnu.org
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
+
+#ifndef EVAL_H
+#define EVAL_H
+
 /****************************************************************************
  *
  *  The various evaluations constants.
@@ -110,3 +114,5 @@
 #define KING_DEFENDER_DEFICIT -50
 #define KING_BACK_RANK_WEAK -40
 #define RUPTURE -20
+
+#endif /* !EVAL_H */
