@@ -535,9 +535,15 @@ void AddXrayPiece (int, int, int, BitBoard *, BitBoard *);
 
 /*  The EPD routines  */
 int ReadEPDFile (const char *, int);
-void ParseEPD (char *);
+int ParseEPD (char *);
 void LoadEPD (char *);
 void SaveEPD (char *);
+
+/* Error codes for ParseEPD */
+enum {
+   EPD_SUCCESS,
+   EPD_ERROR
+};            
 
 /*  The command routines */
 void InputCmd (void);

@@ -48,7 +48,7 @@ int ReadEPDFile (const char *file, int op)
  ****************************************************************************/
 {
    static FILE *fp = NULL;
-   char line[255];
+   char line[1025];
 
    /*  If first time through, must open file  */
    if (fp == NULL)
@@ -69,11 +69,15 @@ int ReadEPDFile (const char *file, int op)
       return (false);
    }
 
+next_line:
    /*  Okay, we read in an EPD entry  */
-   fgets (line, 255, fp);
+   fgets (line, 1024, fp);
    if (!feof(fp)) 
    {
-      ParseEPD (line);
+      int ret = ParseEPD (line);
+
+      /* For now just ignore malformed lines */
+      if (ret != EPD_SUCCESS) goto next_line;
       if (op != 2)
          printf ("\n%s : Best move = %s\n", id, solution);
       return (true);
@@ -87,8 +91,14 @@ int ReadEPDFile (const char *file, int op)
    }
 }
 
+/*
+ * Returns EPD_SUCCESS on success, EPD_ERROR on error. We try to be
+ * quite tough on the format. However, as of yet no legality checking
+ * is done and the board is not reset on error, this should be done by
+ * the caller.
+ */
 
-void ParseEPD (char *p)
+int ParseEPD (char *p)
 /**************************************************************************
  *   
  *  Parses an EPD input line.  A few global variables are updated e.g.
@@ -97,13 +107,13 @@ void ParseEPD (char *p)
  **************************************************************************/
 {
    int r, c, sq;
-   char s[8];
+   char *str_p;
 
    r = 56;
    c = 0;
    memset (&board, 0, sizeof (board));
 
-   while (*p != ' ')
+   while (p && *p != ' ')
    {
      sq = r + c;
      switch (*p)
@@ -187,6 +197,8 @@ void ParseEPD (char *p)
         c += (*p - '0');
      else
         c++;
+     if (r < 0 || c > 8) return EPD_ERROR;
+     if (c == 8 && p[1] != '/' && p[1] != ' ') return EPD_ERROR;
      p++;
    }
 
@@ -201,41 +213,58 @@ void ParseEPD (char *p)
    UpdateMvboard ();
 
    /*  Get side to move  */
-   sscanf (p, " %s %[^\n]", s, p);
-   if (s[0] == 'w')
-      board.side = white;
-   else if (s[0] == 'b')
-      board.side = black;
+   if (!++p) return EPD_ERROR;
+   if      (*p == 'w') board.side = white; 
+   else if (*p == 'b') board.side = black;
+   else return EPD_ERROR;
 
+   /* Isn't this one cute? */
+   if (!++p || *p != ' ' || !++p) return EPD_ERROR;
+  
    /*  Castling status  */
-   sscanf (p, " %s %[^\n]", s, p);
-   if (strchr (s, 'K'))
-      board.flag |= WKINGCASTLE;
-   if (strchr (s, 'Q'))
-      board.flag |= WQUEENCASTLE;
-   if (strchr (s, 'k'))
-      board.flag |= BKINGCASTLE;
-   if (strchr (s, 'q'))
-      board.flag |= BQUEENCASTLE;
+   while (p && *p != ' ') {
+      if      (*p == 'K') board.flag |= WKINGCASTLE;
+      else if (*p == 'Q') board.flag |= WQUEENCASTLE;
+      else if (*p == 'k') board.flag |= BKINGCASTLE;
+      else if (*p == 'q') board.flag |= BQUEENCASTLE;
+      else if (*p == '-') { p++; break; }
+      else return EPD_ERROR;
+      p++;
+   }
+   if (!p || *p != ' ' || !++p) return EPD_ERROR;
 
-   /*  En passant square */
-   sscanf (p, " %s %[^\n]", s, p);
-   if (s[0] != '-')
-      board.ep = (s[0] - 'a') + (s[1] - '1')*8;
-   else
+   /*
+    * En passant square, can only be '-' or [a-h][36]
+    * In fact, one could add more sanity checks here.
+    */
+   if (*p != '-') {
+      if (!p[1] || *p < 'a' || *p > 'h' ||
+	  !(p[1] == '3' || p[1] == '6')) return EPD_ERROR;
+      board.ep = (*p - 'a') + (p[1] - '1')*8;
+      p++;
+   } else {
       board.ep = -1;
+   }
+
+   solution[0] = '\0';
+   id[0] = '\0';
+
+   if (!++p) return EPD_SUCCESS;
+
+   /* The opcodes are optional, so we should not generate errors here */
 
    /*  Read in best move; "bm" operator */
-   if (!strncmp (p, "bm", 2))
-      sscanf (p, "%*s %[^;]; %[^\n]", solution, p); 
+   str_p = strstr(p, "bm");
+   if (str_p) sscanf (str_p, "bm %63[^;];", solution); 
 
    /*  Read in the description; "id" operator */
-   if (!strncmp (p, "id", 2))
-      sscanf (p, "%*s %[^;]; %[^\n]", id, p); 
+   str_p = strstr(p, "id");
+   if (str_p) sscanf (p, "id %31[^;];", id);
 
    CalcHashKey ();
    phase = PHASE;
-   return;
+
+   return EPD_SUCCESS;
 }
 
 
@@ -249,7 +278,7 @@ void LoadEPD (char *p)
    char file[INPUT_SIZE];
    int N = 1;
 
-   sscanf (p, "%s %hd ", file, &N);
+   sscanf (p, "%31s %hd ", file, &N);
    if (strcmp (file, "next") == 0)
    {
       ReadEPDFile (file, 0);
