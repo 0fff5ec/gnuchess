@@ -117,7 +117,7 @@ short TTGetPV (uint8_t side, uint8_t ply, int score, int *move)
    HashSlot *t;
    int s;
 
-   t = HashTab[side] + ((HashKey & TTHashMask) & -2);  
+   t = HashTab[side] + ((HashKey & TTHashMask) & ~1);  
    s = t->score;
    if (MATESCORE(s))
       s -= (s > 0 ? ply : -ply);
