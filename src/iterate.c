@@ -100,12 +100,6 @@ void Iterate (void)
             SearchTime = TCinc;
           }
         }
-#ifdef NEVER
-/* Old style */
-      if (TCinc != 0)
-	if (SearchTime < TCinc)
-	  SearchTime = TCinc;
-#endif
 /* END NEW */
       ShowTime ();
    }

@@ -501,10 +501,6 @@ void InputCmd ()
 	 SET (flags, THINK);
       }
       else {
-#ifdef NEVER
-         printf ("Illegal move: %s\n",cmd);
-         if (ofp != stdout) fprintf (ofp,"Illegal move\n");
-#endif
       }
    }
 }
@@ -574,16 +570,6 @@ void ShowCmd (char *subcmd)
       short r, c, sq;
       BitBoard *b, x;
 
-#ifdef NEVER
-      x = DistMap[board.king[white]][3];
-      printf("Squares within 3 of white king:\n");
-      ShowBitBoard(&x);
-      getchar();
-      x = DistMap[board.king[black]][3];
-      printf("Squares within 3 of black king:\n");
-      ShowBitBoard(&x);
-      getchar();
-#endif
       phase = PHASE;
       GenAtaks ();
       FindPins (&pinned);

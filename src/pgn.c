@@ -23,9 +23,6 @@
      bug-gnu-chess@gnu.org
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
-/*
- *
- */
 
 #include <stdio.h>
 #include <sys/time.h>
@@ -364,16 +361,7 @@ void BookPGNReadFromFile (char *file)
         n = 2;
 
       if (n == 0 || n == 1) break;
-#ifdef NEVER
-      if (n == 1) {printf("moveno=%d, wmv=%s, bmv=%s\n",moveno,wmv,bmv);exit(0);}
 
-      if (n == 3)
-        printf("%d %d %s %s", n, moveno, wmv, bmv);
-      else {
-        printf("%d %d %s", n, moveno, wmv);
-        n = 2;
-      }
-#endif
 
       if (n > 2) {
        p = ValidateMove (wmv);
@@ -382,8 +370,8 @@ void BookPGNReadFromFile (char *file)
 	 puts(header);
 	 ShowBoard();
 	 printf ("Illegal move %d. %s\n", moveno, wmv);
-/*
-*/
+
+
 	 break;
        }
        MakeMove (white, &p->move);
@@ -397,8 +385,8 @@ void BookPGNReadFromFile (char *file)
 	  puts (header);
 	  ShowBoard();
 	  printf ("Illegal move %d. ... %s\n", moveno, bmv);
-/*
-*/
+
+
 	  break;
         }
         MakeMove (black, &p->move);
@@ -427,7 +415,10 @@ void BookPGNReadFromFile (char *file)
    gettimeofday (&t2, &tz);
    et += (t2.tv_sec - t1.tv_sec);
    putchar('\n');
-   if (et == 0.0) { et = 1.0; };		/* Handle divide-by-zero problem */
+
+   /* Handle divide-by-zero problem */
+   if (et == 0.0) { et = 1.0; };
+
    printf ("Time = %ld\n", et);
    printf("Games compiled: %d\n",ngames);
    printf("Games per second: %d\n",ngames/et);

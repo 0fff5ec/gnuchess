@@ -168,9 +168,6 @@ int DBSearchPlayer (char *player)
       index = i;
       break;
     }
-#ifdef NEVER
-  printf("Search for |%s| found it in %d\n",player,index);
-#endif
   return (index);
 }
 
@@ -217,19 +214,3 @@ void DBUpdatePlayer (char *player, char *resultstr)
     playerdb[index].draws++;
   DBWritePlayer ();
 }
-
-#ifdef NEVER
-void DBTest (void) 
-{
-  DBListPlayer ();
-  computerplays = white;
-  DBUpdatePlayer ("Ferd", "1-0");
-  DBWritePlayer ();
-  computerplays = black;
-  DBUpdatePlayer ("Jones", "1-0");
-  computerplays = black;
-  DBUpdatePlayer ("Smith", "1/2-1/2");
-  DBListPlayer ();
-}
-#endif
-

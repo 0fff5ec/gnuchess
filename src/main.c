@@ -323,21 +323,6 @@ int main (int argc, char *argv[])
   ShowVersion ();
   Initialize ();
 
-#ifdef NEVER
-  printf("Kingside:"); 
-  ShowBitBoard(&boardside[ks]);
-  getchar();
-  printf("Queenside:");
-  ShowBitBoard(&boardside[qs]);
-  getchar();
-  printf("Whitehalf:"); 
-  ShowBitBoard(&boardhalf[white]);
-  getchar();
-  printf("Blackhalf:");
-  ShowBitBoard(&boardhalf[black]);
-  getchar();
-#endif
-
   if (argc > 1) {
     for (i = 0; i < argc; i++) {
       if (strcmp(argv[i],"xboard") == 0) {
@@ -345,10 +330,6 @@ int main (int argc, char *argv[])
       } else if (strcmp(argv[i],"post") == 0) {
 	SET (flags, POST);
       } 
-/*
-	else if (strcmp(argv[i],"compile") == 0)
-  	  compilebook++;
-*/
     }
   }
 

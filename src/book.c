@@ -26,14 +26,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef NEVER
-#ifdef UNIX
-#include <sys/types.h>
-#include <sys/time.h>
-#else
-#include <time.h>
-#endif
-#endif
 #include "common.h"
 #include "book.h"
 #include <unistd.h>
@@ -98,16 +90,6 @@ void BookBuilder(short depth, int score, short result, short side)
     fread(&bookpos,sizeof(struct hashtype),runningbookcnt,wfp);
     runningbookcnt = fread(&bookpos,sizeof(struct hashtype),MAXBOOK,rfp);
     fclose(rfp);
-#ifdef NEVER
-    for (i = 0; i < runningbookcnt; i++) {
-      tot = bookpos[i].wins+bookpos[i].draws+bookpos[i].losses;
-      if (tot != 0)
-        printf("#%d p=%2.0f\n",i,
-	  100*(bookpos[i].wins+(bookpos[i].draws/2))/tot);
-      else
-        printf("#%d p=NO EXPERIENCES\n",i);
-    }
-#endif
     printf("Read %d book positions\n",runningbookcnt);
     return;
   }
@@ -184,13 +166,6 @@ int BookQuery()
       fprintf(ofp," no book (%s).\n",BOOKRUN);
     return(0);
   }
-#ifdef DELETEME
-  if (flags & XBOARD)
-    if (!(flags & XBOARD))
-      if (rfp != NULL)
-        fprintf(ofp,", found book (%s).\n",BOOKBIN);
-  /* GenCnt = 0; */
-#endif
   TreePtr[2] = TreePtr[1];
   GenMoves(1);
   FilterIllegalMoves (1);
@@ -227,38 +202,12 @@ int BookQuery()
 	    r[i].losses = bookpos[j].losses;
 	    r[i].wins = bookpos[j].wins;
 	    r[i].draws = bookpos[j].draws;
-/* by wins - losses or 0 whichever is greater */
- //pref[mcnt].score = m[i].score = MAX(0,r[i].wins - r[i].losses) + r[i].wins/3;
-/* */
-/* by 100*wins/losses */
-
-     //       pref[mcnt].score = m[i].score = 
-	//	(100*r[i].wins)/MAX(1,r[i].losses);
-
-/* by wins */
-
-	 //   pref[mcnt].score = m[i].score = r[i].wins;
-
-
 
 /* by percent score starting from this book position */
 
            pref[mcnt].score = m[i].score = 
 		100*(r[i].wins+(r[i].draws/2))/
 		   (MAX(r[i].wins+r[i].losses+r[i].draws,1)) + r[i].wins/2;
-//
-
-
-
-
-/*
-
-          pref[mcnt].score = m[i].score = 
-	100*(r[i].wins+(r[i].draws/2))/(r[i].wins+r[i].losses+r[i].draws) + r[i].wins/10  ;
-
-*/
-
-
 
 	}
 	if (mcnt >= MAXMATCH) {
@@ -280,7 +229,7 @@ fini:
   k = 0;
   if (bookmode == BOOKPREFER) best = -INFINITY;
   if (mcnt+1) {
-    if (/* bookmode != BOOKPREFER && */ !(flags & XBOARD)) {
+    if ( !(flags & XBOARD)) {
       for (i = 0; i <= mcnt; i++) {
 	if (!(flags & XBOARD)) {
 	  SANMove(m[matches[i]].move,1);
@@ -330,16 +279,9 @@ fini:
 	if (!(flags & XBOARD)) 
           if ((i+1) % 8 == 0) fputc('\n',ofp);
       }
-/*
-      if (best < 0) { printf("No book move worth returning.\n"); return(0); }
-*/
       if (!(flags & XBOARD))
 	if (i % 8 != 0) fprintf(ofp,"\n\n");
         temp = (bookfirstlast > mcnt+1 ? mcnt+1 : bookfirstlast);
-#ifdef PREVIOUS
-      k = rand() % temp;
-      RootPV = m[k].move;
-#endif
       /* Choose from the top preferred moves based on distribution */
       maxdistribution = 0;
       for (i = 0; i < temp; i++)
@@ -348,19 +290,12 @@ fini:
       if (maxdistribution == 0) return(0);
       k = rand() % maxdistribution;
       maxdistribution = 0;
-/*
-      printf("maxdistribution = %d\n",maxdistribution);
-      printf("temp = %d\n",temp);
-*/
       for (i = 0; i < temp; i++) {
 	maxdistribution += pref[i].score;
 	if (k >= maxdistribution - pref[i].score &&
 	    k < maxdistribution)
 	{
 	  k = i;
-/*
-	  printf("choosing %d\n",k);
-*/
 	  RootPV = m[k].move;
 	  break;
 	}

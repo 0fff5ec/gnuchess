@@ -38,18 +38,6 @@ void ShowTime ()
  *
  **************************************************************************/
 {
-#ifdef NEVER
-    printf("White: %d moves in %f seconds\nBlack: %d moves in %f seconds\n",
-	MoveLimit[white],TimeLimit[white],MoveLimit[black],TimeLimit[black]);
-    printf("Fischer time control increment: %d seconds added per move\n",
-	TCinc);
-    printf("Search time per move = %f\n", SearchTime);
-    fprintf(ofp,"White: %d moves in %f seconds\nBlack: %d moves in %f seconds\n",
-	MoveLimit[white],TimeLimit[white],MoveLimit[black],TimeLimit[black]);
-    fprintf(ofp,"Fischer time control increment: %d seconds added per move\n",
-	TCinc);
-    fprintf(ofp,"Search time per move = %f\n", SearchTime);
-#endif
 }
 
 void ShowMoveList (short ply)
