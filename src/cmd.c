@@ -49,9 +49,6 @@ char userinput[128],subcmd[128],setting[128],subsetting[128];
 #ifdef UNIVERSAL
 void univ_check (int signal_type)
 {
-/*
-  printf("Univ_check entry: Set alarm to come back to univ_check\n");
-*/
   if (univ_read(fromboard)) {
     printf("Read %s from Universal.\n",fromboard);
     if (strcmp(fromboard,"J") == 0) strcpy(fromboard,"go");
@@ -80,7 +77,6 @@ void InputCmd ()
 #endif
 
    CLEAR (flags, THINK);
-/*   if (!(flags&SELF) || ((flags & SELF) && (flags & ENDED))) { */
 #ifdef UNIVERSAL
   memset(userinput,0,sizeof(userinput));
   memset(cmd,0,sizeof(cmd));
@@ -105,24 +101,13 @@ void InputCmd ()
 	fromboard[0] = '\0';
       }
       if (strlen(userinput) != 0) {
-/*
-        printf("userinput=%s\n",userinput);
-*/
 #else
 	if (!(flags & XBOARD)) {
 	  printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
 	  fflush(stdout);
         }
-/* 
-	fgets (inputstr, 64, stdin);
-	inputstr[strlen(inputstr)-1] = '\000';
-*/
 	if (fgets (inputstr, 64, stdin) && inputstr[0])
 	    inputstr[strlen(inputstr)-1] = '\000';
-/*
-	else
-	    SET (flags, QUIT);
-*/
 	cmd[0] = '\n';
 	strcpy(userinput,inputstr);
 	sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
@@ -147,15 +132,7 @@ void InputCmd ()
   }
 #endif
 
-/*
-  printf("cmd=%s,subcmd=%s,setting=%s,subsetting=%s\n",cmd,subcmd,setting,subsetting);
-  fflush(stdout);
-*/
   sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting);
-/*
-  printf("inputstr=%s\n",inputstr);
-   printf("cmd = %s, inputstr = %s, subcmd = %s\n",cmd,inputstr,subcmd);
-*/
 
    if (strcmp (cmd, "quit") == 0 || strcmp (cmd, "exit") == 0)
       SET (flags, QUIT);
@@ -355,10 +332,6 @@ void InputCmd ()
 #ifdef UNIVERSAL
   else if (strcmp(cmd,"universal") == 0) {
     if (strcmp(subcmd,"on") == 0) {
-/*
-      printf("INITIALIZE UNIVERSAL\n");
-      getchar();
-*/
       SET (flags, UNIV);
       univ_init ();
       signal (SIGALRM, univ_check);
@@ -445,9 +418,6 @@ void InputCmd ()
       CLEAR (flags, TIMEOUT);
       CLEAR (flags, ENDED);
       computer = board.side;
-/*
-      printf ("Computer is playing %s\n", computer ? "black" : "white");
-*/
    }
    else if (strcmp (cmd, "solve") == 0 || strcmp (cmd, "solveepd") == 0)
       Solve (inputstr);
@@ -518,9 +488,6 @@ void ShowCmd (char *subcmd)
    short i;
 
    sscanf (subcmd, "%s %[^\n]", cmd, subcmd);
-/*
-   printf("subcmd = %s, cmd = %s\n",subcmd,cmd);
-*/
    if (strcmp (cmd, "board") == 0)
       ShowBoard ();
    else if (strcmp (cmd, "rating") == 0)
