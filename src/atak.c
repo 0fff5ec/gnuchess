@@ -80,8 +80,8 @@ short SqAtakd (short sq, short side)
    return (false);
 }
 
-extern short raybeg[];
-extern short rayend[];
+extern const short raybeg[];
+extern const short rayend[];
 
 void GenAtaks (void)
 /*************************************************************************
