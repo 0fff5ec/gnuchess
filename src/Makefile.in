@@ -1,0 +1,214 @@
+#
+# Makefile.in for GNU Chess
+# Run ./configure to generate a Makefile from Makefile.in
+
+#
+# Makefile (GNU Make, GNU C, GNU AutoConf )
+#
+# Copyright (c) 1999 Free Software Foundation
+#
+# This file is part of GNU CHESS.
+#
+# GNU Chess is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# GNU Chess is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GNU Chess; see the file COPYING.  If not, write to
+# the Free Software Foundation, 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+#
+
+PRODUCT = gnuchess
+VERSION = 5.02
+PATCHLEVEL = 0.00
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+CC = @CC@
+
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+LDFLAGS = @LDFLAGS@
+ALL_LDFLAGS = $(LDFLAGS)
+LIBS = @LIBS@ -lm
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+LIBDIR = $(prefix)/lib
+BINDIR = $(exec_prefix)/bin
+MANDIR = $(prefix)/man/man6
+MANEXT = .6
+
+#
+# make k2 - makes chess-playing program with xboard capability
+#	    (run k2.exe afterwards, with "post" if you wish verbosity)
+# make k2u - makes version that interfaces with Novag Universal Chess Board
+#	    (run k2u.exe afterwards, set mode universal on, plug Universal
+#	     into COM1 port on PC using Novag cable.)
+
+# Machine type (one of the following):
+#   -DUNIX -- define for Unix not running on an IBMPC
+#   -DIBMPC -- define for an IBMPC or an IBMPC running Unix
+MACHINE=-DUNIX
+# Interface type (one of the following):
+#   -DUNIVERSAL -- define for use with Novag Universal physical playing board.
+INTERFACE=
+
+CFLAGS=-O3 -Winline -Wmissing-prototypes -funroll-loops -fomit-frame-pointer $(MACHINE) $(INTERFACE)
+
+# Not normally needed unless debugging or profiling.
+# Debugging
+# CFLAGS=-g -Winline -Wmissing-prototypes -DDEBUG -DIBMPC
+# Profiling
+# CFLAGS=-pg -Winline -Wmissing-prototypes -DIBMPC
+ 
+# Link flags
+LFLAGS=-lm
+
+# For SVA (COMM-port reading for Universal Board implementation)
+SVAFLAGS=-O3 -g
+
+#source := $(wildcard *.c)
+#objects := $(patsubst %.c,%.o,$(wildcard *.c))
+
+objects := atak.o book.o cmd.o epd.o eval.o genmove.o hash.o hung.o init.o iterate.o main.o move.o null.o output.o players.o pgn.o quiesce.o random.o repeat.o search.o solve.o sort.o swap.o test.o ttable.o util.o version.o
+
+# Regular build (includes Xboard)
+gnuchess : $(objects)
+	$(CC) $(CFLAGS) -o $@ $^ $(LFLAGS)
+
+# Novag version
+k2u: $(objects) libsv.a univ.o
+	$(CC) $(CFLAGS) $(LFLAGS) -o $@ $^ libsv.a -lpc
+
+atak.o: atak.c common.h
+	$(CC) -c $(CFLAGS) atak.c
+
+book.o: book.c common.h
+	$(CC) -c $(CFLAGS) book.c
+
+cmd.o: cmd.c common.h
+	$(CC) -c $(CFLAGS) cmd.c
+
+epd.o: epd.c common.h
+	$(CC) -c $(CFLAGS) epd.c
+
+eval.o: eval.c common.h eval.h
+	$(CC) -c $(CFLAGS) eval.c
+
+genmove.o: genmove.c common.h
+	$(CC) -c $(CFLAGS) genmove.c
+
+hash.o: hash.c common.h
+	$(CC) -c $(CFLAGS) hash.c
+
+hung.o: hung.c common.h
+	$(CC) -c $(CFLAGS) hung.c
+
+init.o: init.c common.h
+	$(CC) -c $(CFLAGS) init.c
+
+iterate.o: iterate.c common.h
+	$(CC) -c $(CFLAGS) iterate.c
+
+main.o: main.c common.h
+	$(CC) -c $(CFLAGS) main.c
+
+move.o: move.c common.h
+	$(CC) -c $(CFLAGS) move.c
+
+null.o: null.c common.h
+	$(CC) -c $(CFLAGS) null.c
+
+output.o: output.c common.h
+	$(CC) -c $(CFLAGS) output.c
+
+pgn.o: pgn.c common.h
+	$(CC) -c $(CFLAGS) pgn.c
+
+players.o: players.c common.h
+	$(CC) -c $(CFLAGS) players.c
+
+quiesce.o: quiesce.c common.h
+	$(CC) -c $(CFLAGS) quiesce.c
+
+random.o: random.c common.h
+	$(CC) -c $(CFLAGS) random.c
+
+repeat.o: repeat.c common.h
+	$(CC) -c $(CFLAGS) repeat.c
+
+search.o: search.c common.h
+	$(CC) -c $(CFLAGS) search.c
+
+solve.o: solve.c common.h
+	$(CC) -c $(CFLAGS) solve.c
+
+sort.o:	sort.c common.h
+	$(CC) -c $(CFLAGS) sort.c
+
+swap.o:	swap.c common.h
+	$(CC) -c $(CFLAGS) swap.c
+
+test.o: test.c common.h
+	$(CC) -c $(CFLAGS) test.c
+
+ttable.o: ttable.c common.h
+	$(CC) -c $(CFLAGS) ttable.c
+
+util.o: util.c common.h
+	$(CC) -c $(CFLAGS) util.c
+
+univ.o: univ.c
+	$(CC) -c -DUNIVERSAL $(SVAFLAGS) univ.c
+
+version.o: version.c common.h
+	$(CC) -c $(CFLAGS) version.c
+
+libsv.a : svasync.o isr.o
+	ar -rs libsv.a svasync.o isr.o
+
+svasync.o : svasync.c
+	$(CC) -c $(SVAFLAGS) svasync.c
+
+isr.o : isr.S
+	$(CC) -c isr.S
+
+term1 : term1.o libsv.a
+	$(CC) term1.o libsv.a -o term1 -lpc
+
+term1.o: term1.c
+	$(CC) -c term1.c
+
+clean:
+	./clean
+
+backup: 
+	mkdir -p backups/v$(VER)
+	cp *.h *.c *.s Makefile Makefile.in configure.in LOG TODO backups/v$(VER)
+
+diff:
+	for i in $(source); do \
+	  echo "********* $$i *********"; \
+	  diff $$i backups\v$(VER)\$$i; \
+	done
+
+diskette:
+	cp todo log *.h *.c Makefile a:\k2
+	cp k2.exe a:\k2.exe
+
+install:
+	cp gnuchess.exe /cygdrive/c/winboard/gnuchess.exe
+
+dist:
+	cd ../.. ; tar cf - chess-$(VERSION) > chess-$(VERSION).tar ; gzip chess-$(VERSION).tar
+
