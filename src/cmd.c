@@ -124,7 +124,21 @@ void cmd_bk(void)
   fflush(stdout);
 }
 
-void cmd_black(void) {}
+void cmd_black(void) 
+{
+ /* 
+  * No longer used by Xboard but requested as a feature
+  */
+
+  NewPosition(); //Reset some flags and settings
+  CLEAR ( flags, THINK);
+  CLEAR ( flags, MANUAL);
+  CLEAR (flags, TIMEOUT);   
+  computer = white;
+  board.side = black;
+  board.ep = -1; // Hack to fixed appearing pawn bug
+
+}
 
 void cmd_book(void)
 {
@@ -572,7 +586,21 @@ void cmd_version(void)
      printf ("Chess\n");
 }
 
-void cmd_white(void) {}
+void cmd_white(void) 
+{
+ /* 
+  * No longer used by Xboard but requested as a feature
+  */
+
+  NewPosition(); //Reset some flags and settings
+  CLEAR ( flags, THINK);
+  CLEAR ( flags, MANUAL);
+  CLEAR (flags, TIMEOUT);   
+  computer = black;
+  board.side = white;
+  board.ep = -1; // Hack to fixed appearing pawn bug
+
+}
 
 void cmd_xboard(void)
 {

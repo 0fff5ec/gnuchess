@@ -1,3 +1,7 @@
+2003-01-31 Simon Waters <Simon@wretched.demon.co.uk>
+
+	* Implement "white" and "black" commands.
+
 2003-01-29 Anil Mungal <vagrancy@rogers.com>
 
 	* Two minor optimisations to eval.c (1% speed-up test evalspeed)
