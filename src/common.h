@@ -114,7 +114,7 @@ typedef struct
 #define CLEARBIT(b,i) ((b) &= NotBitPosArray[i])
 
 #define RANK(i) ((i) >> 3)
-#define FILE(i) ((i) & 7)
+#define ROW(i) ((i) & 7)
 #define trailz(b) (leadz ((b) & ((~b) + 1)))
 
 #define PROMOTEPIECE(a) ((a >> 12) & 0x0007)
@@ -431,7 +431,6 @@ void InitFICS (void);
 
 /*  The book routines  */
 void MakeBinBook (char *, short);
-short GetNextMove (FILE *, char *);
 int BookQuery (void);
 void BookBuilder (short, int, short, short);
 

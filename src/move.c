@@ -442,7 +442,7 @@ void SANMove (int move, short ply)
       /* Capture or enpassant */
       if (cboard[t] != 0 || board.ep == t)
       {
-         *s++ = algbrfile [FILE (f)];
+         *s++ = algbrfile [ROW (f)];
 	 *s++ = 'x';
       }
       strcpy (s, algbr[t]);
@@ -460,10 +460,10 @@ void SANMove (int move, short ply)
       *s++ = notation[piece];
       if (ambiguous)
       {
-         if (FILE (f) == FILE (FROMSQ(node1->move)))
+         if (ROW (f) == ROW (FROMSQ(node1->move)))
             *s++ = algbrrank[RANK (f)];
 	 else
-	    *s++ = algbrfile[FILE (f)];
+	    *s++ = algbrfile[ROW (f)];
       }
       if (cboard[t] != 0)		/* capture */
          *s++ = 'x'; 

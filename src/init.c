@@ -331,9 +331,9 @@ void InitPassedPawnMask ()
    for (sq = 0; sq < 64; sq++)
    {
       PassedPawnMask[white][sq] = Ray[sq][7];
-      if (FILE(sq) != 0)
+      if (ROW(sq) != 0)
          PassedPawnMask[white][sq] |= Ray[sq-1][7];
-      if (FILE(sq) != 7)
+      if (ROW(sq) != 7)
          PassedPawnMask[white][sq] |= Ray[sq+1][7];
    }
 
@@ -341,9 +341,9 @@ void InitPassedPawnMask ()
    for (sq = 0; sq < 64; sq++)
    {
       PassedPawnMask[black][sq] = Ray[sq][4];
-      if (FILE(sq) != 0)
+      if (ROW(sq) != 0)
          PassedPawnMask[black][sq] |= Ray[sq-1][4];
-      if (FILE(sq) != 7)
+      if (ROW(sq) != 7)
          PassedPawnMask[black][sq] |= Ray[sq+1][4];
    }
 }

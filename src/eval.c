@@ -77,22 +77,6 @@ static const short isolani_weaker[8] = {
   -22, -24, -26, -28, -28, -26, -24, -22
 };
 
-static const char outside_passed[128] ={ 96, 48, 48, 48, 45, 42, 40, 40,
-                                    36, 36, 32, 32, 28, 28, 24, 24,
-                                    20, 20, 16, 16, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12,
-                                    12, 12, 12, 12, 12, 12, 12, 12};
 static const short rank7[2] = { 6, 1 };
 static const short rank8[2] = { 7, 0 };
 static const BitBoard d2e2[2] =
@@ -176,8 +160,13 @@ inline int ScoreP (short side)
 
       /*  Backward pawns */
       backward = false;
-      i = sq + (side == white ? 8 : -8);
-      if (!(PassedPawnMask[xside][i] & ~FileBit[FILE(sq)] & c) &&
+    /*   i = sq + (side == white ? 8 : -8); */
+      if ( side == white ) {
+ 	 i = sq + 8;  }
+      else {
+         i= sq - 8; }
+
+      if (!(PassedPawnMask[xside][i] & ~FileBit[ROW(sq)] & c) &&
 	  cboard[i] != pawn)
       {
          n1 = nbits (c & MoveArray[ptype[xside]][i]);
@@ -189,7 +178,7 @@ inline int ScoreP (short side)
       {
          i1 = 1;
          i = i + (side == white ? 8 : -8);
-         if (!(PassedPawnMask[xside][i] & ~FileBit[FILE(i1)] & c))
+         if (!(PassedPawnMask[xside][i] & ~FileBit[ROW(i1)] & c))
          {
             n1 = nbits (c & MoveArray[ptype[xside]][i]);
             n2 = nbits (p & MoveArray[ptype[side]][i]);
@@ -208,7 +197,7 @@ inline int ScoreP (short side)
          s += PAWNBASEATAK;
  
       /*  Increment file count for isolani & doubled pawn evaluation */
-      nfile[FILE(sq)]++;
+      nfile[ROW(sq)]++;
    }
 
    for (i = 0; i <= 7; i++)
@@ -295,7 +284,7 @@ phase2:
 	(board.pmaterial[xside] == ValueN &&
 	pieces[xside] == board.b[xside][knight])))
    {
-      n1 = FILE(board.king[xside]);
+      n1 = ROW(board.king[xside]);
       n2 = RANK(board.king[xside]);
       for (i = 0; i <= 6; i++)
       {
@@ -334,10 +323,10 @@ phase2:
 
   /* If both sides are castled on different sides, bonus for pawn storms */
   c = board.b[side][pawn];
-  if (abs (FILE (board.king[side]) - FILE (board.king[xside])) >= 4 &&
+  if (abs (ROW (board.king[side]) - ROW (board.king[xside])) >= 4 &&
 	PHASE < 6)
   {
-     n1 = FILE (board.king[xside]);
+     n1 = ROW (board.king[xside]);
      p = (IsolaniMask[n1] | FileBit[n1]) & c;
      while (p)
      {
@@ -460,7 +449,7 @@ inline int ScoreN (short side)
 	s1 += KNIGHTONRIM;
 
       if (Outpost[side][sq] && 
-	  !(t & IsolaniMask[FILE(sq)] & PassedPawnMask[side][sq]) )
+	  !(t & IsolaniMask[ROW(sq)] & PassedPawnMask[side][sq]) )
       {
          s1 += OUTPOSTKNIGHT;
 
@@ -519,7 +508,7 @@ inline int ScoreB (short side)
 
       /*  Outpost bishop */
       if (Outpost[side][sq] && 
-	  !(t & IsolaniMask[FILE (sq)] & PassedPawnMask[side][sq]))
+	  !(t & IsolaniMask[ROW (sq)] & PassedPawnMask[side][sq]))
       {
          s1 += OUTPOSTBISHOP;
 
@@ -623,12 +612,12 @@ inline int ScoreR (short side)
       /* Control */
       s1 = CTL(sq,rook,side);
 
-      fyle = FILE(sq);
+      fyle = ROW(sq);
       if (PHASE < 7)
       {
          if (!(board.b[side][pawn] & FileBit[fyle]))
          {
-	    if (fyle == 5 && FILE(board.king[xside])>=E_FILE)
+	    if (fyle == 5 && ROW(board.king[xside])>=E_FILE)
 	      s1 += ROOKLIBERATED;
             s1 += ROOKHALFFILE;
             if (!(board.b[xside][pawn] & FileBit[fyle]))
@@ -803,7 +792,7 @@ inline int ScoreK (short side)
    s = 0;
    xside = 1^side;
    sq = board.king[side];
-   file = FILE (sq);
+   file = ROW (sq);
    rank = RANK (sq);
    KingSafety[side] = 0;
    if (!ENDING)
@@ -955,7 +944,7 @@ inline int ScoreK (short side)
       }
 
       /* Don't give fianchetto target for advanced pawns */
-      if (file > E_FILE && FILE(board.king[xside]) < D_FILE) {
+      if (file > E_FILE && ROW(board.king[xside]) < D_FILE) {
          if (side == white) fsq = G3; else fsq = G6;
 	 if ((BitPosArray[fsq] & board.b[side][pawn]) != NULLBITBOARD)
             if (((BitPosArray[F4]|BitPosArray[H4]|
@@ -963,7 +952,7 @@ inline int ScoreK (short side)
 	      & board.b[xside][pawn]) != NULLBITBOARD) 
 	        s += FIANCHETTO_TARGET;	
       }
-      if (file < E_FILE && FILE(board.king[xside]) > E_FILE) {
+      if (file < E_FILE && ROW(board.king[xside]) > E_FILE) {
          if (side == white) fsq = B3; else fsq = B6;
 	 if ((BitPosArray[fsq] & board.b[side][pawn]) != NULLBITBOARD)
             if (((BitPosArray[A4]|BitPosArray[C4]|
@@ -1097,8 +1086,8 @@ int KPK (short side)
  *  on a file other than a rook file and ...
  *
  **************************************************************************/
-   if (FILE(sq) != 0 && FILE(sq) != 7 &&
-        ((IsolaniMask[FILE(sq)] | FileBit[FILE(sq)]) & board.b[winer][king]))
+   if (ROW(sq) != 0 && ROW(sq) != 7 &&
+        ((IsolaniMask[ROW(sq)] | FileBit[ROW(sq)]) & board.b[winer][king]))
    {
 
 /**************************************************************************
@@ -1218,7 +1207,7 @@ int ScoreKBNK (short side, short loser)
    winer = 1^loser;
    sqB = board.king[loser];
    if (board.b[winer][bishop] & WHITESQUARES)
-      sqB = RANK(sqB)*8 + 7 - FILE(sqB);
+      sqB = RANK(sqB)*8 + 7 - ROW(sqB);
    sq1 = board.king[winer];
    sq2 = board.king[loser];
    s = 300 - 6 * taxicab[sq1][sq2];
