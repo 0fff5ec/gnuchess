@@ -71,7 +71,7 @@ void InputCmd ()
    int i;
    leaf *ptr; 
    int ncmds;
-   char *x;
+   char *x,*trim;
 #ifdef UNIVERSAL
    char *p,c;
 #endif
@@ -132,7 +132,12 @@ void InputCmd ()
   }
 #endif
 
-   sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting); 
+   /* Put options after command back in inputstr - messy */
+   sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting);
+
+   trim = inputstr + strlen(inputstr) - 1;
+   while (*trim==' ' && trim>=inputstr)
+                *trim--='\0';
 
    if (strcmp (cmd, "quit") == 0 || strcmp (cmd, "exit") == 0)
       SET (flags, QUIT);
@@ -161,7 +166,7 @@ void InputCmd ()
       ShowVersion ();
    else if (strcmp (cmd, "pgnsave") == 0)
            {     
-		if ( strlen(inputstr) > 2 )
+		if ( strlen(inputstr) > 0 )
       		  PGNSaveToFile (inputstr,"");
 		else
 		  printf("Invalid filename.\n");
@@ -389,7 +394,7 @@ void InputCmd ()
    }
    else if (strcmp (cmd, "save") == 0 || strcmp (cmd, "epdsave") == 0)
 	{  
-	   if ( strlen(inputstr) > 2 )
+	   if ( strlen(inputstr) > 0 )
              SaveEPD (inputstr);
 	   else
 	     printf("Invalid filename.\n");
