@@ -2,6 +2,8 @@
 
 	* Add "book random" to command line help text
 
+	* Remove redundant code, and update documentation for release.
+
 2002-08-17 Simon Waters <simon@wretched.demon.co.uk>
 
 	* Bug code bug introduced in development version

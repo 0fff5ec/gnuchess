@@ -542,7 +542,6 @@ void SaveEPD (char *);
 /*  The command routines */
 void InputCmd (void);
 void ShowCmd (char *);
-void BookCmd (char *);
 void TestCmd (char *);
 
 /*  Some utility routines  */

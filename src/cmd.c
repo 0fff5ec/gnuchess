@@ -731,28 +731,6 @@ void ShowCmd (char *subcmd)
    }
 }
 
-
-void BookCmd (char *subcmd)
-/*************************************************************************
- *
- *  The book command driver section.
- *
- *************************************************************************/
-{
-   char cmd[INPUT_SIZE];
-   char bookfile[INPUT_SIZE];
-   int bookply;
-
-   sscanf (subcmd, "%s %[^\n]", cmd, subcmd);
-   if (strcmp (cmd, "make") == 0)
-   {
-      sscanf (subcmd, "%s %hd\n", bookfile, &bookply);
-      /* MakeBinBook (bookfile, bookply); */
-   }
-}
-
-
-
 void TestCmd (char *subcmd)
 /*************************************************************************
  *
