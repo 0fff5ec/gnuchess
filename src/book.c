@@ -515,8 +515,10 @@ int BookQuery(int BKquery)
 	rfp = NULL;
       } else break; /* Success, stop search */
     }
-    if (rfp == NULL && (!(flags & XBOARD) || BKquery == 1) ) {
-      fprintf(ofp," No book found.\n\n");
+    if (rfp == NULL) {
+      /* If appropriate print error */
+      if (!(flags & XBOARD) || BKquery == 1)
+        fprintf(ofp," No book found.\n\n");
       return BOOK_ENOBOOK;
     }
     if (!(flags & XBOARD)) {
