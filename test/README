@@ -37,3 +37,21 @@ endgame.epd	14/46	10893908
 wac.epd		249/300	32364914
 
 2003/03/12 SRW, correction, white to move, position 4 BT2630.epd
+
+2003/06/16 SRW, benchmark for future reference.
+GNU Chess 5.07 development version.
+GCC version 2.95.4 Debian Pre-release
+Celeron (Coppermine) 547.19MHz 1091.17 bogomips
+Acer Travelmate 200DX, Debian unstable, 256MB
+Options, easy, book off, hashsize 524288
+
+Test		Score	Nodes Examined
+BT2630.epd	12/30	21987342
+endgame.epd	15/46	53994637
+wac.epd		275/300 171065732
+
+2003/06/18 Add wacfailed.epd selection of "difficult" wac positions.
+Noted that 5/24 of these are solved on same hardware with "hash off".
+Hashing is a mixed blessing at fast time scales, as it slows the 
+search slightly.
+
