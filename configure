@@ -1247,7 +1247,7 @@ fi
 
 # Define the identity of the package.
 PACKAGE=gnuchess
-VERSION=5.06
+VERSION=5.07
 
 cat >>confdefs.h <<EOF
 #define PACKAGE "$PACKAGE"
