@@ -172,7 +172,7 @@ void SortRoot (void)
 
       p->score += taxicab[FROMSQ(p->move)][D5] - taxicab[TOSQ(p->move)][E4];
 
-      if ( f == pawn ) {
+      if ( f == ValueP ) {
         /* Look at pushing Passed pawns first */
         if ( (enemyP & PassedPawnMask[side][TOSQ(p->move)]) == NULLBITBOARD )
            p->score +=50;
