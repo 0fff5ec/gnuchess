@@ -287,12 +287,12 @@ void Iterate (void)
    else
    {
       if (!wasbookmove) {
-        fprintf (ofp,"\nTime = %.1f Rate=%ld Nodes=[%ld/%ld/%ld] GenCnt=%ld\n", 
+        fprintf (ofp,"\nTime = %.1f Rate=%lu Nodes=[%lu/%lu/%lu] GenCnt=%lu\n", 
 	  et, et > 0 ? (unsigned long)((NodeCnt+QuiesCnt)/et) : 0, 
 	  NodeCnt, QuiesCnt, NodeCnt+QuiesCnt, GenCnt);
-        fprintf (ofp,"Eval=[%ld/%ld] RptCnt=%ld NullCut=%ld FutlCut=%ld\n",
+        fprintf (ofp,"Eval=[%lu/%lu] RptCnt=%lu NullCut=%lu FutlCut=%lu\n",
           EvalCnt, EvalCall, RepeatCnt, NullCutCnt, FutlCutCnt);
-        fprintf (ofp,"Ext: Chk=%ld Recap=%ld Pawn=%ld OneRep=%ld Horz=%ld Mate=%ld KThrt=%ld\n",
+        fprintf (ofp,"Ext: Chk=%lu Recap=%lu Pawn=%lu OneRep=%lu Horz=%lu Mate=%lu KThrt=%lu\n",
           ChkExtCnt, RcpExtCnt, PawnExtCnt, OneRepCnt, HorzExtCnt, ThrtExtCnt,
 	  KingExtCnt);
         fprintf (ofp,"Material=[%d/%d : %d/%d] ", 
