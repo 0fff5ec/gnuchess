@@ -200,18 +200,17 @@ void Iterate (void)
          RootAlpha = RootBeta;
          RootBeta = INFINITY;
          score = SearchRoot (Idepth, RootAlpha, RootBeta);
-         /*score = SearchRoot (Idepth, RootBeta, INFINITY);*/
       }
-      else 
       /*  If we fail low, then research. */ 
-      if (score <= RootAlpha && !(flags & TIMEOUT))
+      else 
       {
-         ShowLine (RootPV, score, '-');
-         rootscore = -INFINITY-1;
-	 RootBeta = RootAlpha;	
-	 RootAlpha = -INFINITY;
-         score = SearchRoot (Idepth, RootAlpha, RootBeta);
-         /*score = SearchRoot (Idepth, -INFINITY, RootAlpha);*/
+	if (score <= RootAlpha && !(flags & TIMEOUT))
+        {
+          ShowLine (RootPV, score, '-');
+          rootscore = -INFINITY-1;
+	  RootBeta = RootAlpha;
+	  RootAlpha = -INFINITY;
+        }
       }
 
       /*  Print the final PV line  */
