@@ -1,7 +1,11 @@
-2003-06-13 Simon Waters <Simon@wretched.demon.co.uk>      
+2003-06-15 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* const declaration for progname removed to 
 	  resolve problems with other compilers.
+
+	* Reapply earlier fix to ensure the players
+	  names for white and black are fixed which got
+	  overwritten with pgn parser merge.
 
 2003-06-13 Simon Waters <Simon@wretched.demon.co.uk>      
 

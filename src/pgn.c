@@ -78,14 +78,14 @@ void PGNSaveToFile (const char *file, const char *resultstr)
 
    if (pgn_white) 
      fprintf (fp, "[White \"%s\"]\n", pgn_white);
-   else if (computerplays == white) 
+   else if (computer == white) 
      fprintf (fp, "[White \"%s %s\"]\n",PROGRAM,VERSION);
    else
      fprintf (fp, "[White \"%s\"]\n",name);
 
    if (pgn_black) 
      fprintf (fp, "[Black \"%s\"]\n", pgn_black);
-   else if (computerplays == black)
+   else if (computer == black)
      fprintf (fp, "[Black \"%s %s\"]\n",PROGRAM,VERSION);
    else
      fprintf (fp, "[Black \"%s\"]\n",name);
