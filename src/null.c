@@ -44,7 +44,8 @@ void MakeNullMove (short side)
    g->epsq = board.ep;
    g->bflag = board.flag;
    g->hashkey = HashKey;
-   HashKey ^= ephash[board.ep];
+   if (board.ep > -1)
+      HashKey ^= ephash[board.ep];
    HashKey ^= Sidehash; 
    board.ep = -1;
    board.side = 1^side;
