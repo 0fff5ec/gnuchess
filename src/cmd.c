@@ -461,6 +461,14 @@ void InputCmd ()
       TimeLimit[board.side] += Game[GameCnt+1].et;
       if (!(flags & XBOARD)) ShowBoard ();
    }
+   else if (strcmp (cmd, "bk") == 0)
+   {
+	/* Implement Basic Book function for Xboard */
+	printf (" GNU Chess Opening Book is built using the\n");
+	printf (" 'book add file.pgn' command\n");
+	printf ("\n");
+        fflush(stdout);
+   }
 
    /* everything else must be a move */
    else
