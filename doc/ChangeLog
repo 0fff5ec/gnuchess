@@ -613,3 +613,51 @@ Version 5.01
     Stuart Cracraft <cracraftt@gnu.org>
     Expanded opening book
 
+Version 5.02
+
+  Various bug fixes.
+
+Version 5.03
+
+  Book handling rewritten, and other major changes collected and applied
+  by Stuart Cracraft before use of CVS. Book need to be remade from PGN.
+
+  List of Grandmasters we "trust" in generating the opening book was
+  extended.
+
+  Contributed Bug fixes - various.
+
+  Code placed under CVS after some minor changes to 5.02.
+  Opening book not placed under CVS - too large.
+
+  Other changes managed under CVS
+
+  Installation instructions corrected "book create" to "book add".
+  Makefile modified to work with OpenBSD make.
+  Use of C++ reserved words as variable names removed for ease of reuse. 
+  The C Macro i386 replaced with Endianness test for portability.
+  Lots of unreachable code removed to make it more readable.
+  "#ifdef debug" and "#ifdef never" code removed.
+  Removed problem with "space" on the end of filenames.
+  Handle XBoard SIGINT gracefully (Caused Solaris Xboard problem).
+  Reduced default hashtable size.
+  Deleted Crafty style bad trade code as it was incorrect.
+
+  The calculations for hung and pinned pieces were using stale
+  information in the calculations. All relevant code was removed
+  from the position evaluation routine. 
+  
+  Fixed loop bound error that allowed King to remain in check!!!
+
+  Made input buffers consistent to stop crash on long commands.
+  Correct hashtable handling of En Passant.
+  Fixed EPD output when loading a game from file with Black to move.
+  Fixed file handling problem extending opening book.
+
+  Various modifications to SortMove to encourage examination of
+  pushing passed pawns, centralisation, before other moves. Some
+  modification have little effect, as the calling of sorting routines
+  is quite complex.
+
+  Added various EPD files for developer testing. These files cannot be
+  included in the released tar file until copyright issues are resolved.
