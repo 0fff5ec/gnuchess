@@ -146,8 +146,12 @@ typedef struct
 
 /*  MACRO definitions */
 
+#ifndef MAX
 #define MAX(a,b)     ((a) > (b) ? (a) : (b))
+#endif
+#ifndef MIN
 #define MIN(a,b)     ((a) < (b) ? (a) : (b))
+#endif
 #define SET(a,b)                     \
   do {                               \
     (a) |= (b);                      \
