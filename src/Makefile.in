@@ -97,7 +97,8 @@ am_gnuchess_OBJECTS = atak.$(OBJEXT) book.$(OBJEXT) cmd.$(OBJEXT) \
 	sort.$(OBJEXT) swap.$(OBJEXT) test.$(OBJEXT) ttable.$(OBJEXT) \
 	util.$(OBJEXT)
 gnuchess_OBJECTS = $(am_gnuchess_OBJECTS)
-gnuchess_LDADD = $(LDADD)
+# Manually added LIBOBJ for getopt_long
+gnuchess_LDADD = $(LDADD) @LIBOBJS@
 gnuchess_DEPENDENCIES =
 gnuchess_LDFLAGS =
 
@@ -130,6 +131,8 @@ CFLAGS = @CFLAGS@
 DIST_SOURCES = $(gnuchess_SOURCES)
 DIST_COMMON = ./stamp-h.in Makefile.am Makefile.in config.h.in
 SOURCES = $(gnuchess_SOURCES)
+# For getopt_long
+EXTRA_DIST = getopt.h
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

@@ -54,5 +54,10 @@ AC_FUNC_MEMCMP
 dnl See above, how do we treat failure here?
 AC_CHECK_FUNCS(gettimeofday strchr strcspn strstr strerror memset nanosleep usleep)
 
+dnl Check for getopt_long or use bundled version
+AC_SUBST(LIBOBJS)
+AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] )
+
+
 AC_CONFIG_FILES(Makefile src/Makefile)
 AC_OUTPUT

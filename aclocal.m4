@@ -47,7 +47,7 @@ dnl
 dnl Remember, if the system already had a valid <stdint.h>, the generated
 dnl file will include it directly. No need for fuzzy HAVE_STDINT_H things...
 dnl
-dnl @version $Id: aclocal.m4,v 1.13 2003/01/29 22:36:52 srw Exp $
+dnl @version $Id: aclocal.m4,v 1.14 2003/02/16 21:10:07 srw Exp $
 dnl @author  Guido Draheim <guidod@gmx.de>       STATUS: used on new platforms
 
 AC_DEFUN([AC_NEED_STDINT_H],
@@ -234,7 +234,7 @@ dnl      AC_COMPILE_CHECK_SIZEOF(ptrdiff_t, $headers)
 dnl      AC_COMPILE_CHECK_SIZEOF(off_t, $headers)
 dnl
 dnl @author Kaveh Ghazi <ghazi@caip.rutgers.edu>
-dnl @version $Id: aclocal.m4,v 1.13 2003/01/29 22:36:52 srw Exp $
+dnl @version $Id: aclocal.m4,v 1.14 2003/02/16 21:10:07 srw Exp $
 dnl
 AC_DEFUN([AC_COMPILE_CHECK_SIZEOF],
 [changequote(<<, >>)dnl
@@ -248,7 +248,7 @@ AC_CACHE_VAL(AC_CV_NAME,
 [for ac_size in 4 8 1 2 16 $2 ; do # List sizes in rough order of prevalence.
   AC_TRY_COMPILE([#include "confdefs.h"
 #include <sys/types.h>
-
+$2
 ], [switch (0) case 0: case (sizeof ($1) == $ac_size):;], AC_CV_NAME=$ac_size)
   if test x$AC_CV_NAME != x ; then break; fi
 done
@@ -272,7 +272,7 @@ dnl
 dnl a convenience macro AC_CHECK_TYPEDEF_ is provided that will not emit
 dnl any message to the user - it just executes one of the actions.
 dnl
-dnl @version $Id: aclocal.m4,v 1.13 2003/01/29 22:36:52 srw Exp $
+dnl @version $Id: aclocal.m4,v 1.14 2003/02/16 21:10:07 srw Exp $
 dnl @author  Guido Draheim <guidod@gmx.de>
 
 AC_DEFUN(AC_CHECK_TYPEDEF_,
