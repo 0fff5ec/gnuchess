@@ -863,10 +863,14 @@ static const char * const helpstr[] = {
    "xboard",
    " on - enables use of xboard/winboard",
    " off - disables use of xboard/winboard",
+#ifdef UNIVERSAL
    "universal",
-   " on - enables using the universal chess board (if compiles with",
-   "      INTERFACE=-DUNIVERSAL by GNU CC on a PC with SVASYNC library",
+   " on - enables using the universal chess board",
    " off - disables using the universal chess board",
+#else /* !UNIVERSAL */
+   "universal",
+   " Universal chess board support was not enabled at compile time, sorry",
+#endif /* UNIVERSAL */
    "depth N",
    " Sets the program to look N ply (half-moves) deep for every",
    " search it performs. If there is a checkmate or other condition",
