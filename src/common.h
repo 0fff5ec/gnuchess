@@ -721,6 +721,7 @@ void DBUpdatePlayer (const char *player, const char *resultstr);
 void DBTest (void);
 
 /* Input thread and thread function */
+#include <pthread.h>
 extern pthread_t input_thread;
 void *input_func(void *);
 
