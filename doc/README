@@ -253,6 +253,10 @@ The general hash table size is controlled by the variable HASHSLOTS
 as defined in common.h. Likewise the pawn hash table size is controlled
 by the variable PAWNSLOTS in common.h.
 
+The number of hashtable slots can be controlled from the command
+line (Type "gnuchess -help" for details), or via the interactive
+hashsize command.
+
 Typically middle-game searches are sped up by 25%-50% by the general
 hash table and by much more in endgames where there are few pieces
 (because so many of the positions turn out to be cached already in
@@ -297,8 +301,8 @@ COMPILERS
   For Microsoft Windows platforms we compile and test using Cygwin,
   which is a port of many GNU packages, including GCC.
 
-  Cygwin requires a run time DLL to provide the interface, this should
-  be provided with any executable you receive.
+  Cygwin may require specific run time DLL's to provide the interface, 
+  these should be provided with any executable you receive.
 
   Whilst GCC is the supported compiler, a key goal is portability. If
   you experience problems compiling GNU Chess with a modern C compiler
