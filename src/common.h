@@ -547,7 +547,6 @@ void InitInput (void);
 void CleanupInput(void);
 
 /*  The book routines */
-void MakeBinBook (char *, short);
 int BookQuery (int);
 int BookBuilderOpen(void);
 int BookBuilder (short result, uint8_t side);
@@ -708,10 +707,6 @@ void TestNonCaptureList (void);
 void TestCaptureList (void);
 void TestEvalSpeed (void);
 void TestEval (void);
-
-/*  Miscellaneous routines  */
-void ShowVersion (void);
-void ShowHelp (const char *);
 
 /* Player database */
 void DBSortPlayer (const char *style);

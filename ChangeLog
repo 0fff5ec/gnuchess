@@ -12,6 +12,8 @@
 
 	* Tell xboard sigint=0 to avoid workaround on Solaris.
 
+	* Various code clean-ups.
+
 2003-06-13 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Use CalcHashSize in main.c
