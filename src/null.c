@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include "common.h"
 
-void MakeNullMove (short side)
+void MakeNullMove (int side)
 /*****************************************************************************
  *
  *  Makes a null move on the board and update the various game information.
@@ -56,7 +56,7 @@ void MakeNullMove (short side)
 }
 
 
-void UnmakeNullMove (short side)
+void UnmakeNullMove (int side)
 /****************************************************************************
  *
  *  Undoing a null move.

@@ -28,8 +28,8 @@
 
 #include "common.h"
 
-const short raybeg[7] = { 0, 0, 0, 0, 4, 0, 0 };
-const short rayend[7] = { 0, 0, 0, 4, 8, 8, 0 };
+const int raybeg[7] = { 0, 0, 0, 0, 4, 0, 0 };
+const int rayend[7] = { 0, 0, 0, 4, 8, 8, 0 };
 
 static leaf *node;
 
@@ -47,7 +47,7 @@ static leaf *node;
     ADDMOVE (a, b, BISHOPPRM);    \
   } while (0)
 
-static inline void BitToMove (short f, BitBoard b)
+static inline void BitToMove (int f, BitBoard b)
 /***************************************************************************
  *
  *  Convert a bitboard into a list of moves.  These are stored
@@ -55,7 +55,7 @@ static inline void BitToMove (short f, BitBoard b)
  *
  ***************************************************************************/
 {
-   short t;
+   int t;
 
    while (b)
    {
@@ -67,7 +67,7 @@ static inline void BitToMove (short f, BitBoard b)
 
 
 
-void GenMoves (short ply)
+void GenMoves (int ply)
 /****************************************************************************
  *
  *  My bitboard move generator.  Let's see how fast we can go!
@@ -75,7 +75,8 @@ void GenMoves (short ply)
  *
  ****************************************************************************/
 {
-   short side, piece, sq, t, ep;
+   int side;
+   int piece, sq, t, ep;
    BitBoard b, c, d, e, friends, notfriends, blocker, notblocker;
    BitBoard *a;
 
@@ -299,7 +300,7 @@ void GenMoves (short ply)
 }
 
 
-void GenNonCaptures (short ply)
+void GenNonCaptures (int ply)
 /****************************************************************************
  *
  *  Here I generate only non-captures.  Promotions are considered
@@ -307,9 +308,10 @@ void GenNonCaptures (short ply)
  *
  ****************************************************************************/
 {
-   register short side, piece, sq, t, ep;
-   register BitBoard b, c, d, friends, notfriends, blocker, notblocker;
-   register BitBoard *a;
+   int side;
+   int piece, sq, t, ep;
+   BitBoard b, c, d, friends, notfriends, blocker, notblocker;
+   BitBoard *a;
 
    side = board.side;
    a = board.b[side];
@@ -442,7 +444,7 @@ void GenNonCaptures (short ply)
 }
 
 
-void GenCaptures (short ply)
+void GenCaptures (int ply)
 /****************************************************************************
  *
  *  This routine generates captures.  En passant and pawn promotions
@@ -450,9 +452,10 @@ void GenCaptures (short ply)
  *
  ****************************************************************************/
 {
-   short side, piece, sq, t, ep;
+   int side;
+   int piece, sq, t, ep;
    BitBoard b, c, friends, notfriends, enemy, blocker;
-   register BitBoard *a;
+   BitBoard *a;
 
    side = board.side;
    a = board.b[side];
@@ -618,7 +621,7 @@ void GenCaptures (short ply)
 }
 
 
-void GenCheckEscapes (short ply)
+void GenCheckEscapes (int ply)
 /**************************************************************************
  *
  *  The king is in check, so generate only moves which get the king out
@@ -628,7 +631,8 @@ void GenCheckEscapes (short ply)
  *
  **************************************************************************/
 {
-   short side, xside, kingsq, chksq, sq, sq1, epsq, dir;
+   int side, xside;
+   int kingsq, chksq, sq, sq1, epsq, dir;
    BitBoard checkers, b, c, p; 
 
    side = board.side;
@@ -748,7 +752,7 @@ void GenCheckEscapes (short ply)
 }
 
 
-void FilterIllegalMoves (short ply)
+void FilterIllegalMoves (int ply)
 /**************************************************************************
  *
  *  All the illegal moves in the current ply is removed.
@@ -756,7 +760,8 @@ void FilterIllegalMoves (short ply)
  **************************************************************************/
 {
    leaf *p;
-   short side, xside, check, sq;
+   int side, xside;
+   int check, sq;
 
    side = board.side;
    xside = 1^side;

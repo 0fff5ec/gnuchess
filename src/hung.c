@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include "common.h"
 
-short EvalHung(short side)
+int EvalHung(int side)
 /****************************************************************************
  *
  *  Calculate the number of hung pieces for a side.
@@ -38,7 +38,7 @@ short EvalHung(short side)
  ****************************************************************************/
 {
    BitBoard c, n, b, r, q;
-   short xside;
+   int xside;
 
    xside = 1 ^ side;
    hunged[side] = 0;

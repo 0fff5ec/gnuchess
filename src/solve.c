@@ -39,7 +39,7 @@ void Solve (char *file)
  *
  *****************************************************************************/
 {
-   short total, correct, found;
+   int total, correct, found;
    long TotalNodes;
    char *p;
 

@@ -59,13 +59,13 @@ typedef struct
    BitBoard blockerr90;
    BitBoard blockerr45;
    BitBoard blockerr315;
-   short ep;
-   short flag;
-   short side;
-   short material[2];
-   short pmaterial[2];
-   short castled[2];
-   short king[2];
+   int ep;
+   int flag;
+   int side;
+   int material[2];
+   int pmaterial[2];
+   int castled[2];
+   int king[2];
 } Board; 
 
 typedef struct
@@ -77,10 +77,10 @@ typedef struct
 typedef struct
 {
    int move;
-   short epsq; 
-   short bflag;
-   short Game50;
-   short mvboard;
+   int epsq; 
+   int bflag;
+   int Game50;
+   int mvboard;
    float et;
    HashType hashkey;
    HashType phashkey;
@@ -92,8 +92,8 @@ typedef struct
    KeyType key; 
    int move;
    int score;
-   short flag;
-   short depth;
+   int flag;
+   int depth;
 } HashSlot;   
 
 typedef struct
@@ -101,8 +101,8 @@ typedef struct
    KeyType pkey;  
    BitBoard passed;
    BitBoard weaked;
-   short score;
-   short phase;
+   int score;
+   int phase;
 } PawnSlot;
 
 
@@ -268,13 +268,13 @@ typedef struct
 
 #define INPUT_SIZE 128
 
-extern short distance[64][64];
-extern short taxicab[64][64];
-extern unsigned char lzArray[65536];
-extern short Shift00[64];
-extern short Shift90[64];
-extern short Shift45[64];
-extern short Shift315[64];
+extern int distance[64][64];
+extern int taxicab[64][64];
+extern int lzArray[65536];
+extern int Shift00[64];
+extern int Shift90[64];
+extern int Shift45[64];
+extern int Shift315[64];
 extern BitBoard DistMap[64][8];
 extern BitBoard BitPosArray[64];
 extern BitBoard NotBitPosArray[64];
@@ -301,18 +301,18 @@ extern BitBoard mask_qr_trapped_w[3];
 extern BitBoard mask_qr_trapped_b[3];
 extern BitBoard boardhalf[2];
 extern BitBoard boardside[2];
-extern short directions[64][64];
-extern unsigned char BitCount[65536];
+extern int directions[64][64];
+extern int BitCount[65536];
 extern leaf Tree[MAXTREEDEPTH];
 extern leaf *TreePtr[MAXPLYDEPTH];
 extern int RootPV;
 extern GameRec Game[MAXGAMEDEPTH];
-extern short GameCnt;
-extern short computer;
+extern int GameCnt;
+extern int computer;
 extern unsigned int flags;
 extern Board board;
-extern short cboard[64];
-extern short Mvboard[64];
+extern int cboard[64];
+extern int Mvboard[64];
 extern HashType hashcode[2][7][64];
 extern HashType ephash[64];
 extern HashType WKCastlehash;
@@ -324,9 +324,9 @@ extern HashType HashKey;
 extern HashType PawnHashKey;
 extern HashSlot *HashTab[2];
 extern PawnSlot *PawnTab[2];
-extern short Idepth;
-extern short SxDec;
-extern short Game50;
+extern int Idepth;
+extern int SxDec;
+extern int Game50;
 extern int lazyscore[2];
 extern int maxposnscore[2];
 extern int rootscore;
@@ -356,14 +356,14 @@ extern unsigned long RepeatCnt;
 extern unsigned HashSize;
 extern unsigned long TTHashMask;
 extern unsigned long PHashMask;
-extern short slider[8];
-extern short Value[7];
+extern int slider[8];
+extern int Value[7];
 extern char SANmv[10];
 extern unsigned long history[2][4096];
 extern int killer1[MAXPLYDEPTH];
 extern int killer2[MAXPLYDEPTH];
-extern short ChkCnt[MAXPLYDEPTH];
-extern short ThrtCnt[MAXPLYDEPTH];
+extern int ChkCnt[MAXPLYDEPTH];
+extern int ThrtCnt[MAXPLYDEPTH];
 extern char id[32];
 extern char solution[64];
 /*
@@ -373,60 +373,60 @@ extern char solution[64];
  */
 extern double et;
 extern float SearchTime;
-extern short SearchDepth;
-extern short MoveLimit[2];
+extern int SearchDepth;
+extern int MoveLimit[2];
 extern float TimeLimit[2];
-extern short TCMove;
-extern short TCinc;
+extern int TCMove;
+extern int TCinc;
 extern float TCTime;
-extern short hunged[2];
-extern short phase;
+extern int hunged[2];
+extern int phase;
 extern int Hashmv[MAXPLYDEPTH];
 extern int Debugmv[MAXPLYDEPTH];
-extern short Debugmvl;
-extern short RootPieces;
-extern short RootPawns;
-extern short RootMaterial;
-extern short RootAlpha;
-extern short RootBeta;
-extern short pickphase[MAXPLYDEPTH];
-extern short InChk[MAXPLYDEPTH];
-extern short KingThrt[2][MAXPLYDEPTH];
-extern short threatmv;
-extern short threatply;
-extern short KingSafety[2];
+extern int Debugmvl;
+extern int RootPieces;
+extern int RootPawns;
+extern int RootMaterial;
+extern int RootAlpha;
+extern int RootBeta;
+extern int pickphase[MAXPLYDEPTH];
+extern int InChk[MAXPLYDEPTH];
+extern int KingThrt[2][MAXPLYDEPTH];
+extern int threatmv;
+extern int threatply;
+extern int KingSafety[2];
 
-extern short bookmode;
-extern short bookfirstlast;
+extern int bookmode;
+extern int bookfirstlast;
 
-extern short range[8];
-extern short ptype[2];
+extern int range[8];
+extern int ptype[2];
 extern char algbr[64][3];
 extern char algbrfile[9];
 extern char algbrrank[9];
 extern char notation[8];
 extern char lnotation[8];
-extern short r90[64];
-extern short r45[64];
-extern short r315[64];
-extern short Mask45[64];
-extern short Mask315[64];
+extern int r90[64];
+extern int r45[64];
+extern int r315[64];
+extern int Mask45[64];
+extern int Mask315[64];
 
-extern short rank6[2];
-extern short rank7[2];
-extern short rank8[2];
+extern int rank6[2];
+extern int rank7[2];
+extern int rank8[2];
 
 extern FILE *ofp;
-extern short myrating, opprating, suddendeath;
+extern int myrating, opprating, suddendeath;
 extern char name[50];
-extern short computerplays;
-extern short wasbookmove;
+extern int computerplays;
+extern int wasbookmove;
 extern int nmovesfrombook;
 extern float maxtime;
-extern short n; 		/* Last mobility returned by CTL */
-extern short ExchCnt[2];
+extern int n; 		/* Last mobility returned by CTL */
+extern int ExchCnt[2];
 extern int newpos, existpos;		/* For book statistics */
-extern short bookloaded;
+extern int bookloaded;
 
 enum Piece { empty, pawn, knight, bishop, rook, queen, king, bpawn };
 
@@ -479,10 +479,10 @@ void NewPosition (void);
 void InitFICS (void);
 
 /*  The book routines */
-void MakeBinBook (char *, short);
+void MakeBinBook (char *, int);
 int BookQuery (int);
 int BookBuilderOpen(void);
-int BookBuilder (short result, short side);
+int BookBuilder (int result, int side);
 int BookBuilderClose(void);
 
 /*
@@ -501,40 +501,40 @@ enum {
 };
  
 /*  The move generation routines  */
-void GenMoves (short);
-void GenCaptures (short);
-void GenNonCaptures (short);
-void GenCheckEscapes (short);
-void FilterIllegalMoves (short);
+void GenMoves (int);
+void GenCaptures (int);
+void GenNonCaptures (int);
+void GenCheckEscapes (int);
+void FilterIllegalMoves (int);
 
 /*  The move routines  */
-void MakeMove (short, int *);
-void UnmakeMove (short, int *);
-void MakeNullMove (short);
-void UnmakeNullMove (short);
-void SANMove (int, short);
+void MakeMove (int, int *);
+void UnmakeMove (int, int *);
+void MakeNullMove (int);
+void UnmakeNullMove (int);
+void SANMove (int, int);
 leaf *ValidateMove (char *);
-leaf *IsInMoveList (short, short, short, char);
-short IsLegalMove (int);
+leaf *IsInMoveList (int, int, int, char);
+int IsLegalMove (int);
 char *AlgbrMove (int);
 
 /*  The attack routines  */
-short SqAtakd (short, short);
+int SqAtakd (int, int);
 void GenAtaks (void);
-BitBoard AttackTo (short, short);
-BitBoard AttackXTo (short, short);
-BitBoard AttackFrom (short, short, short);
-BitBoard AttackXFrom (short, short);
-short PinnedOnKing (short, short);
+BitBoard AttackTo (int, int);
+BitBoard AttackXTo (int, int);
+BitBoard AttackFrom (int, int, int);
+BitBoard AttackXFrom (int, int);
+int PinnedOnKing (int, int);
 void FindPins (BitBoard *);
-short MateScan (short);
+int MateScan (int);
 
 /*  The swap routines  */
-short SwapOff (int);
-void AddXrayPiece (short, short, short, BitBoard *, BitBoard *);
+int SwapOff (int);
+void AddXrayPiece (int, int, int, BitBoard *, BitBoard *);
 
 /*  The EPD routines  */
-short ReadEPDFile (const char *, short);
+int ReadEPDFile (const char *, int);
 void ParseEPD (char *);
 void LoadEPD (char *);
 void SaveEPD (char *);
@@ -547,15 +547,15 @@ void TestCmd (char *);
 
 /*  Some utility routines  */
 #ifdef NO_INLINE
-short int leadz (BitBoard);
-unsigned char nbits (BitBoard);
+int int leadz (BitBoard);
+int nbits (BitBoard);
 #endif
 
 void UpdateFriends (void);
 void UpdateCBoard (void);
 void UpdateMvboard (void);
 void EndSearch (int);
-short ValidateBoard (void);
+int ValidateBoard (void);
 
 /*  PGN routines  */
 void PGNSaveToFile (const char *, const char *);
@@ -567,45 +567,45 @@ void CalcHashKey (void);
 void ShowHashKey (HashType);
 
 /*  The evaluation routines  */
-int ScoreP (short);
-int ScoreN (short);
-int ScoreB (short);
-int ScoreR (short);
-int ScoreQ (short);
-int ScoreK (short);
-int ScoreDev (short);
+int ScoreP (int);
+int ScoreN (int);
+int ScoreB (int);
+int ScoreR (int);
+int ScoreQ (int);
+int ScoreK (int);
+int ScoreDev (int);
 int Evaluate (int, int);
-short EvaluateDraw (void);
+int EvaluateDraw (void);
 
 /*  Hung routines  */
-short EvalHung (short);
+int EvalHung (int);
 
 /*  The search routines  */
 void Iterate (void);
-int Search (short, short, int, int, short);
-int SearchRoot (short, int, int);
-int Quiesce (short, int, int);
-void pick (leaf *, short);
-short Repeat (void);
+int Search (int, int, int, int, int);
+int SearchRoot (int, int, int);
+int Quiesce (int, int, int);
+void pick (leaf *, int);
+int Repeat (void);
 void ShowLine (int, int, char);
 void GetElapsed (void);
 
 /*  The transposition table routies */
-void TTPut (short, short, short, int, int, int, int);
-short TTGet (short, short, short, int, int, int *, int *);
-short TTGetPV (short, short, int, int *);
+void TTPut (int, int, int, int, int, int, int);
+int TTGet (int, int, int, int, int, int *, int *);
+int TTGetPV (int, int, int, int *);
 void TTClear (void);
 void PTClear (void);
 
 /*  Sorting routines  */
-void SortCaptures (short);
-void SortMoves (short);
+void SortCaptures (int);
+void SortMoves (int);
 void SortRoot (void);
-short PhasePick (leaf **, short);
-short PhasePick1 (leaf **, short);
+int PhasePick (leaf **, int);
+int PhasePick1 (leaf **, int);
 
 /*  Some output routines */
-void ShowMoveList (short);
+void ShowMoveList (int);
 void ShowSmallBoard (void);
 void ShowBoard (void);
 void ShowBitBoard (BitBoard *);

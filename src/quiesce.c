@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include "common.h"
 
-int Quiesce (short ply, int alpha, int beta)
+int Quiesce (int ply, int alpha, int beta)
 /**************************************************************************
  *
  *  Our quiescent search.  This quiescent search is able to recognize
@@ -38,7 +38,7 @@ int Quiesce (short ply, int alpha, int beta)
  *
  **************************************************************************/
 {
-   short side, xside;
+   int side, xside;
    int best, delta, score, savealpha;
    leaf *p, *pbest;
 

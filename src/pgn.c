@@ -47,7 +47,7 @@ void PGNSaveToFile (const char *file, const char *resultstr)
    char s[100];
    int len;
    char *p;
-   short i;
+   int i;
    time_t secs;
    struct tm *timestruct;
 
@@ -190,7 +190,7 @@ void BookPGNReadFromFile (const char *file)
    leaf *p;
    time_t t1, t2;
    double et;
-   short examinecolor, playerfound[2];
+   int examinecolor, playerfound[2];
 
 /* Only players in the table below are permitted into the opening book 
    from the PGN files. Please expand the table as needed. Generally,

@@ -41,7 +41,7 @@ void CalcHashKey ()
  *
  ***************************************************************************/
 {
-   short sq, piece, color;
+   int sq, piece, color;
    BitBoard b;
 
    PawnHashKey = HashKey = (HashType) 0;

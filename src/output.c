@@ -39,7 +39,7 @@ void ShowTime ()
 {
 }
 
-void ShowMoveList (short ply)
+void ShowMoveList (int ply)
 /**************************************************************************
  *
  *  Print out the move list.  
@@ -71,7 +71,7 @@ void ShowSmallBoard ()
  *
  *****************************************************************************/ 
 {
-   short r, c, sq;
+   int r, c, sq;
 
    printf ("\n");
    if (board.side == white)
@@ -138,7 +138,7 @@ void ShowBitBoard (BitBoard *b)
  *
  *****************************************************************************/
 {
-   short r, c;
+   int r, c;
 
    printf ("\n");
    for (r = 56; r >= 0; r -= 8)
@@ -164,7 +164,7 @@ void ShowBoard ()
  *
  *****************************************************************************/ 
 {
-   short r, c, sq;
+   int r, c, sq;
 
    fprintf (ofp, "\n");
    if (board.side == white)
@@ -229,7 +229,7 @@ void ShowCBoard ()
  *
  *****************************************************************************/
 {
-   short r, c;
+   int r, c;
 
    for (r = 56; r >= 0; r -= 8)
    {
@@ -250,7 +250,7 @@ void ShowMvboard ()
  *
  *****************************************************************************/
 {
-   short r, c;
+   int r, c;
 
    for (r = 56; r >= 0; r -= 8)
    {
@@ -265,7 +265,7 @@ void ShowMvboard ()
    
 void ShowGame (void)
 {
-  short i;
+  int i;
 
 /* *********************************************
    * We must handle the special case of an EPD *

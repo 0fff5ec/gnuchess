@@ -32,7 +32,7 @@
 #ifndef INLINES_H
 #define INLINES_H
 
-static inline short int leadz (BitBoard b)
+static inline int leadz (BitBoard b)
 /**************************************************************************
  *
  *  Returns the leading bit in a bitboard.  Leftmost bit is 0 and
@@ -47,7 +47,7 @@ static inline short int leadz (BitBoard b)
 }
 
 
-static inline unsigned char nbits (BitBoard b)
+static inline int nbits (BitBoard b)
 /***************************************************************************
  *
  *  Count the number of bits in b.

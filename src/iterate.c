@@ -32,8 +32,8 @@
 #define WINDOW	75
 
 static struct timeval t1, t2;
-extern short stage;
-short InChkDummy, terminal;
+extern int stage;
+int InChkDummy, terminal;
 
 void Iterate (void)
 /**************************************************************************
@@ -43,7 +43,7 @@ void Iterate (void)
  *
  **************************************************************************/
 {
-   short side;
+   int side;
    int score, RootAlpha, RootBeta;
 
    side = board.side;

@@ -50,7 +50,7 @@ extern void add_history(char *);
 
 #define prompt ':'
 
-extern short stage, InChkDummy, terminal;
+extern int stage, InChkDummy, terminal;
 
 #ifdef HAVE_LIBREADLINE
 static char *inputstr;
@@ -86,7 +86,7 @@ void InputCmd ()
  *************************************************************************/
 {
    char *color[2] = { "White", "Black" };
-   short suffix;
+   int suffix;
    int i;
    leaf *ptr; 
    int ncmds;
@@ -741,7 +741,7 @@ void BookCmd (char *subcmd)
 {
    char cmd[INPUT_SIZE];
    char bookfile[INPUT_SIZE];
-   short bookply;
+   int bookply;
 
    sscanf (subcmd, "%s %[^\n]", cmd, subcmd);
    if (strcmp (cmd, "make") == 0)

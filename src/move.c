@@ -33,7 +33,7 @@
 #include <ctype.h>
 #include "common.h"
 
-void MakeMove (short side, int *move)
+void MakeMove (int side, int *move)
 /**************************************************************************
  *
  *  To make a move on the board and update the various game information.
@@ -41,9 +41,9 @@ void MakeMove (short side, int *move)
  **************************************************************************/
 {
    BitBoard *a;
-   short f, t, fpiece, tpiece; 
-   short rookf, rookt, epsq, sq;
-   short xside;
+   int f, t, fpiece, tpiece; 
+   int rookf, rookt, epsq, sq;
+   int xside;
    GameRec *g;
 
    xside = 1^side;
@@ -261,7 +261,7 @@ void MakeMove (short side, int *move)
 
 
 
-void UnmakeMove (short side, int *move)
+void UnmakeMove (int side, int *move)
 /****************************************************************************
  *
  *  To unmake a move on the board and update the various game information.
@@ -271,9 +271,9 @@ void UnmakeMove (short side, int *move)
  ****************************************************************************/
 {
    BitBoard *a;
-   short f, t, fpiece, cpiece;   
-   short rookf, rookt, epsq;
-   short xside;
+   int f, t, fpiece, cpiece;   
+   int rookf, rookt, epsq;
+   int xside;
    GameRec *g;
 
    side = 1^side;
@@ -377,7 +377,7 @@ void UnmakeMove (short side, int *move)
 }
 
 
-void SANMove (int move, short ply)
+void SANMove (int move, int ply)
 /****************************************************************************
  *
  *  Convert the move to a SAN format.  GenMoves (ply) needs to be called
@@ -385,8 +385,9 @@ void SANMove (int move, short ply)
  *
  ****************************************************************************/
 {
-   short piece, side, ambiguous;
-   short f, t;
+   int side;
+   int piece, ambiguous;
+   int f, t;
    BitBoard b;
    leaf *node1;
    char *s;
@@ -507,8 +508,9 @@ leaf * ValidateMove (char *s)
  *
  **************************************************************************/
 {
-   short f, t, side, rank, file, fileto;
-   short piece, kount;
+   int side;
+   int f, t, rank, file, fileto;
+   int piece, kount;
    char mvstr[INPUT_SIZE], *p;
    BitBoard b;
    leaf *n1, *n2;
@@ -698,7 +700,7 @@ leaf * ValidateMove (char *s)
 }
 
 
-leaf * IsInMoveList (short ply, short f, short t, char piece)
+leaf * IsInMoveList (int ply, int f, int t, char piece)
 /**************************************************************************
  *
  *  Checks to see if from and to square can be found in the movelist
@@ -710,7 +712,7 @@ leaf * IsInMoveList (short ply, short f, short t, char piece)
 
    for (node = TreePtr[ply]; node < TreePtr[ply + 1]; node++)
    {
-      if ((short) (node->move & 0x0FFF) == MOVE(f,t)  && 
+      if ((int) (node->move & 0x0FFF) == MOVE(f,t)  && 
 	toupper(piece) == notation[PROMOTEPIECE (node->move)])
          return (node);
    }
@@ -718,7 +720,7 @@ leaf * IsInMoveList (short ply, short f, short t, char piece)
 }
 
 
-short IsLegalMove (int move)
+int IsLegalMove (int move)
 /*****************************************************************************
  *
  *  Check that a move is legal on the current board.  
@@ -733,7 +735,8 @@ short IsLegalMove (int move)
  *
  *****************************************************************************/
 {
-   short f, t, piece, side;
+   int side;
+   int f, t, piece;
    BitBoard blocker, enemy;
 
    f = FROMSQ(move); 
@@ -837,7 +840,7 @@ char *AlgbrMove (int move)
  *
  *****************************************************************************/
 {
-   short f, t;
+   int f, t;
    static char s[6];
 
    f = FROMSQ(move);

@@ -362,7 +362,7 @@ int BookBuilderOpen(void)
  * in order to actually write the book to disk.
  */
 
-int BookBuilder(short result, short side)
+int BookBuilder(int result, int side)
 {
   uint32_t i;
   
@@ -485,7 +485,7 @@ int BookQuery(int BKquery)
   } r[MAXMOVES];
   FILE *rfp = NULL;
   leaf *p;
-  short side,xside,temp;
+  int side,xside,temp;
   uint32_t booksize;
   int res;
 

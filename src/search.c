@@ -40,8 +40,8 @@
 #define FUTSCORE        (MATERIAL+fdel)
 #define GETNEXTMOVE  (InChk[ply] ? PhasePick1 (&p, ply) : PhasePick (&p, ply))
 
-inline void ShowThinking (leaf *, short);
-inline void ShowThinking (leaf *p, short ply)
+inline void ShowThinking (leaf *, int);
+inline void ShowThinking (leaf *p, int ply)
 {
    if (flags & XBOARD)
       return;
@@ -59,7 +59,7 @@ inline void ShowThinking (leaf *p, short ply)
 
 static int ply1score;
 
-int SearchRoot (short depth, int alpha, int beta)
+int SearchRoot (int depth, int alpha, int beta)
 /**************************************************************************
  *
  *  This perform searches at ply=1.  For ply>1, it calls the more generic
@@ -70,7 +70,8 @@ int SearchRoot (short depth, int alpha, int beta)
  **************************************************************************/
 {
    int best, score, savealpha;
-   short side, xside, ply, nodetype;
+   int side, xside;
+   int ply, nodetype;
    leaf *p, *pbest;
 
    ply = 1; 
@@ -187,7 +188,7 @@ done:
 }
 
 
-int Search (short ply, short depth, int alpha, int beta, short nodetype)
+int Search (int ply, int depth, int alpha, int beta, int nodetype)
 /**************************************************************************
  *
  *  The basic algorithm for this search routine came from Anthony 
@@ -198,8 +199,9 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
  **************************************************************************/
 {
    int best, score, nullscore, savealpha;
-   short side, xside, rc, t0, t1, firstmove;
-   short fcut, fdel, donull, savenode, nullthreatdone, extend;
+   int side, xside;
+   int rc, t0, t1, firstmove;
+   int fcut, fdel, donull, savenode, nullthreatdone, extend;
    leaf *p, *pbest;
    int g0, g1;
    int upperbound;
@@ -637,7 +639,7 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
  *
  *****************************************************************************/
 {
-   short i, len;
+   int i, len;
    int pvar[MAXPLYDEPTH];
 
    /* SMC */

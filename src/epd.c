@@ -34,7 +34,7 @@
 
 #define EPDCLOSE 1
 
-short ReadEPDFile (const char *file, short op)
+int ReadEPDFile (const char *file, int op)
 /****************************************************************************
  *
  *  Reads in an EPD file.  The first call will read the first EPD line,
@@ -96,7 +96,7 @@ void ParseEPD (char *p)
  *
  **************************************************************************/
 {
-   short r, c, sq;
+   int r, c, sq;
    char s[8];
 
    r = 56;
@@ -247,7 +247,7 @@ void LoadEPD (char *p)
  **************************************************************************/
 {
    char file[INPUT_SIZE];
-   short N = 1;
+   int N = 1;
 
    sscanf (p, "%s %hd ", file, &N);
    if (strcmp (file, "next") == 0)
@@ -281,7 +281,7 @@ void SaveEPD (char *p)
 {
    char file[INPUT_SIZE];
    FILE *fp;
-   short r, c, sq, k;
+   int r, c, sq, k;
    char c1;
 
    sscanf (p, "%s ", file);

@@ -1,3 +1,10 @@
+
+2002-08-02 Simon Waters <simon@wretched.demon.co.uk>
+
+	* Switch from short to int for all short
+	  variable types.
+	  (Note some aspects of change require futher work)
+
 2002-08-02 Simon Waters <simon@wretched.demon.co.uk>
 
 	* Clean up of SortRoot (also MC suggested optimisation)

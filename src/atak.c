@@ -29,7 +29,7 @@
 #include "common.h"
 
 
-short SqAtakd (short sq, short side)
+int SqAtakd (int sq, int side)
 /**************************************************************************
  *
  *  To determine if sq is attacked by any pieces from side.
@@ -37,7 +37,7 @@ short SqAtakd (short sq, short side)
  **************************************************************************/
 {
    register BitBoard *a, b, *c, d, blocker;
-   short t;
+   int t;
    
    a = board.b[side];
 
@@ -80,8 +80,8 @@ short SqAtakd (short sq, short side)
    return (false);
 }
 
-extern short raybeg[];
-extern short rayend[];
+extern int raybeg[];
+extern int rayend[];
 
 void GenAtaks ()
 /*************************************************************************
@@ -92,7 +92,8 @@ void GenAtaks ()
  *
  *************************************************************************/
 {
-   short side, sq;
+   int side; 
+   int sq;
    register BitBoard *a, b, *t, *a0;
 
    memset (Ataks, 0, sizeof (Ataks)); 
@@ -173,7 +174,7 @@ void GenAtaks ()
 }
 
 
-BitBoard AttackTo (short sq, short side)
+BitBoard AttackTo (int sq, int side)
 /***************************************************************************
  *
  *  Generate a bitboard of all squares with pieces belonging to side
@@ -182,7 +183,7 @@ BitBoard AttackTo (short sq, short side)
  ***************************************************************************/
 {
    register BitBoard *a, b, *c, e, blocker;
-   short t;
+   int t;
    
    a = board.b[side];
 
@@ -222,7 +223,7 @@ BitBoard AttackTo (short sq, short side)
 }
  
 
-BitBoard AttackXTo (short sq, short side)
+BitBoard AttackXTo (int sq, int side)
 /***************************************************************************
  *
  *  Generate a bitboard of all squares with pieces belonging to side
@@ -234,7 +235,7 @@ BitBoard AttackXTo (short sq, short side)
  ***************************************************************************/
 {
    register BitBoard *a, b, *c, *d, e, blocker;
-   short t;
+   int t;
    
    a = board.b[side];
    d = board.b[1^side];
@@ -276,7 +277,7 @@ BitBoard AttackXTo (short sq, short side)
 }
 
 
-BitBoard AttackFrom (short sq, short piece, short side)
+BitBoard AttackFrom (int sq, int piece, int side)
 /***************************************************************************
  *
  *  Generate a bitboard of all squares attacked by a piece on sq.
@@ -302,7 +303,7 @@ BitBoard AttackFrom (short sq, short piece, short side)
 }
 
 
-BitBoard AttackXFrom (short sq, short side)
+BitBoard AttackXFrom (int sq, int side)
 /***************************************************************************
  *
  *  Generate a bitboard of all squares attacked by a piece on sq.  This 
@@ -312,7 +313,7 @@ BitBoard AttackXFrom (short sq, short side)
  ***************************************************************************/
 {
    register BitBoard *a, b, c, blocker;
-   short piece, dir, blocksq;
+   int piece, dir, blocksq;
 
    a = board.b[side];
    piece = cboard[sq];
@@ -367,7 +368,7 @@ BitBoard AttackXFrom (short sq, short side)
 }
 
 
-short PinnedOnKing (short sq, short side)
+int PinnedOnKing (int sq, int side)
 /***************************************************************************
  *
  *  Determine if the piece on sq is pinned against the King.
@@ -378,7 +379,8 @@ short PinnedOnKing (short sq, short side)
  *
  ***************************************************************************/
 {
-   short xside, KingSq, dir, sq1;
+   int xside;
+   int KingSq, dir, sq1;
    BitBoard b, blocker;
 
    KingSq = board.king[side];
@@ -417,7 +419,8 @@ void FindPins (BitBoard *pin)
  *
  ***************************************************************************/
 {
-   short side, xside, sq, sq1;
+   int side, xside;
+   int sq, sq1;
    BitBoard b, c, e, f, t, *p;
    
    *pin = NULLBITBOARD;
@@ -493,7 +496,7 @@ void FindPins (BitBoard *pin)
 }
 
 
-short MateScan (short side)
+int MateScan (int side)
 /***************************************************************************
  *
  *  This routine scans the squares around the king to see if a Q + piece
@@ -503,7 +506,8 @@ short MateScan (short side)
  *
  ***************************************************************************/
 {
-   short KingSq, QueenSq, xside, sq;
+   int KingSq, QueenSq, sq;
+   int xside;
    BitBoard b;
 
    xside = 1 ^ side;

@@ -29,9 +29,9 @@
 #include <string.h>
 #include "common.h"
 
-static const short xray[7] = { 0, 1, 0, 1, 1, 1, 0 };
+static const int xray[7] = { 0, 1, 0, 1, 1, 1, 0 };
 
-short SwapOff (int move)
+int SwapOff (int move)
 /****************************************************************************
  *
  *  A Static Exchange Evaluator (or SEE for short).
@@ -45,8 +45,9 @@ short SwapOff (int move)
  *
  ****************************************************************************/
 {
-   short f, t, sq, piece, side, xside, lastval;
-   short swaplist[MAXPLYDEPTH], n;
+   int f, t, sq, piece, lastval;
+   int side, xside; 
+   int swaplist[MAXPLYDEPTH], n;
    BitBoard b, c, *d, *e, r;
 
    f = FROMSQ (move);
@@ -138,7 +139,7 @@ short SwapOff (int move)
 }
 
 
-void AddXrayPiece (short t, short sq, short side, BitBoard *b, BitBoard *c)
+void AddXrayPiece (int t, int sq, int side, BitBoard *b, BitBoard *c)
 /***************************************************************************
  *
  *  The purpose of this routine is to find a piece which attack through
@@ -147,7 +148,7 @@ void AddXrayPiece (short t, short sq, short side, BitBoard *b, BitBoard *c)
  *
  ***************************************************************************/
 {
-   short dir, nsq, piece;
+   int dir, nsq, piece;
    BitBoard a;
 
    dir = directions[t][sq];

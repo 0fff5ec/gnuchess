@@ -117,7 +117,7 @@ void InitBitPosArray ()
  ***************************************************************************/
 {
    BitBoard b;
-   short i;
+   int i;
 
    b = (BitBoard) 1;  
    for (i = 63; i >= 0; i--, b <<= 1)
@@ -131,7 +131,7 @@ void InitBitPosArray ()
 
 /*  Data used for generating MoveArray  */
 
-static const short dir[8][8] =
+static const int dir[8][8] =
 {
   { 0, 0, 0, 0, 0, 0, 0, 0 },
   { 9, 11, 0, 0, 0, 0, 0, 0 },
@@ -142,10 +142,10 @@ static const short dir[8][8] =
   { -11, -10, -9, -1, 1, 9, 10, 11 },
   { -9, -11, 0, 0, 0, 0, 0, 0 }
 };
-static const short ndir[8] = 
+static const int ndir[8] = 
 { 0, 2, 8, 4, 4, 8, 8, 2 };
 
-static const short map[120] =
+static const int map[120] =
 {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -170,7 +170,7 @@ void InitMoveArray ()
  *
  ***************************************************************************/
 {
-   short piece, fsq, tsq, f, t, n;
+   int piece, fsq, tsq, f, t, n;
    BitBoard *b;
 
    for (piece = pawn; piece <= bpawn; piece++)
@@ -207,7 +207,7 @@ void InitRay ()
  *
  **************************************************************************/
 {
-   short piece, fsq, tsq, f, t, n, ray;
+   int piece, fsq, tsq, f, t, n, ray;
    BitBoard *b;
 
    memset (directions, -1, sizeof (directions));
@@ -246,7 +246,7 @@ void InitFromToRay ()
  *
  ***************************************************************************/
 {
-   short piece, fsq, tsq, f, t, n;
+   int piece, fsq, tsq, f, t, n;
    BitBoard *b;
 
    memset (FromToRay, 0, sizeof (FromToRay));
@@ -284,7 +284,7 @@ void InitRankFileBit ()
  ***************************************************************************/
 {
    BitBoard b;
-   short i;
+   int i;
 
    i = 8;
    b = (BitBoard) 255;
@@ -331,7 +331,7 @@ void InitPassedPawnMask ()
  *
  **************************************************************************/
 {
-   unsigned short sq;
+   unsigned int sq;
 
    memset (PassedPawnMask, 0, sizeof (PassedPawnMask));
 
@@ -369,7 +369,7 @@ void InitIsolaniMask ()
  *
  **************************************************************************/
 {
-   short i;
+   int i;
 
    IsolaniMask[0] = FileBit[1];
    IsolaniMask[7] = FileBit[6];
@@ -389,8 +389,8 @@ void InitSquarePawnMask ()
  *
  **************************************************************************/
 {
-   unsigned short sq;
-   short len, i, j;
+   unsigned int sq;
+   int len, i, j;
 
    memset (SquarePawnMask, 0, sizeof (PassedPawnMask));
    for (sq = 0; sq < 64; sq++)
@@ -455,11 +455,11 @@ void InitRotAtak ()
  *
  **************************************************************************/
 {
-   short sq, map, sq1, sq2;
-   short cmap[8] = { 128, 64, 32, 16, 8, 4, 2, 1 };
-   short rot1[8] = { A1, A2, A3, A4, A5, A6, A7, A8 };
-   short rot2[8] = { A1, B2, C3, D4, E5, F6, G7, H8 };
-   short rot3[8] = { A8, B7, C6, D5, E4, F3, G2, H1 };
+   int sq, map, sq1, sq2;
+   int cmap[8] = { 128, 64, 32, 16, 8, 4, 2, 1 };
+   int rot1[8] = { A1, A2, A3, A4, A5, A6, A7, A8 };
+   int rot2[8] = { A1, B2, C3, D4, E5, F6, G7, H8 };
+   int rot3[8] = { A8, B7, C6, D5, E4, F3, G2, H1 };
    
    for (sq = A1; sq <= H1; sq++)
    {
@@ -555,8 +555,8 @@ void InitDistance ()
  *
  *************************************************************************/
 {
-   register short f, t, j;
-   short d1, d2;
+   int f, t, j;
+   int d1, d2;
 
    for (f = 0; f < 64; f++)
      for (t = 0; t < 8; t++)
@@ -714,7 +714,7 @@ void InitHashCode ()
  *
  ***************************************************************************/
 {
-   short color, piece, sq;
+   int color, piece, sq;
 
    for (color = white; color <= black; color++)
    {

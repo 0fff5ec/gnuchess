@@ -36,7 +36,7 @@
 #define KILLERSORTSCORE 1000
 #define CASTLINGSCORE   500
 
-void SortCaptures (short ply)
+void SortCaptures (int ply)
 /***************************************************************************
  *
  *  Actually no sorting is done.  Just scores are assigned to the captures.
@@ -65,7 +65,7 @@ void SortCaptures (short ply)
 }
 
 
-void SortMoves (short ply)
+void SortMoves (int ply)
 /*****************************************************************************
  *
  *  Sort criteria is as follows.
@@ -78,7 +78,8 @@ void SortMoves (short ply)
  *****************************************************************************/
 {
    leaf *p;
-   short f, t, m, tovalue, side, xside;
+   int f, t, m, tovalue;
+   int side, xside;
    BitBoard enemyP;
 
    side = board.side;
@@ -148,7 +149,7 @@ void SortRoot (void)
 {
    leaf *p;
    int f, t ;
-   short side, xside;
+   int side, xside;
    BitBoard enemyP;
 
    side = board.side;
@@ -180,7 +181,7 @@ void SortRoot (void)
 }
 
 
-void pick (leaf *head, short ply)
+void pick (leaf *head, int ply)
 /***************************************************************************
  *
  *  This pick routine searches the movelist and swap the high score entry
@@ -209,7 +210,7 @@ void pick (leaf *head, short ply)
 }
 
 
-short PhasePick (leaf **p1, short ply)
+int PhasePick (leaf **p1, int ply)
 /***************************************************************************
  *
  *  A phase style routine which returns the next move to the search.
@@ -229,7 +230,7 @@ short PhasePick (leaf **p1, short ply)
    static leaf* p[MAXPLYDEPTH];
    leaf *p2;
    int mv;
-   short side;
+   int side;
 
    side = board.side;
    switch (pickphase[ply])
@@ -318,7 +319,7 @@ short PhasePick (leaf **p1, short ply)
 } 
 
 
-short PhasePick1 (leaf **p1, short ply)
+int PhasePick1 (leaf **p1, int ply)
 /***************************************************************************
  *
  *  Similar to phase pick, but only used when the King is in check.

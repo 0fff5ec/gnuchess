@@ -38,9 +38,9 @@
 #include <signal.h>
 #endif
 
-short distance[64][64];
-short taxicab[64][64];
-unsigned char lzArray[65536];
+int distance[64][64];
+int taxicab[64][64];
+int lzArray[65536];
 BitBoard DistMap[64][8];
 BitBoard BitPosArray[64];
 BitBoard NotBitPosArray[64];
@@ -67,17 +67,17 @@ BitBoard mask_qr_trapped_w[3];
 BitBoard mask_qr_trapped_b[3];
 BitBoard boardhalf[2];
 BitBoard boardside[2];
-short directions[64][64];
-unsigned char BitCount[65536];
+int directions[64][64];
+int BitCount[65536];
 leaf Tree[MAXTREEDEPTH];
 leaf *TreePtr[MAXPLYDEPTH];
 int RootPV;
 GameRec Game[MAXGAMEDEPTH];
-short GameCnt;
-short computer;
+int GameCnt;
+int computer;
 unsigned int flags;
-short cboard[64];
-short Mvboard[64];
+int cboard[64];
+int Mvboard[64];
 Board board;
 HashType hashcode[2][7][64];
 HashType ephash[64];
@@ -90,9 +90,9 @@ HashType HashKey;
 HashType PawnHashKey;
 HashSlot *HashTab[2];
 PawnSlot *PawnTab[2];
-short Idepth;
-short SxDec;
-short Game50;
+int Idepth;
+int SxDec;
+int Game50;
 int lazyscore[2];
 int maxposnscore[2];
 int rootscore;
@@ -126,53 +126,53 @@ char SANmv[10];
 unsigned long history[2][4096];
 int killer1[MAXPLYDEPTH];
 int killer2[MAXPLYDEPTH];
-short ChkCnt[MAXPLYDEPTH];
-short ThrtCnt[MAXPLYDEPTH];
+int ChkCnt[MAXPLYDEPTH];
+int ThrtCnt[MAXPLYDEPTH];
 char id[32];
 char solution[64];
 double et;
 float SearchTime;
-short SearchDepth;
-short MoveLimit[2];
+int SearchDepth;
+int MoveLimit[2];
 float TimeLimit[2];
-short TCMove;
-short TCinc;
+int TCMove;
+int TCinc;
 float TCTime;
-short castled[2];
-short hunged[2];
-short phase;
+int castled[2];
+int hunged[2];
+int phase;
 int Hashmv[MAXPLYDEPTH];
 int Debugmv[MAXPLYDEPTH];
-short Debugmvl;
-short RootPieces;
-short RootPawns;
-short RootMaterial;
-short RootAlpha;
-short RootBeta;
-short pickphase[MAXPLYDEPTH];
-short InChk[MAXPLYDEPTH];
-short KingThrt[2][MAXPLYDEPTH];
-short threatmv;
-short threatply;
-short KingSafety[2];
-short bookmode;
-short bookfirstlast;
+int Debugmvl;
+int RootPieces;
+int RootPawns;
+int RootMaterial;
+int RootAlpha;
+int RootBeta;
+int pickphase[MAXPLYDEPTH];
+int InChk[MAXPLYDEPTH];
+int KingThrt[2][MAXPLYDEPTH];
+int threatmv;
+int threatply;
+int KingSafety[2];
+int bookmode;
+int bookfirstlast;
 FILE *ofp;
-short myrating, opprating, suddendeath, TCionc;
+int myrating, opprating, suddendeath, TCionc;
 char name[50];
-short computerplays;		/* Side computer is playing */
-short wasbookmove;		/* True if last move was book move */
+int computerplays;		/* Side computer is playing */
+int wasbookmove;		/* True if last move was book move */
 int nmovesfrombook;		/* Number of moves since last book move */
 int newpos, existpos;		/* For book statistics */
 float maxtime;		/* Max time for the next searched move */
-short n;		/* Last mobility returned by CTL */
-short ExchCnt[2];	/* How many exchanges? */
-short bookloaded = 0;  	/* Is the book loaded already into memory? */
+int n;		/* Last mobility returned by CTL */
+int ExchCnt[2];	/* How many exchanges? */
+int bookloaded = 0;  	/* Is the book loaded already into memory? */
 
-short slider[8] = { 0, 0, 0, 1, 1, 1, 0, 0 };
-short Value[7] = { 0, ValueP, ValueN, ValueB, ValueR, ValueQ, ValueK};
-short range[8] = { 0, 0, 0, 1, 1, 1, 0, 0 };
-short ptype[2] = { pawn, bpawn };
+int slider[8] = { 0, 0, 0, 1, 1, 1, 0, 0 };
+int Value[7] = { 0, ValueP, ValueN, ValueB, ValueR, ValueQ, ValueK};
+int range[8] = { 0, 0, 0, 1, 1, 1, 0, 0 };
+int ptype[2] = { pawn, bpawn };
 char algbr[64][3] =
 { "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
   "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
@@ -189,7 +189,7 @@ char algbrrank[9] = "12345678";
 char notation[8] = { " PNBRQK" };
 char lnotation[8] = { " pnbrqk" };
 
-short Shift00[64] =
+int Shift00[64] =
 { 56, 56, 56, 56, 56, 56, 56, 56,
   48, 48, 48, 48, 48, 48, 48, 48,
   40, 40, 40, 40, 40, 40, 40, 40,
@@ -200,7 +200,7 @@ short Shift00[64] =
    0,  0,  0,  0,  0,  0,  0,  0
 };
 
-short r90[64] =
+int r90[64] =
 { A8, A7, A6, A5, A4, A3, A2, A1,
   B8, B7, B6, B5, B4, B3, B2, B1,
   C8, C7, C6, C5, C4, C3, C2, C1,
@@ -210,7 +210,7 @@ short r90[64] =
   G8, G7, G6, G5, G4, G3, G2, G1,
   H8, H7, H6, H5, H4, H3, H2, H1 };
 
-short Shift90[64] =
+int Shift90[64] =
 { 0, 8, 16, 24, 32, 40, 48, 56,
   0, 8, 16, 24, 32, 40, 48, 56,
   0, 8, 16, 24, 32, 40, 48, 56,
@@ -221,7 +221,7 @@ short Shift90[64] =
   0, 8, 16, 24, 32, 40, 48, 56
 };
 
-short r45[64] =
+int r45[64] =
 { E4, F3, H2, C2, G1, D1, B1, A1,
   E5, F4, G3, A3, D2, H1, E1, C1,
   D6, F5, G4, H3, B3, E2, A2, F1, 
@@ -231,7 +231,7 @@ short r45[64] =
   F8, D8, A8, E7, H6, B6, C5, D4, 
   H8, G8, E8, B8, F7, A7, C6, D5 };
 
-short Shift45[64] =
+int Shift45[64] =
 { 28, 36, 43, 49, 54, 58, 61, 63,
   21, 28, 36, 43, 49, 54, 58, 61,
   15, 21, 28, 36, 43, 49, 54, 58,
@@ -241,7 +241,7 @@ short Shift45[64] =
    1,  3,  6, 10, 15, 21, 28, 36,
    0,  1,  3,  6, 10, 15, 21, 28 };
 
-short Mask45[64] =
+int Mask45[64] =
 { 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01,
   0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 
   0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 
@@ -251,7 +251,7 @@ short Mask45[64] =
   0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 
   0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF };
 
-short r315[64] =
+int r315[64] =
 { A1, C1, F1, B2, G2, E3, D4, D5,
   B1, E1, A2, F2, D3, C4, C5, C6,
   D1, H1, E2, C3, B4, B5, B6, A7,
@@ -261,7 +261,7 @@ short r315[64] =
   F3, F4, F5, E6, C7, H7, D8, G8,
   E4, E5, D6, B7, G7, C8, F8, H8 };
 
-short Shift315[64] =
+int Shift315[64] =
 { 63, 61, 58, 54, 49, 43, 36, 28,
   61, 58, 54, 49, 43, 36, 28, 21,
   58, 54, 49, 43, 36, 28, 21, 15,
@@ -271,7 +271,7 @@ short Shift315[64] =
   36, 28, 21, 15, 10,  6,  3,  1,
   28, 21, 15, 10,  6,  3,  1,  0 };
 
-short Mask315[64] =
+int Mask315[64] =
 { 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF,
   0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F,
   0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F,
@@ -281,9 +281,9 @@ short Mask315[64] =
   0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03,
   0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
 
-short rank6[2] = { 5, 2 };
-short rank7[2] = { 6, 1 };
-short rank8[2] = { 7, 0 };
+int rank6[2] = { 5, 2 };
+int rank7[2] = { 6, 1 };
+int rank8[2] = { 7, 0 };
 
 
 int main (int argc, char *argv[])

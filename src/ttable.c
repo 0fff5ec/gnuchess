@@ -31,7 +31,7 @@
 #include <string.h>
 #include "common.h"
 
-void TTPut (short side, short depth, short ply, int alpha, int beta, 
+void TTPut (int side, int depth, int ply, int alpha, int beta, 
 	    int score, int move)
 /****************************************************************************
  *
@@ -77,7 +77,7 @@ void TTPut (short side, short depth, short ply, int alpha, int beta,
 }
 
 
-short TTGet (short side, short depth, short ply, 
+int TTGet (int side, int depth, int ply, 
 	     int alpha __attribute__ ((unused)),
 	     int beta  __attribute__ ((unused)), 
 	     int *score, int *move)
@@ -111,7 +111,7 @@ short TTGet (short side, short depth, short ply,
 }
 
 
-short TTGetPV (short side, short ply, int score, int *move)
+int TTGetPV (int side, int ply, int score, int *move)
 /*****************************************************************************
  *
  *  Probe the transposition table.  There are 2 entries to be looked at as

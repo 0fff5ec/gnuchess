@@ -30,9 +30,9 @@
 #include <stdio.h>
 #include "common.h"
 
-short Repeat ()
+int Repeat ()
 {
-   short i, k;
+   int i, k;
 
    k = 0;
    for (i = GameCnt-3; i >= Game50; i-=2)

@@ -48,7 +48,7 @@
 
 #ifdef NO_INLINE
 
-short int leadz (BitBoard b)
+int leadz (BitBoard b)
 /**************************************************************************
  *
  *  Returns the leading bit in a bitboard.  Leftmost bit is 0 and
@@ -62,7 +62,7 @@ short int leadz (BitBoard b)
   return lzArray[b] + 48;
 }
 
-unsigned char nbits (BitBoard b)
+int nbits (BitBoard b)
 /***************************************************************************
  *
  *  Count the number of bits in b.
@@ -102,7 +102,7 @@ void UpdateCBoard (void)
  **************************************************************************/
 {
    BitBoard b;
-   short piece, sq;
+   int piece, sq;
 
    memset (cboard, 0, sizeof (cboard));
    for (piece = pawn; piece <= king; piece++)
@@ -118,7 +118,7 @@ void UpdateCBoard (void)
 }
 
 
-static const short OrigCboard[64] = 
+static const int OrigCboard[64] = 
 { rook,  knight, bishop, queen, king,  bishop, knight, rook,
   pawn,  pawn,   pawn,   pawn,  pawn,  pawn,   pawn,   pawn,
   empty, empty,  empty,  empty, empty, empty,  empty,  empty,
@@ -137,7 +137,7 @@ void UpdateMvboard ()
  *
  **************************************************************************/
 {
-   short sq;
+   int sq;
  
    for (sq = 0; sq < 64; sq++)
    {
@@ -161,7 +161,7 @@ void EndSearch (int sig __attribute__ ((unused)) )
 }
 
 
-short ValidateBoard (void)
+int ValidateBoard (void)
 /***************************************************************************
  *
  *  Check the board to make sure that its valid.  Some things to check are
@@ -172,7 +172,7 @@ short ValidateBoard (void)
  *
  ***************************************************************************/
 {
-   short side, xside, sq;
+   int side, xside, sq;
 
    if (nbits (board.b[white][king]) != 1) 
       return (false);

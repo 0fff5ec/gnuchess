@@ -37,16 +37,16 @@
 #include "common.h"
 #include "eval.h"
 
-int LoneKing (short, short);
-int ScoreKBNK (short, short);
-int KPK (short);
-int BishopTrapped (short);
-int DoubleQR7 (short);
+int LoneKing (int, int);
+int ScoreKBNK (int, int);
+int KPK (int);
+int BishopTrapped (int);
+int DoubleQR7 (int);
 
 BitBoard passed[2];
 BitBoard weaked[2];
 
-static short PawnSq[2][64] = 
+static int PawnSq[2][64] = 
 {
 {  0,  0,  0,  0,  0,  0,  0,  0,
    5,  5,  5,-10,-10,  5,  5,  5,
@@ -66,14 +66,14 @@ static short PawnSq[2][64] =
    0,  0,  0,  0,  0,  0,  0,  0}
 };
 
-static const short Passed[2][8] =
+static const int Passed[2][8] =
 { { 0, 48, 48, 120, 144, 192, 240, 0}, {0, 240, 192, 144, 120, 48, 48, 0} };
 /* Penalties for one or more isolated pawns on a given file */
-static const short isolani_normal[8] = {
+static const int isolani_normal[8] = {
   -8, -10, -12, -14, -14, -12, -10, -8
 };
 /* Penalties if the file is half-open (i.e. no enemy pawns on it) */
-static const short isolani_weaker[8] = {
+static const int isolani_weaker[8] = {
   -22, -24, -26, -28, -28, -26, -24, -22
 };
 
@@ -88,7 +88,7 @@ static const BitBoard brank67[2] = { ULL(0x0000000000FFFF00),
 static const BitBoard brank58[2] = { ULL(0x00000000FFFFFFFF),
 				     ULL(0xFFFFFFFF00000000) };
 
-int ScoreP (short side)
+int ScoreP (int side)
 /***************************************************************************
  *
  *  Pawn evaluation is based on the following factors (which is being
@@ -107,10 +107,11 @@ int ScoreP (short side)
  *
  ***************************************************************************/
 {
-   short s, sq, i, i1, xside;
-   short n1, n2, backward;
-   short nfile[8];
-   short EnemyKing;
+   int xside;
+   int s, sq, i, i1;
+   int n1, n2, backward;
+   int nfile[8];
+   int EnemyKing;
    BitBoard c, t, p, blocker, *e;
    PawnSlot *ptable;
 
@@ -333,7 +334,7 @@ phase2:
    return (s);
 }
 
-static const short Outpost[2][64] =
+static const int Outpost[2][64] =
 {
   { 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -354,7 +355,7 @@ static const short Outpost[2][64] =
 };
 
 
-static inline int CTL(short sq, short piece __attribute__ ((unused)), short side)
+static inline int CTL(int sq, int piece __attribute__ ((unused)), int side)
 /***************************************************************************
  *
  *  Return a score corresponding to the number of squares in the bitboard
@@ -364,7 +365,7 @@ static inline int CTL(short sq, short piece __attribute__ ((unused)), short side
  *
  ***************************************************************************/
 {
-  short s, n, EnemyKing, FriendlyKing;
+  int s, n, EnemyKing, FriendlyKing;
   BitBoard controlled;
 
   s = 0;
@@ -393,7 +394,7 @@ static inline int CTL(short sq, short piece __attribute__ ((unused)), short side
   return (s);
 }
 
-int ScoreN (short side)
+int ScoreN (int side)
 /***************************************************************************
  *
  *  1.  central knight - distance from enemy king.
@@ -403,8 +404,9 @@ int ScoreN (short side)
  *
  ***************************************************************************/
 {
-   short s, s1, sq, xside;
-   short EnemyKing;
+   int xside;
+   int s, s1, sq;
+   int EnemyKing;
    BitBoard c, t;
 
    if (board.b[side][knight] == NULLBITBOARD)
@@ -453,7 +455,7 @@ int ScoreN (short side)
 }
 
 
-int ScoreB (short side)
+int ScoreB (int side)
 /****************************************************************************
  *
  *  1.  double bishops.
@@ -464,7 +466,8 @@ int ScoreB (short side)
  *
  ****************************************************************************/
 {
-   short s, s1, xside, n, sq, EnemyKing;
+   int xside;
+   int s, s1, n, sq, EnemyKing;
    BitBoard c, t;
 
    if (board.b[side][bishop] == NULLBITBOARD)
@@ -533,7 +536,7 @@ int ScoreB (short side)
 }
 
 
-int BishopTrapped (short side)
+int BishopTrapped (int side)
 /****************************************************************************
  *
  *  Check for bishops trapped at A2/H2/A7/H7
@@ -564,7 +567,7 @@ int BishopTrapped (short side)
    return (s);
 }
 
-int ScoreR (short side)
+int ScoreR (int side)
 /****************************************************************************
  *
  *  1.  rook on 7th rank and Enemy king on 8th rank or pawns on 7th rank.
@@ -573,7 +576,7 @@ int ScoreR (short side)
  *
  ****************************************************************************/
 {
-   short s, s1, sq, xside, fyle, EnemyKing;
+   int s, s1, sq, xside, fyle, EnemyKing;
    BitBoard c;
 
    if (board.b[side][rook] == NULLBITBOARD)
@@ -639,7 +642,7 @@ int ScoreR (short side)
    return (s);
 }
 
-int DoubleQR7 (short side)
+int DoubleQR7 (int side)
 /***************************************************************************
  *
  *  This code just check to see if there is a QQ or QR or RR combo on the
@@ -648,7 +651,7 @@ int DoubleQR7 (short side)
  *
  ***************************************************************************/
 {
-   short xside;
+   int xside;
 
    xside = 1^side;
    if (nbits ((board.b[side][queen]|board.b[side][rook]) & brank7[side]) > 1
@@ -660,7 +663,7 @@ int DoubleQR7 (short side)
       return (0);
 }
 
-int ScoreQ (short side)
+int ScoreQ (int side)
 /***************************************************************************
  *
  *  1. queen centralization.
@@ -669,7 +672,8 @@ int ScoreQ (short side)
  *
  ***************************************************************************/
 {
-   short s, s1, sq, xside, EnemyKing;
+   int xside;
+   int s, s1, sq, EnemyKing;
    BitBoard c;
    
    if (board.b[side][queen] == NULLBITBOARD)
@@ -711,7 +715,7 @@ int ScoreQ (short side)
 }
 
 
-static const short KingSq[64] =
+static const int KingSq[64] =
 {
    24, 24, 24, 16, 16,  0, 32, 32,
    24, 20, 16, 12, 12, 16, 20, 24,
@@ -723,7 +727,7 @@ static const short KingSq[64] =
    24, 24, 24, 16, 16,  0, 32, 32
 };
 
-static const short EndingKing[64] =
+static const int EndingKing[64] =
 {
    0,  6, 12, 18, 18, 12,  6,  0,
    6, 12, 18, 24, 24, 18, 12,  6,
@@ -735,10 +739,10 @@ static const short EndingKing[64] =
    0,  6, 12, 18, 18, 12,  6,  0
 };
 
-static short pawncover[9] = { -60, -30, 0, 5, 30, 30, 30, 30, 30 };
-static const short factor[9] = { 7, 8, 8, 7, 6, 5, 4, 2, 0, };
+static int pawncover[9] = { -60, -30, 0, 5, 30, 30, 30, 30, 30 };
+static const int factor[9] = { 7, 8, 8, 7, 6, 5, 4, 2, 0, };
 
-int ScoreK (short side)
+int ScoreK (int side)
 /***************************************************************************
  *
  *  1.  king in the corner. ?? SRW 2002-08-02 Unclear if implemented
@@ -750,7 +754,8 @@ int ScoreK (short side)
  *
  ***************************************************************************/
 {
-   short s, sq, sq1, n, n1, n2, xside, file, fsq, rank;
+   int xside;
+   int s, sq, sq1, n, n1, n2, file, fsq, rank;
    BitBoard b, x;
 
    s = 0;
@@ -981,7 +986,7 @@ int ScoreK (short side)
 }
 
 
-int LoneKing (short side, short loser)
+int LoneKing (int side, int loser)
 /**************************************************************************
  *
  *  One side has a lonely king and the other has no pawns, but enough
@@ -990,7 +995,7 @@ int LoneKing (short side, short loser)
  *
  **************************************************************************/
 {
-   short s, winer, sq1, sq2;
+   int s, winer, sq1, sq2;
 
    winer = 1^loser;
    if (board.material[winer] == ValueB+ValueN && 
@@ -1009,7 +1014,7 @@ int LoneKing (short side, short loser)
 }
 
 
-int KPK (short side)
+int KPK (int side)
 /**************************************************************************
  *
  *  A KPK endgame evaluator.  Side is the one on the move.
@@ -1019,7 +1024,7 @@ int KPK (short side)
  *
  **************************************************************************/
 {
-   short winer, loser, sq, sqw, sql;
+   int winer, loser, sq, sqw, sql;
    int s;
 
    winer = (board.b[white][pawn] ? white : black);
@@ -1146,7 +1151,7 @@ int KPK (short side)
 }
 
 
-short KBNK[64] = 
+int KBNK[64] = 
 {
    0, 10, 20, 30, 40, 50, 60, 70,
   10, 20, 30, 40, 50, 60, 70, 60,
@@ -1158,14 +1163,14 @@ short KBNK[64] =
   70, 60, 50, 40, 30, 20, 10,  0
 };
 
-int ScoreKBNK (short side, short loser)
+int ScoreKBNK (int side, int loser)
 /****************************************************************************
  *
  *  My very own KBNK routine!
  *
  ****************************************************************************/
 {
-   short s, winer, sq1, sq2, sqB;
+   int s, winer, sq1, sq2, sqB;
 
    winer = 1^loser;
    sqB = board.king[loser];
@@ -1193,7 +1198,7 @@ int ScoreKBNK (short side, short loser)
 static const BitBoard nn[2] = { ULL(0x4200000000000000), ULL(0x0000000000000042) };
 static const BitBoard bb[2] = { ULL(0x2400000000000000), ULL(0x0000000000000024) };
 
-int ScoreDev (short side)
+int ScoreDev (int side)
 /***************************************************************************
  *
  *  Calculate the development score for side (for opening only).
@@ -1205,7 +1210,8 @@ int ScoreDev (short side)
  ***************************************************************************/
 {
    int s = 0;
-   short sq, xside;
+   int xside;
+   int sq;
    BitBoard c;
 
    xside = 1 ^ side;
@@ -1275,7 +1281,7 @@ int ScoreDev (short side)
 
 
 /*  Array of pointer to functions  */
-static int (*ScorePiece[7]) (short) =
+static int (*ScorePiece[7]) (int) =
 { NULL, ScoreP, ScoreN, ScoreB, ScoreR, ScoreQ, ScoreK };
 
 
@@ -1293,8 +1299,9 @@ int Evaluate (int alpha, int beta)
  *
  ****************************************************************************/
 {
-   short side, xside, piece, s, s1, score;
-   short npiece[2];
+   int side, xside;
+   int piece, s, s1, score;
+   int npiece[2];
    BitBoard *b;
 
    side = board.side;
@@ -1423,7 +1430,7 @@ next:
 }
 
 
-short EvaluateDraw ()
+int EvaluateDraw ()
 /***************************************************************************
  *
  *  This routine is called by search() and quiesce() before anything else
@@ -1437,7 +1444,7 @@ short EvaluateDraw ()
  ***************************************************************************/
 {
    BitBoard *w, *b;
-   short wm, bm, wn, bn;
+   int wm, bm, wn, bn;
 
    w = board.b[white];
    b = board.b[black];

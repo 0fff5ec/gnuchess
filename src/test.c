@@ -41,7 +41,7 @@ void TestMoveGenSpeed (void)
    unsigned long i;
    struct timeval t1, t2;
    double et;
-   short side, xside;
+   int side, xside;
 
    GenCnt = 0;
    et = 0;
@@ -250,7 +250,7 @@ void TestEval (void)
  *
  ***************************************************************************/
 {
-   short score;
+   int score;
 
    SET (flags, TESTT);
    while (ReadEPDFile ("../test/wac.epd", 0))
