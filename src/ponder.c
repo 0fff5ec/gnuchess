@@ -42,8 +42,10 @@ void ponder(void)
 
    CLEAR(flags, TIMECTL);
    SET(flags, PONDER);
-		 
+
+   dbg_printf("Pondering, GameCnt = %d\n", GameCnt);
    Iterate();
+   dbg_printf("Pondering ended, GameCnt = %d\n", GameCnt);
 
    /* Restore flags, will also clear the PONDER flag */
    flags=saved_flags;

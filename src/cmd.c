@@ -896,9 +896,7 @@ void parse_input(void)
    leaf *ptr; 
    const struct methodtable * meth;
  
-   if (ofp != stdout) {
-	   fprintf(ofp, "parse_input() called, inputstr = *%s*\n", inputstr);
-   }
+   dbg_printf("parse_input() called, inputstr = *%s*\n", inputstr);
    
    split_input();
 

@@ -67,6 +67,7 @@ void getline_readline(char * p)
   char *inp;
 
   inp = readline(p);
+  dbg_printf("getline_readline() called, input is >%s<\n", inp ? inp : "NULL");
   if (inp && *inp) {
     add_history(inputstr);
     strncpy(inputstr, inp, MAXSTR-1);
@@ -101,17 +102,17 @@ static pthread_cond_t input_cond = PTHREAD_COND_INITIALIZER;
 void *input_func(void *arg __attribute__((unused)) )
 {
   char prompt[MAXSTR] = "";
-  const char color[2][6] = { "White", "Black" };
 
   while (!(flags & QUIT)) {
     if (!(flags & XBOARD)) {
-      sprintf(prompt,"%s (%d) : ", color[board.side], (GameCnt+1)/2 + 1 );
+      sprintf(prompt,"%s (%d) : ", 
+	      RealSide ? "Black" : "White", 
+	      (RealGameCnt+1)/2 + 1 );
     }
     getline(prompt);
     input_status = INPUT_AVAILABLE;
     pthread_mutex_lock(&input_mutex);
     pthread_cond_wait(&input_cond, &input_mutex);
-    input_status = INPUT_NONE;
     pthread_mutex_unlock(&input_mutex);
   }
   return NULL;
@@ -121,6 +122,7 @@ void input_wakeup(void)
 {
   pthread_mutex_lock(&input_mutex);
   pthread_cond_signal(&input_cond);
+  input_status = INPUT_NONE;
   pthread_mutex_unlock(&input_mutex);
 }
 

@@ -347,6 +347,8 @@ extern leaf Tree[MAXTREEDEPTH];
 extern leaf *TreePtr[MAXPLYDEPTH];
 extern int RootPV;
 extern GameRec Game[MAXGAMEDEPTH];
+extern int RealGameCnt;
+extern short RealSide;
 extern int GameCnt;
 extern int computer;
 extern unsigned int flags;
@@ -807,5 +809,23 @@ unsigned char nbits (BitBoard);
 #else
 # include "inlines.h"
 #endif
+
+/* More elaborate debugging output to logfile */
+
+/* All the following functions are no-ops if DEBUG is not defined */
+
+/*
+ * dbg_open() can be called with NULL as argument, using a default
+ * filename, defined in debug.c, for the debug log. Otherwise the
+ * argument is the filename. If dbg_open() fails or is not called at
+ * all, debugging output goes to stderr by default.
+ */
+int dbg_open(const char *name);
+
+/* Same format rules as printf() */
+int dbg_printf(const char *fmt, ...);
+
+/* Closes the debugging log, if it is not stderr */
+int dbg_close(void);
 
 #endif /* !COMMON_H */

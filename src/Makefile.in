@@ -71,7 +71,7 @@ install_sh = @install_sh@
 
 bin_PROGRAMS = gnuchess
 
-gnuchess_SOURCES = atak.c book.c cmd.c epd.c eval.c genmove.c hash.c\
+gnuchess_SOURCES = atak.c book.c cmd.c debug.c epd.c eval.c genmove.c hash.c\
  hung.c	init.c input.c iterate.c main.c move.c null.c output.c players.c\
  pgn.c ponder.c quiesce.c random.c repeat.c search.c solve.c sort.c\
  swap.c test.c ttable.c util.c common.h book.h eval.h inlines.h version.h
@@ -88,13 +88,14 @@ bin_PROGRAMS = gnuchess$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_gnuchess_OBJECTS = atak.$(OBJEXT) book.$(OBJEXT) cmd.$(OBJEXT) \
-	epd.$(OBJEXT) eval.$(OBJEXT) genmove.$(OBJEXT) hash.$(OBJEXT) \
-	hung.$(OBJEXT) init.$(OBJEXT) input.$(OBJEXT) iterate.$(OBJEXT) \
-	main.$(OBJEXT) move.$(OBJEXT) null.$(OBJEXT) output.$(OBJEXT) \
-	players.$(OBJEXT) pgn.$(OBJEXT) ponder.$(OBJEXT) \
-	quiesce.$(OBJEXT) random.$(OBJEXT) repeat.$(OBJEXT) \
-	search.$(OBJEXT) solve.$(OBJEXT) sort.$(OBJEXT) swap.$(OBJEXT) \
-	test.$(OBJEXT) ttable.$(OBJEXT) util.$(OBJEXT)
+	debug.$(OBJEXT) epd.$(OBJEXT) eval.$(OBJEXT) genmove.$(OBJEXT) \
+	hash.$(OBJEXT) hung.$(OBJEXT) init.$(OBJEXT) input.$(OBJEXT) \
+	iterate.$(OBJEXT) main.$(OBJEXT) move.$(OBJEXT) null.$(OBJEXT) \
+	output.$(OBJEXT) players.$(OBJEXT) pgn.$(OBJEXT) \
+	ponder.$(OBJEXT) quiesce.$(OBJEXT) random.$(OBJEXT) \
+	repeat.$(OBJEXT) search.$(OBJEXT) solve.$(OBJEXT) \
+	sort.$(OBJEXT) swap.$(OBJEXT) test.$(OBJEXT) ttable.$(OBJEXT) \
+	util.$(OBJEXT)
 gnuchess_OBJECTS = $(am_gnuchess_OBJECTS)
 gnuchess_LDADD = $(LDADD)
 gnuchess_DEPENDENCIES =
@@ -107,7 +108,8 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 @AMDEP_TRUE@DEP_FILES = $(DEPDIR)/atak.Po $(DEPDIR)/book.Po \
-@AMDEP_TRUE@	$(DEPDIR)/cmd.Po $(DEPDIR)/epd.Po $(DEPDIR)/eval.Po \
+@AMDEP_TRUE@	$(DEPDIR)/cmd.Po $(DEPDIR)/debug.Po \
+@AMDEP_TRUE@	$(DEPDIR)/epd.Po $(DEPDIR)/eval.Po \
 @AMDEP_TRUE@	$(DEPDIR)/genmove.Po $(DEPDIR)/hash.Po \
 @AMDEP_TRUE@	$(DEPDIR)/hung.Po $(DEPDIR)/init.Po \
 @AMDEP_TRUE@	$(DEPDIR)/input.Po $(DEPDIR)/iterate.Po \
@@ -202,6 +204,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/atak.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/book.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/cmd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/epd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/eval.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/genmove.Po@am__quote@

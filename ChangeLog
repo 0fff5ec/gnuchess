@@ -1,3 +1,11 @@
+2002-12-30  Lukas Geyer  <lukas@debian.org>
+
+	* Corrected threading code to consume input correctly
+
+	* Corrections to comments
+
+	* debug.c added
+
 2002-12-22  Stuart Cracraft <cracraft@earthlink.net>
 
 	* Reinstate penalty for having no queens on in
@@ -55,7 +63,7 @@
 
 	* main.c: Default to "nopost".
 
-	* common.h: Added #include <sys/types>, needed for some
+	* common.h: Added #include <sys/types.h>, needed for some
 	  pthread implementations, it seems.
 
 2002-08-25  Lukas Geyer  <lukas@debian.org>

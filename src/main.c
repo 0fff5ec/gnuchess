@@ -68,6 +68,8 @@ leaf *TreePtr[MAXPLYDEPTH];
 int RootPV;
 GameRec Game[MAXGAMEDEPTH];
 int GameCnt;
+int RealGameCnt;
+short RealSide;
 int computer;
 unsigned int flags;
 int cboard[64];
@@ -305,6 +307,8 @@ int main (int argc, char *argv[])
     }
   }
   
+  dbg_open(NULL);
+  
   cmd_version();
   Initialize ();
 
@@ -325,23 +329,26 @@ int main (int argc, char *argv[])
   bookfirstlast = 3;
 
   while (!(flags & QUIT)) {
+    dbg_printf("Waiting for input...\n");
     wait_for_input();
+    dbg_printf("Parsing input...\n");
     parse_input();
+    dbg_printf("input_status = %d\n", input_status);
     if ((flags & THINK) && !(flags & MANUAL) && !(flags & ENDED)) {
       if (!(flags & XBOARD)) printf("Thinking...\n");
       Iterate ();
       CLEAR (flags, THINK);
     }
+    RealGameCnt = GameCnt;
+    RealSide = board.side;
+    dbg_printf("Waking up input...\n");
     input_wakeup();
+    dbg_printf("input_status = %d\n", input_status);
     /* Ponder only after first move */
     /* Ponder or (if pondering disabled) just wait for input */
     if ((flags & HARD) && !(flags & QUIT) ) {
       ponder();
     }
-    /*
-     * ponder() is allowed to return early, and pondering may be
-     * disabled
-     */
   }
   
   CleanupInput();
@@ -350,5 +357,6 @@ int main (int argc, char *argv[])
   free (HashTab[0]);
   free (HashTab[1]);
 
+  dbg_close();
   return (0);
 }

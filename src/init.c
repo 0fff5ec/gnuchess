@@ -629,11 +629,11 @@ void InitVars (void)
    boardside[qs] = FileBit[0]|FileBit[1]|FileBit[2]|FileBit[3];
 
    board.flag |= (WCASTLE | BCASTLE);
-   board.side = white;
+   RealSide = board.side = white;
    board.ep = -1;
    board.king[white] = E1;
    board.king[black] = E8;
-   GameCnt = -1;
+   RealGameCnt = GameCnt = -1;
    Game50 = 0;
    computer = black;
    CalcHashKey ();
@@ -786,7 +786,7 @@ void NewPosition (void)
 {
    CLEAR (flags, ENDED);
    Game50 = 0;
-   GameCnt = -1;
+   RealGameCnt = GameCnt = -1;
    Game[0].hashkey = HashKey;
    TTClear ();
    PTClear ();

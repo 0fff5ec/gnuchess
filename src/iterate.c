@@ -250,7 +250,7 @@ void Iterate (void)
    if (flags & PONDER) return;
 /***************************************************************************
  *
- *  We've finish the search.  Do things like update the game history,
+ *  We've finished the search.  Do things like update the game history,
  *  time control stuff and print the search result.
  *  mcriley - MoveLimit was = 60
  ***************************************************************************/
