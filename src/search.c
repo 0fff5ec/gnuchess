@@ -150,7 +150,7 @@ int SearchRoot (short depth, int alpha, int beta)
 
       if (flags & TIMEOUT)
       {
-         best = (ply & 1 ? rootscore : -rootscore);
+         best = (ply & 1 ? beta : alpha);
 	 return (best);
       }
 
@@ -574,7 +574,7 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
 
       if (flags & TIMEOUT)
       {
-         best = (ply & 1 ? rootscore : -rootscore);
+         best = (ply & 1 ? beta : alpha);
 	 return (best);
       }
 
