@@ -1,4 +1,10 @@
+2003-06-28 Mike Curtis <chess@wt.net>
+
+	* Portability fix IsTrustedPlayer
+
 2003-06-28 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Portability fix to lexpgn.l
 
 	* Changes to lexpgn.l to handle some special
 	  cases.

@@ -306,6 +306,7 @@ int IsTrustedPlayer(const char *name)
 		if (strstr(name, trusted_players[i]) != NULL)
 			return 1;
        }
+	return 0;
 }
 
 void BookPGNReadFromFile (const char *file)
