@@ -29,7 +29,6 @@
 #include <string.h>
 #include "common.h"
 
-#define R 2*DEPTH
 #define TIMECHECK 	1023
 #define HISTSCORE(d)	((d)*(d))
 
@@ -46,7 +45,7 @@ static inline void ShowThinking (leaf *p, uint8_t ply)
       return;
    }
    SANMove (p->move, ply);
-   printf ("\r%2d.         %2d/%2d%10s    ", Idepth/DEPTH, 
+   printf ("\r%2d.         %2d/%2d%10s    ", Idepth, 
       (int) (p-TreePtr[ply]+1), (int) (TreePtr[ply+1]-TreePtr[ply]), SANmv);
    fflush (stdout);
 }
@@ -76,11 +75,11 @@ int SearchRoot (short depth, int alpha, int beta)
    KingThrt[white][ply] = MateScan (white);
    KingThrt[black][ply] = MateScan (black);
    InChk[ply] = SqAtakd (board.king[side], xside);
-   if (InChk[ply] && ChkCnt[ply] < 3*Idepth/DEPTH)
+   if (InChk[ply] && ChkCnt[ply] < 3*Idepth)
    {
       ChkExtCnt++;
       ChkCnt[ply+1]++;
-      depth += DEPTH;
+      depth += 1;
    }
    best = -INFINITY;
    savealpha = alpha;
@@ -97,7 +96,7 @@ int SearchRoot (short depth, int alpha, int beta)
       /*  If first move, search against full alpha-beta window  */
       if (p == TreePtr[1])
       {
-         score = -Search (2, depth-DEPTH, -beta, -alpha, nodetype);
+         score = -Search (2, depth-1, -beta, -alpha, nodetype);
          /*
 	    The following occurs when we are re-searching a fail high move
             and now it has fail low.  This can be disastrous, so immediately
@@ -106,7 +105,7 @@ int SearchRoot (short depth, int alpha, int beta)
 	 if (beta == INFINITY && score <= alpha)
 	 {
 	    alpha = -INFINITY;
-            score = -Search (2, depth-DEPTH, -beta, -alpha, nodetype);
+            score = -Search (2, depth-1, -beta, -alpha, nodetype);
          }
       }
 
@@ -115,13 +114,13 @@ int SearchRoot (short depth, int alpha, int beta)
       {
 	 nodetype = CUT;
          alpha = MAX (best, alpha);            
-         score = -Search (2, depth-DEPTH, -alpha-1, -alpha, nodetype);
+         score = -Search (2, depth-1, -alpha-1, -alpha, nodetype);
          if (score > best)
          {
             if (alpha < score && score < beta)
 	    {
 	       nodetype = PV;
-               score = -Search (2, depth-DEPTH, -beta, -score, nodetype);
+               score = -Search (2, depth-1, -beta, -score, nodetype);
 	    }
          }
       }
@@ -183,7 +182,7 @@ done:
 
    /*  Update history  */
    if (best > savealpha)
-      history[side][pbest->move & 0x0FFF] += HISTSCORE(depth/DEPTH);
+      history[side][pbest->move & 0x0FFF] += HISTSCORE(depth);
 
    rootscore = best;
    return (best);
@@ -241,7 +240,7 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
          return (-MATE+ply-2);
       if (TreePtr[ply]+1 == TreePtr[ply+1])
       {
-         depth += DEPTH;
+         depth += 1;
 	 extend = true;
          OneRepCnt++;
       }
@@ -262,18 +261,18 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
    ThrtCnt[ply+1] = ThrtCnt[ply];
    KingThrt[white][ply] = MateScan (white);
    KingThrt[black][ply] = MateScan (black);
-   if (InChk[ply]  && /* ChkCnt[ply] < Idepth-1*/ ply <= 2*Idepth/DEPTH)
+   if (InChk[ply]  && /* ChkCnt[ply] < Idepth-1*/ ply <= 2*Idepth)
    {
       ChkExtCnt++;
       ChkCnt[ply+1]++;
-      depth += DEPTH;
+      depth += 1;
       extend = true;
    }
-   else if (!KingThrt[side][ply-1] && KingThrt[side][ply] && ply <= 2*Idepth/DEPTH)
+   else if (!KingThrt[side][ply-1] && KingThrt[side][ply] && ply <= 2*Idepth)
    {
       KingExtCnt++;
       extend = true;
-      depth += DEPTH;
+      depth += 1;
       extend = true;
       donull = false;
    }
@@ -281,7 +280,7 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
    else if (g0 & PROMOTION)
    {
       PawnExtCnt++;
-      depth += DEPTH; /* Not reached, but why?! */
+      depth += 1; /* Not reached, but why?! */
       extend = true;
    }
    /* Recapture extension */
@@ -289,14 +288,14 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
 	board.material[1^computer] == RootMaterial))
    {
       RcpExtCnt++;
-      depth += DEPTH;
+      depth += 1;
       extend = true;
    }
    /* 6th or 7th rank extension */
-   else if (depth <= DEPTH && cboard[t0] == pawn && (RANK(t0) == rank7[xside] || RANK(t0) == rank6[xside]))
+   else if (depth <= 1 && cboard[t0] == pawn && (RANK(t0) == rank7[xside] || RANK(t0) == rank6[xside]))
    {
       PawnExtCnt++;
-      depth += DEPTH;
+      depth += 1;
       extend = true;
    }
 
@@ -310,7 +309,7 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
 	 !SqAtakd (t0, xside))
    {
       HorzExtCnt++;
-      depth += DEPTH;
+      depth += 1;
       extend = true;
    }
 
@@ -378,22 +377,22 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
  *****************************************************************************/
    if (ply > 4 && InChk[ply-2] && InChk[ply-4])
       donull = false;
-   if (flags & USENULL && g0 != NULLMOVE && depth > DEPTH && nodetype != PV &&
+   if (flags & USENULL && g0 != NULLMOVE && depth > 1 && nodetype != PV &&
        !InChk[ply] && MATERIAL+ValueP > beta && beta > -MATE+ply && donull &&
 	board.pmaterial[side] > ValueB )
    {
       TreePtr[ply+1] = TreePtr[ply];
       MakeNullMove (side);
-      nullscore = -Search (ply+1, depth-DEPTH-R, -beta, -beta+1, nodetype);
+      nullscore = -Search (ply+1, depth-3, -beta, -beta+1, nodetype);
       UnmakeNullMove (xside); 
       if (nullscore >= beta)
       {
          NullCutCnt++;
          return (nullscore);
       }
-      if ( depth-DEPTH-R >= 1 && MATERIAL > beta && nullscore <= -MATE+256)
+      if ( depth-3 >= 1 && MATERIAL > beta && nullscore <= -MATE+256)
       {
-         depth += DEPTH;
+         depth += 1;
 	 extend = true;
       }
    }
@@ -417,17 +416,17 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
  *************************************************************************/
    fcut = false;
    fdel = MAX (ValueQ, maxposnscore[side]);
-   if (!extend && nodetype != PV && depth == 3*DEPTH && FUTSCORE <= alpha)
+   if (!extend && nodetype != PV && depth == 3 && FUTSCORE <= alpha)
    {
-      depth = 2*DEPTH;
+      depth = 2;
       RazrCutCnt++;
    }
    fdel = MAX (ValueR, maxposnscore[side]);
-   fcut = (!extend && nodetype != PV && depth == 2*DEPTH && FUTSCORE <= alpha);
+   fcut = (!extend && nodetype != PV && depth == 2 && FUTSCORE <= alpha);
    if (!fcut)
    {
       fdel = MAX (3*ValueP, maxposnscore[side]);
-      fcut = (nodetype != PV && depth == DEPTH && FUTSCORE <= alpha);
+      fcut = (nodetype != PV && depth == 1 && FUTSCORE <= alpha);
    }
 
    MakeMove (side, &p->move);
@@ -459,7 +458,7 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
       if (firstmove)
       {
          firstmove = false;
-         score = -Search (ply+1, depth-DEPTH, -beta, -alpha, nodetype);
+         score = -Search (ply+1, depth-1, -beta, -alpha, nodetype);
       }
 
       /* Zero window search for rest of moves */
@@ -499,19 +498,19 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
          if (nodetype == PV)
             nodetype = CUT;
          alpha = MAX (best, alpha);                /* fail-soft condition */
-         score = -Search (ply+1, depth-DEPTH, -alpha-1, -alpha, nodetype);
+         score = -Search (ply+1, depth-1, -alpha-1, -alpha, nodetype);
          if (score > best)
          {
 	    if (savenode == PV)
 	       nodetype = PV;
             if (alpha < score && score < beta)
 	    {
-               score = -Search (ply+1, depth-DEPTH, -beta, -score, nodetype);
+               score = -Search (ply+1, depth-1, -beta, -score, nodetype);
 	    } 
 	    if (nodetype == PV && score <= alpha &&
 		Game[GameCnt+1].move == NULLMOVE)
 	    {
-               score = -Search (ply+1, depth-DEPTH, -alpha, INFINITY, nodetype);
+               score = -Search (ply+1, depth-1, -alpha, INFINITY, nodetype);
 	    }
          }
       }
@@ -579,7 +578,7 @@ done:
 
    /*  Update history  */
    if (best > savealpha)
-      history[side][pbest->move & 0x0FFF] += HISTSCORE(depth/DEPTH);
+      history[side][pbest->move & 0x0FFF] += HISTSCORE(depth);
 
    /*  Don't store captures as killers as they are tried before killers */
    if (!(pbest->move & (CAPTURE | PROMOTION)) && best > savealpha)
@@ -614,7 +613,7 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
       /* printf("NodeCnt = %d\n",NodeCnt); getchar(); */
       return;
    }
-   if (Idepth == DEPTH && c == '&')
+   if (Idepth == 1 && c == '&')
       return;
    if ((flags & XBOARD) && c == '&')
       return;
@@ -635,43 +634,43 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
     */
    if (flags & XBOARD) {
      if (score > MATE-255) {
-       printf ("%d%c Mat%d %d %ld\t", Idepth/DEPTH, c,
+       printf ("%d%c Mat%d %d %ld\t", Idepth, c,
                 (int)(MATE+2-abs(score))/2, (int)(ElapsedTime), NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10ld\t", Idepth, c, ElapsedTime,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else if (score < -MATE+255) {
-       printf ("%d%c -Mat%2d %d %ld\t", Idepth/DEPTH, c,
+       printf ("%d%c -Mat%2d %d %ld\t", Idepth, c,
                 (int)(MATE+2-abs(score))/2, (int)(ElapsedTime), NodeCnt+QuiesCnt);
        if (ofp != stdout)
-       fprintf (ofp,"%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+       fprintf (ofp,"%2d%c%7.2f -Mat%02d%10ld\t", Idepth, c, ElapsedTime,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else {
-	 printf ("%d%c %d %d %ld\t", Idepth/DEPTH, c, (int)score, 
+	 printf ("%d%c %d %d %ld\t", Idepth, c, (int)score, 
 		 (int)(ElapsedTime), NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
-	   fprintf (ofp,"%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, 
+	   fprintf (ofp,"%2d%c%7.2f%7d%10ld\t", Idepth, c, 
 		    ElapsedTime, score, NodeCnt+QuiesCnt);	 
        }
    }
    else {              /* Not XBOARD */
       if (score > MATE-255) {
-	 printf ("\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+	 printf ("\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth, c, ElapsedTime,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
 	 if (ofp != stdout)
-	    fprintf (ofp,"\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+	    fprintf (ofp,"\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth, c, ElapsedTime,
 		     (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
       } else if (score < -MATE+255) {
-	 printf ("\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+	 printf ("\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth, c, ElapsedTime,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
 	 if (ofp != stdout)
-	    fprintf (ofp,"\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+	    fprintf (ofp,"\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth, c, ElapsedTime,
 		     (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
       } else {
-	 printf ("\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+	 printf ("\r%2d%c%7.2f%7d%10ld\t", Idepth, c, ElapsedTime,
 		 score, NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
-	    fprintf (ofp,"\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, ElapsedTime,
+	    fprintf (ofp,"\r%2d%c%7.2f%7d%10ld\t", Idepth, c, ElapsedTime,
 		    score, NodeCnt+QuiesCnt);	 
       }
    }

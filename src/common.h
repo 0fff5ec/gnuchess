@@ -330,8 +330,6 @@ typedef struct
 #define HASHSLOTS 1024 
 #define PAWNSLOTS 512
 
-#define DEPTH	12
-
 extern short distance[64][64];
 extern short taxicab[64][64];
 extern unsigned char lzArray[65536];

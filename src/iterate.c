@@ -207,7 +207,7 @@ void Iterate (void)
 	 RootAlpha = MAX (score - WINDOW, -MATE);
 	 RootBeta  = MIN (score + WINDOW,  MATE);
       }
-      Idepth += DEPTH;
+      Idepth += 1; /* increase iteration depth */
       rootscore = -INFINITY-1;
       score = SearchRoot (Idepth, RootAlpha, RootBeta);
       if (score >= RootBeta && score < MATE && !(flags & TIMEOUT))
@@ -244,7 +244,7 @@ void Iterate (void)
       if (abs(score) + Idepth >= MATE + 1) 
          SET (flags, TIMEOUT);
 
-      if (!(flags & PONDER) && Idepth == SearchDepth*DEPTH) 
+      if (!(flags & PONDER) && Idepth == SearchDepth) 
          break; 
    }
 

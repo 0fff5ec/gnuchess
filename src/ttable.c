@@ -46,7 +46,6 @@ void TTPut (uint8_t side, uint8_t depth, uint8_t ply, int alpha, int beta,
 {
    HashSlot *t;
 
-   depth = depth/DEPTH;
    t = HashTab[side] + ((HashKey & TTHashMask) & ~1); 
    if (depth < t->depth)
       t++;
@@ -91,7 +90,6 @@ uint8_t TTGet (uint8_t side, uint8_t depth, uint8_t ply,
    if (HashKey != t->key && HashKey != (++t)->key)
       return (0);
 
-   depth = depth/DEPTH;
    GoodGetHashCnt++;
    *move = t->move;
    *score = t->score;
