@@ -830,8 +830,6 @@ short IsLegalMove (int move)
    return (true);
 }
 
-
-static char s[6];
 char *AlgbrMove (int move)
 /*****************************************************************************
  *
@@ -840,6 +838,7 @@ char *AlgbrMove (int move)
  *****************************************************************************/
 {
    short f, t;
+   static char s[6];
 
    f = FROMSQ(move);
    t = TOSQ(move);

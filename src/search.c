@@ -57,8 +57,6 @@ inline void ShowThinking (leaf *p, short ply)
    fflush (stderr);
 }
 
-static const short rank7[2] = { 6, 1 };
-static const short rank6[2] = { 5, 2 };
 static int ply1score;
 
 int SearchRoot (short depth, int alpha, int beta)

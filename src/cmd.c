@@ -636,6 +636,7 @@ void InputCmd ()
 #ifdef HAVE_LIBREADLINE
    free(inputstr);
 #endif
+   return;
 }
 
 

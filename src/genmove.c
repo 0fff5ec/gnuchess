@@ -518,7 +518,7 @@ void GenCaptures (short ply)
       }
 
       b = a[pawn] & ~FileBit[0]; 		/* captures to the left */
-      c = (b >> 7) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
+      c = (b >> 7) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : ULL(0)));
       while (c)
       {
          t = leadz (c);
@@ -538,7 +538,7 @@ void GenCaptures (short ply)
       }
 
       b = a[pawn] & ~FileBit[7]; 		/* captures to the right */
-      c = (b >> 9) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
+      c = (b >> 9) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : ULL(0)));
       while (c)
       {
          t = leadz (c);
@@ -571,7 +571,7 @@ void GenCaptures (short ply)
       }
 
       b = a[pawn] & ~FileBit[7];		/* captures to the left */
-      c = (b << 7) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
+      c = (b << 7) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : ULL(0)));
       while (c)
       {
          t = leadz (c);
@@ -591,7 +591,7 @@ void GenCaptures (short ply)
       }
 
       b = a[pawn] & ~FileBit[0];		/* captures to the right */
-      c = (b << 9) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : 0ULL));
+      c = (b << 9) & (board.friends[1^side] | (ep > -1 ? BitPosArray[ep] : ULL(0)));
       while (c)
       {
          t = leadz (c);

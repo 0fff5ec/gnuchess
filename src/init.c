@@ -295,7 +295,7 @@ void InitRankFileBit ()
    }
    
    i = 8;
-   b = 0x0101010101010101ULL;
+   b = ULL(0x0101010101010101);
    while (i--)
    {
       FileBit[i] = b;

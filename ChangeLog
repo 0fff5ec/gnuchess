@@ -4,6 +4,9 @@
 	  and related field sizes throughout code.
 	  (NB UNIVERSIAL code changes untested)
 
+	* Changes proposed by MC for compiling with MSVC
+	  Note: ULL() macro should be used for 64 bit integer constants
+
 2002-05-19  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Corrected command line size to 128 through out cmd.c to

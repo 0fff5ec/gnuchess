@@ -80,9 +80,6 @@ short SqAtakd (short sq, short side)
    return (false);
 }
 
-extern short raybeg[];
-extern short rayend[];
-
 void GenAtaks ()
 /*************************************************************************
  *
@@ -311,6 +308,9 @@ BitBoard AttackXFrom (short sq, short side)
  *
  ***************************************************************************/
 {
+   const short raybeg[7] = { 0, 0, 0, 0, 4, 0, 0 };
+   const short rayend[7] = { 0, 0, 0, 4, 8, 8, 0 };
+
    register BitBoard *a, b, c, blocker;
    short piece, dir, blocksq;
 

@@ -77,18 +77,16 @@ static const short isolani_weaker[8] = {
   -22, -24, -26, -28, -28, -26, -24, -22
 };
 
-static const short rank7[2] = { 6, 1 };
-static const short rank8[2] = { 7, 0 };
 static const BitBoard d2e2[2] =
-		 { 0x0018000000000000ULL, 0x0000000000001800ULL };
-static const BitBoard brank7[2]  = { 0x000000000000FF00ULL,
-				     0x00FF000000000000ULL };
-static const BitBoard brank8[2]  = { 0x00000000000000FFULL,
-				     0xFF00000000000000ULL };
-static const BitBoard brank67[2] = { 0x0000000000FFFF00ULL,
-				     0x00FFFF0000000000ULL };
-static const BitBoard brank58[2] = { 0x00000000FFFFFFFFULL,
-				     0xFFFFFFFF00000000ULL };
+		 { ULL(0x0018000000000000), ULL(0x0000000000001800) };
+static const BitBoard brank7[2]  = { ULL(0x000000000000FF00),
+				     ULL(0x00FF000000000000) };
+static const BitBoard brank8[2]  = { ULL(0x00000000000000FF),
+				     ULL(0xFF00000000000000) };
+static const BitBoard brank67[2] = { ULL(0x0000000000FFFF00),
+				     ULL(0x00FFFF0000000000) };
+static const BitBoard brank58[2] = { ULL(0x00000000FFFFFFFF),
+				     ULL(0xFFFFFFFF00000000) };
 
 int ScoreP (short side)
 /***************************************************************************
@@ -739,8 +737,8 @@ static const short EndingKing[64] =
 
 static short pawncover[9] = { -60, -30, 0, 5, 30, 30, 30, 30, 30 };
 static const short factor[9] = { 7, 8, 8, 7, 6, 5, 4, 2, 0, };
-static const BitBoard Corner[2] = { 0xC3C3000000000000ULL,
-				    0x000000000000C3C3ULL };
+static const BitBoard Corner[2] = { ULL(0xC3C3000000000000),
+				    ULL(0x000000000000C3C3) };
 
 int ScoreK (short side)
 /***************************************************************************
@@ -1184,7 +1182,7 @@ int ScoreKBNK (short side, short loser)
    s -= taxicab[leadz(board.b[winer][bishop])][sq2];
 
    /*  King in the central 4x4 region is good! */
-   if (board.b[winer][king] & 0x00003C3C3C3C0000ULL)
+   if (board.b[winer][king] & ULL(0x00003C3C3C3C0000))
       s += 20;
    if (side == loser)
       s = -s;
@@ -1194,10 +1192,10 @@ int ScoreKBNK (short side, short loser)
 }
 
 
-static const BitBoard nn[2] = { 0x4200000000000000ULL, 0x0000000000000042ULL };
-static const BitBoard bb[2] = { 0x2400000000000000ULL, 0x0000000000000024ULL };
-static const BitBoard rr[2] = { 0x8100000000000000ULL, 0x0000000000000081ULL };
-static const BitBoard corner = 0xC3C300000000C3C3ULL;
+static const BitBoard nn[2] = { ULL(0x4200000000000000), ULL(0x0000000000000042) };
+static const BitBoard bb[2] = { ULL(0x2400000000000000), ULL(0x0000000000000024) };
+static const BitBoard rr[2] = { ULL(0x8100000000000000), ULL(0x0000000000000081) };
+static const BitBoard corner = ULL(0xC3C300000000C3C3);
 
 int ScoreDev (short side)
 /***************************************************************************

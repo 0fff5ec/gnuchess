@@ -38,6 +38,15 @@
   */
 #include "GCint.h"
 
+ /*
+  * Define macro for declaring 64bit constants for compilers not using ULL
+  */
+#ifdef _MSC_VER
+   #define ULL(x) ((uint64_t)(x))
+#else
+   #define ULL(x) x ## ULL
+#endif
+
 typedef uint64_t BitBoard;
 typedef uint64_t HashType;
 typedef uint32_t KeyType;
@@ -130,8 +139,8 @@ typedef struct
  * calculation.
  */
 #if defined(__GNUC__) && defined(__PPC__) && __GNUC__ < 3
-#  define SETBIT(b,i)   ((b) |=  ((1ULL<<63)>>(i)))
-#  define CLEARBIT(b,i) ((b) &= ~((1ULL<<63)>>(i)))
+#  define SETBIT(b,i)   ((b) |=  ((ULL(1)<<63)>>(i)))
+#  define CLEARBIT(b,i) ((b) &= ~((ULL(1)<<63)>>(i)))
 #else
 #  define SETBIT(b,i)   ((b) |= BitPosArray[i])
 #  define CLEARBIT(b,i) ((b) &= NotBitPosArray[i])
@@ -191,12 +200,12 @@ typedef struct
 #define MOVEMASK      (CASTLING | ENPASSANT | PROMOTION | 0x0FFF)
 
 /*  Some special BitBoards  */
-#define NULLBITBOARD  (0x0000000000000000ULL)
-#define WHITESQUARES  (0x55AA55AA55AA55AAULL)
-#define BLACKSQUARES  (0xAA55AA55AA55AA55ULL)
-#define CENTRESQUARES (0x0000001818000000ULL)
-#define COMPUTERHALF  (0xFFFFFFFF00000000ULL)
-#define OPPONENTHALF  (0x00000000FFFFFFFFULL)
+#define NULLBITBOARD  ( ULL(0x0000000000000000))
+#define WHITESQUARES  ( ULL(0x55AA55AA55AA55AA))
+#define BLACKSQUARES  ( ULL(0xAA55AA55AA55AA55))
+#define CENTRESQUARES ( ULL(0x0000001818000000))
+#define COMPUTERHALF  ( ULL(0xFFFFFFFF00000000))
+#define OPPONENTHALF  ( ULL(0x00000000FFFFFFFF))
 
 /*  Game flags */
 #define QUIT    0x0001
@@ -406,6 +415,11 @@ extern short r45[64];
 extern short r315[64];
 extern short Mask45[64];
 extern short Mask315[64];
+
+extern short rank6[2];
+extern short rank7[2];
+extern short rank8[2];
+
 extern FILE *ofp;
 extern short myrating, opprating, suddendeath;
 extern char name[50];
@@ -606,7 +620,7 @@ void ShowGame (void);
 void ShowTime (void);
 
 /*  Random numbers routines */
-unsigned int Rand32 (void);
+uint32_t Rand32 (void);
 HashType Rand64 (void);
 
 /*  Solver routines  */
