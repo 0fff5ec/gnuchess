@@ -1,3 +1,35 @@
+2003-06-12 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Convert autoconf to AX_CREATE_STDINT_H from AC_CREATE_STDINT_H
+
+	* Changes suggested by latest "autoscan" including tests
+	  for functions we can't do without.
+
+	* Changes required to merge DAW contribution below.
+
+2003-06-12 David A. Wheeler <dwheeler@dwheeler.com> 
+           (Originally 2002-10-03 merged SRW)
+	   
+	* Rewrote PGN reader so that it fully handles the PGN standard
+	  and common nonstandard variants of PGN, including PGN {} comments,
+	  ; comments, varying newline conventions (Unix, Windows, MacOS),
+	  FEN starting positions, multiple tags, and so on.
+	  If a game is being read in with pgnload,
+	  data is kept so it can be written back out later by pgnsave
+	  (so that later on, annotations won't lose existing data).
+	  The new reader is implemented using flex/lex, which eliminates
+	  
+	* Added support for not-quite-valid SAN moves, so that games
+	  with such entries are still read correctly.  This includes
+	  "capture-only" notation like "KxN" (King takes Knight),
+	  the use of "P" for pawns, and
+	  lower-case versions of many pieces (e.g., "k" for King) - note
+	  that Bishops MUST be upper case (since "b" is a column identifier).
+
+	* Added a script named "gnuchessx", which simply invokes gnuchess
+	  with the "xboard" option.  This means that GNU Chess 5 now
+	  automatically supports Xboard, just like GNU Chess 4 did.
+
 2003-06-09 Anil Mungal <vagrancy@rogers.com>
 
 	* Tidy up hashsize calculation, fix segfault

@@ -123,6 +123,7 @@ typedef struct
    HashType hashkey;
    HashType phashkey;
    char SANmv[SANSZ];  /* The move in SAN notation */
+   char *comments;
 } GameRec;
 
 typedef struct
@@ -622,6 +623,8 @@ short ValidateBoard (void);
 void PGNSaveToFile (const char *, const char *);
 void PGNReadFromFile (const char *);
 void BookPGNReadFromFile (const char *);
+int IsTrustedPlayer(const char *name);
+
 
 /*  The hash routines  */
 void CalcHashKey (void);

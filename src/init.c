@@ -32,6 +32,7 @@
 
 #include "common.h"
 #include "version.h"
+#include "lexpgn.h"
 
 void Initialize (void)
 /**************************************************************************
@@ -643,6 +644,16 @@ void InitVars (void)
       2*ValueR + 2*ValueN + 2*ValueB + ValueQ;
    board.material[white] = board.material[black] =
       board.pmaterial[white] + 8*ValueP;
+
+   /* Initialize pgn values */
+   initial_comments = NULL;
+   /* Reset values; doing this again will cause a trivial memory leak
+    * when reloading PGN files as games, but it's not worth fixing. */
+   pgn_event = pgn_site =
+   pgn_date = pgn_round = pgn_white = pgn_black =
+   pgn_whiteELO = pgn_blackELO = pgn_result =
+   pgn_othertags = NULL; 
+
 
    UpdateFriends ();
    UpdateCBoard ();

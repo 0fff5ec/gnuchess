@@ -70,6 +70,7 @@ void MakeMove (int side, int *move)
    g->hashkey = HashKey;
    g->phashkey = PawnHashKey;
    g->mvboard = Mvboard[t];
+   g->comments = NULL;
    Mvboard[t] = Mvboard[f]+1; 
    Mvboard[f] = 0;
    if (board.ep > -1)
@@ -498,6 +499,37 @@ void SANMove (int move, int ply)
 #define ATOH(a) ((a) >= 'a' && (a) <= 'h')
 #define ITO8(a) ((a) >= '1' && (a) <= '8')
 
+inline int piece_id(const char c)
+{
+/* Given c, what is the piece id.  This only takes one char, which
+ * isn't enough to handle two-character names (common in Russian text
+ * and old English notation that used Kt), but we're not supposed to
+ * see such text here anyway.  This will
+ * accept "P" for pawn, and many lowercase chars (but not "b" for Bishop). */
+   switch (c)
+   {
+      case 'n':
+      case 'N':
+         return knight;
+      case 'B':
+         return bishop;
+      case 'r':
+      case 'R':
+         return rook;
+      case 'q':
+      case 'Q':
+         return queen;
+      case 'k':
+      case 'K':
+         return king;
+      case 'p':
+      case 'P':
+         return pawn;
+   }
+   return empty;
+}
+
+
 
 leaf * ValidateMove (char *s)
 /*************************************************************************
@@ -509,9 +541,10 @@ leaf * ValidateMove (char *s)
  **************************************************************************/
 {
    short f, t, side, rank, file, fileto;
-   short piece, kount;
+   short piece, piece2, kount;
+   char promote;
    char mvstr[MAXSTR], *p;
-   BitBoard b;
+   BitBoard b, b2;
    leaf *n1, *n2;
 
    TreePtr[2] = TreePtr[1];
@@ -640,14 +673,11 @@ leaf * ValidateMove (char *s)
       } 
 
    } 
-   else	if (strchr ("NBRQK", mvstr[0]))			/* Is a piece move */
+   else	if ((piece = piece_id(mvstr[0])) != empty &&
+            (piece_id(mvstr[1]) == empty))	/* Is a piece move */
    {
-      piece = empty;
-      if (mvstr[0] == 'N') piece = knight;
-      else if (mvstr[0] == 'B') piece = bishop;
-      else if (mvstr[0] == 'R') piece = rook;
-      else if (mvstr[0] == 'Q') piece = queen;
-      else if (mvstr[0] == 'K') piece = king;
+      /* Since piece_id accepts P as pawns, this will correctly
+       * handle malformed commands like Pe4 */
 
       b = board.b[side][piece];
       t = -1;
@@ -694,7 +724,54 @@ leaf * ValidateMove (char *s)
       else
          return (n2);
    }
+   else	if (((piece = piece_id(mvstr[0])) != empty) &&
+            ((piece2 = piece_id(mvstr[1])) != empty) &&
+	    ( (mvstr[2] == '\0') ||
+	      ((piece_id(mvstr[2]) != empty) && mvstr[3] == '\0')))
+   { /* KxP format */
+      promote = ' ';
+      if (piece_id(mvstr[2] != empty)) {
+          promote = mvstr[2];
+      }
+      kount = 0;
+      n1 = n2 = (leaf *) NULL;
+      b = board.b[side][piece];
+      while (b)
+      {
+         f = leadz (b);
+ 	 CLEARBIT (b, f);
+         b2 = board.b[1^side][piece2];
+	 while (b2)
+	 {
+           t = leadz (b2);
+ 	   CLEARBIT (b2, t);
+	   printf("Trying %s: ", AlgbrMove(MOVE(f,t)));
+	   if ((n1 = IsInMoveList (1, f, t, promote)) != (leaf *) NULL)
+	   {
+	     n2 = n1;
+	     kount++;
+	     printf("Y  ");
+	   }
+	   else printf("N  ");
+	 }
+      }
+      if (kount > 1)
+      {
+	 printf ("Ambiguous move: %s %s\n",s,mvstr);
+	 ShowBoard();
+/*
+	 getchar();
+*/
+   	 return ((leaf *) NULL);
+      } 
+      else if (kount == 0)
+   	 return ((leaf *) NULL);
+      else
+         return (n2);
+      
+   }
 
+   /* Fall through.  Nothing worked, return that no move was performed. */
    return ((leaf *) NULL);
 }
 
