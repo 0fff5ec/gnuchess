@@ -81,16 +81,29 @@ void Iterate (void)
       /* mcriley - was no # */
 
       SearchTime = TimeLimit[side] * 1.25 / MoveLimit[side];
+
       /* Allocate 10% of total time as reserve */
       /* mcriley - was 9 * S /10 */
+
       SearchTime = 95 * SearchTime / 100;
       /* Reserve more if in sudden death */
       /* mcrikey was 8 * S / 10 */
+
       if (suddendeath) 
 	SearchTime = 92 * SearchTime / 100;
 /* NEW */
+
+	/* From loss against Ryo Saeba where we ran out of
+	   time first move out of book and blundered pawn */
+	/* Book lookups took too long */
+      if ( nmovesfrombook <= 3 ){
+	printf ("Search time bonus near book\n");
+	SearchTime = 1.5 * SearchTime;
+      }
+
       /* Always target at least the increment seconds for the move! */
       /* To prevent huge surplus build-up. */
+
       if (TCinc != 0)
         if (SearchTime < TCinc) {
 	  char color[2][6] = { "White", "Black" };

@@ -383,19 +383,19 @@ inline int CTL(short sq, short piece, short side)
 
   /* Center control */
   n = nbits (controlled & (rings[0]|rings[1]));
-  s += n;
+  s += 4*n;
 
   /* Attacks against enemy king */
   n = nbits (controlled & DistMap[EnemyKing][2]);
   s += n;
 
-  /* Defenses for friendly kin */
+  /* Defenses for friendly king */
   n = nbits (controlled & DistMap[FriendlyKing][2]);
   s += n;
 
   /* Mobility */
   n = nbits(controlled);
-  s += n;
+  s += 4*n;
 
   return (s);
 }
