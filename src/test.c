@@ -51,7 +51,7 @@ void TestMoveGenSpeed ()
    GenCnt = 0;
    et = 0;
 /*
-   while (ReadEPDFile ("TEST/BK.epd", 0))
+   while (ReadEPDFile ("../test/wac.epd", 0))
    {
 */
       gettimeofday (&t1, &tz);
@@ -93,7 +93,7 @@ void TestNonCaptureGenSpeed ()
 
    GenCnt = 0;
    et = 0;
-   while (ReadEPDFile ("TEST/BK.epd", 0))
+   while (ReadEPDFile ("../test/wac.epd", 0))
    {
       gettimeofday (&t1, &tz);
       for (i = 0; i < 100000; i++)
@@ -129,7 +129,7 @@ void TestCaptureGenSpeed ()
 
    GenCnt = 0;
    et = 0;
-   while (ReadEPDFile ("TEST/BK.epd", 0))
+   while (ReadEPDFile ("../test/wac.epd", 0))
    {
       gettimeofday (&t1, &tz);
       for (i = 0; i < 200000; i++)
@@ -227,7 +227,7 @@ void TestEvalSpeed ()
 
    et = 0;
    EvalCnt = 0;
-   while (ReadEPDFile ("TEST/BK.epd", 0))
+   while (ReadEPDFile ("../test/wac.epd", 0))
    {
       gettimeofday (&t1, &tz);
       for (i = 0; i < NEVALS; i++)
@@ -261,7 +261,7 @@ void TestEval ()
    short score;
 
    SET (flags, TESTT);
-   while (ReadEPDFile ("TEST/BK.epd", 0))
+   while (ReadEPDFile ("../test/wac.epd", 0))
    {
       ShowBoard ();
       score = Evaluate (-INFINITY, INFINITY);
