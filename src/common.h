@@ -377,7 +377,7 @@ extern short r315[64];
 extern short Mask45[64];
 extern short Mask315[64];
 extern FILE *ofp;
-extern short myrating, opprating, suddendeath, TCinc;
+extern short myrating, opprating, suddendeath;
 extern char name[50];
 extern short computerplays;
 extern short wasbookmove;
