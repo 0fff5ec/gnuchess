@@ -803,6 +803,7 @@ static const char * const helpstr[] = {
    " off - disables use of book",
    " worst - play worst move from book",
    " best - play best move from book",
+   " random - play any move from book",
    " prefer - default, same as 'book on'",
    "version",
    " prints out the version of this program",
