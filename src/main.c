@@ -138,7 +138,6 @@ short TCMove;
 short TCinc;
 float TCTime;
 short castled[2];
-short Developed[2];
 short hunged[2];
 short phase;
 int Hashmv[MAXPLYDEPTH];

@@ -563,8 +563,10 @@ void InitDistance ()
          if (d1 < 0) d1 = -d1;
          d2 = (t >> 3) - (f >> 3);
          if (d2 < 0) d2 = -d2;
-         distance[f][t] = distance[t][f] = MAX (d1, d2);
-         taxicab[f][t] = taxicab[t][f] = d1 + d2;
+         distance[f][t] = MAX (d1, d2);
+         distance[t][f] = MAX (d1, d2);
+         taxicab[f][t] = d1 + d2;
+         taxicab[t][f] = d1 + d2;
       }
 
    for (f = 0; f < 64; f++)

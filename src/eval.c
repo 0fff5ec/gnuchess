@@ -42,7 +42,6 @@ int KPK (short);
 int BishopTrapped (short);
 int DoubleQR7 (short);
 
-short Developed[2];
 BitBoard passed[2];
 BitBoard weaked[2];
 
@@ -338,19 +337,6 @@ phase2:
 
    return (s);
 }
-
-
-static const short KnightSq[64] =
-{  
-   -6, -2,  0,  0,  0,  0, -2, -6,
-   -2,  2,  4,  4,  4,  4,  2, -2,
-    0,  4,  8,  8,  8,  8,  4,  0,
-    0,  4,  8, 12, 12,  8,  4,  0,
-    0,  4,  8, 12, 12,  8,  4,  0,
-    0,  4,  8,  8,  8,  8,  4,  0,
-   -2,  2,  4,  4,  4,  4,  2, -2,
-   -6, -2,  0,  0,  0,  0, -2, -6
-};
 
 static const short Outpost[2][64] =
 {
@@ -680,19 +666,6 @@ inline int DoubleQR7 (short side)
    else
       return (0);
 }
-
-
-static const short QueenSq[64] =
-{  
-   0, 1, 2, 3, 3, 2, 1, 0,
-   1, 2, 3, 4, 4, 3, 2, 1,
-   2, 3, 4, 5, 5, 4, 3, 2,
-   3, 4, 5, 6, 6, 5, 4, 3,
-   3, 4, 5, 6, 6, 5, 4, 3,
-   2, 3, 4, 5, 5, 4, 3, 2,
-   1, 2, 3, 4, 4, 3, 2, 1,
-   0, 1, 2, 3, 3, 2, 1, 0 
-};
 
 inline int ScoreQ (short side)
 /***************************************************************************
@@ -1251,7 +1224,6 @@ inline int ScoreDev (short side)
 
    /* Calculate whether we are developed */
    c = (board.b[side][knight] & nn[side]) | (board.b[side][bishop] & bb[side]);
-   if (c == NULLBITBOARD) Developed[side] = true; else Developed[side] = false;
    s += nbits(c) * -8;
 
    /* If we are castled or beyond the 10th move, no more ScoreDev */
