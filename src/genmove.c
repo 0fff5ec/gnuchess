@@ -633,8 +633,8 @@ void GenCheckEscapes (short ply)
 {
    int side, xside;
    int kingsq, chksq, sq, sq1, epsq, dir;
-   BitBoard checkers, b, c, p; 
-
+   BitBoard checkers, b, c, p, escapes; 
+   escapes = NULLBITBOARD;
    side = board.side;
    xside = 1 ^ side;
 /*   TreePtr[ply + 1] = TreePtr[ply];  */
@@ -728,19 +728,20 @@ void GenCheckEscapes (short ply)
    }
 
    /* If more than one checkers, move king to get out of check */
-   p = MoveArray[king][kingsq] & ~board.friends[side];
+   if (checkers)
+    escapes = MoveArray[king][kingsq] & ~board.friends[side];
    while (checkers)
    {
       chksq = leadz (checkers);
       CLEARBIT (checkers, chksq);
       dir = directions[chksq][kingsq];
       if (slider[cboard[chksq]])
-         p &= ~Ray[chksq][dir];
+         escapes &= ~Ray[chksq][dir];
    }
-   while (p)
+   while (escapes)
    {
-      sq = leadz (p);
-      CLEARBIT (p, sq);
+      sq = leadz (escapes);
+      CLEARBIT (escapes, sq);
       if (!SqAtakd (sq, xside))
          ADDMOVE (kingsq, sq, 0);
    }
