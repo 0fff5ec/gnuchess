@@ -100,7 +100,7 @@ void SortMoves (short ply)
       else if (ply > 2 && (m == killer1[ply-2] || m == killer2[ply-2]))
          p->score += KILLERSORTSCORE; 
 
-      p->score += history[side][(p->move & 0x0FFF)] + 15 - taxicab[t][E4];
+      p->score += history[side][(p->move & 0x0FFF)] + taxicab[f][D5] - taxicab[t][E4];
    }
 }
 
