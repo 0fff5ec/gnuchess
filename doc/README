@@ -18,7 +18,6 @@ Table of Contents
   Book
   Hash Table
   Auxillary File Formats (PGN, EPD)
-  Universal Board
   Caveats
   Compilers
   Internet
@@ -288,50 +287,16 @@ highly recommended to do this since the resulting two files that match
 in a monotonically-increasing extension numbered suffix may be used for
 reporting bugs and keeping track of your games.
 
-
-UNIVERSAL BOARD
-
-This version has the capability to use the Novag Universal Board 
-(www.novag.com).
-
-The universal board is a three-dimensional wooden chess-board. The advantage
-is that you don't need to use a mouse or a keyboard in order to play against
-the program. Just move your pieces naturally on a real board.
-
-The Novag Universal Board interface is controlled with the "INTERFACE="
-variable in the Makefile. It must have the setting
-
-	INTERFACE=-DUNIVERSAL
-
-or you must instead (and preferably) run the make with
-
-	make INTERFACE=-DUNIVERSAL k2u
-
-The name of the executable is "k2u" as opposed to "gnuchess" to
-distinguish the Universal and non-Universal versions. The reason why
-we don't always just compile Universal code in is that it involves
-the SVA library in the SVASYNC subdirectory of SRC. This code is PC only.
-So it would not work on Unix/Linux. Plus, you must use the GNU C compiler
-by DJGPP, not the Cygnus nor others. Of course you're welcome to test
-others but they haven't been tested.
-
-The SVA library controls the COM port. By default, COM1 is used. If you
-use some other port, you will have to adjust the SVA library accordingly.
-Note: the SVASYNC\TERM*.* modules are useful since these can be compiled
-standalone, with the library, to permit debugging with the COM ports until
-you are correctly reading the Universal Board.
-
 COMPILERS
 
   We like GNU C in all its various forms. For Unix and Linux, use GNU C.
 
-  For the PC, use GNU C in the following forms: for use with Universal,
-  use DJGPP GNU C. For use on ICS, use CYGNUS 32-BIT. For regular PC
+  For the PC, use GNU C in the following forms: 
+  For use on ICS, use CYGNUS 32-BIT. For regular PC
   use, either will do.
 
   Versions of the code that compile under Microsoft Visual C have been
   contributed. This may be supported in future, contact the developers.
-
 
 INTERNET
 
@@ -339,10 +304,6 @@ INTERNET
   Servers (freechess.org) with Winboard which is included along with various
   scripts we use. We made no attempt to have these immediately user-ready
   but you could tinker around with it if you're an hobbyist.
-
-  One caveat: you must use CYGNUS 32-BIT GNU C under WINBOARD. Do not try
-  to use DJGPP as that will fail (last time we tried.)
-
 
 XBOARD/WINBOARD
 
@@ -458,11 +419,6 @@ COMMAND LIST
   xboard
 	on - enables use of xboard/winboard
 	off - disables use of xboard/winboard
-
-  universal
-	on - enables using the universal chess board (if compiles with
-	     INTERFACE=-DUNIVERSAL by GNU CC on a PC with SVASYNC library
-	off - disables using the universal chess board
 
   depth N
 	Sets the program to look N ply (half-moves) deep for every

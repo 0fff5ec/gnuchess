@@ -3772,7 +3772,7 @@ echo "$as_me:3771: result: $ac_cv_func_memcmp_working" >&5
 echo "${ECHO_T}$ac_cv_func_memcmp_working" >&6
 test $ac_cv_func_memcmp_working = no && LIBOBJS="$LIBOBJS memcmp.$ac_objext"
 
-for ac_func in gettimeofday strchr strcspn strstr strerror memset alarm
+for ac_func in gettimeofday strchr strcspn strstr strerror memset
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:3778: checking for $ac_func" >&5

@@ -31,11 +31,6 @@
 #include "version.h"
 #include "common.h"
 #include "eval.h"
-#ifdef UNIVERSAL
-#include "univ.h"
-#include <conio.h>
-char fromboard[INPUT_SIZE];
-#endif
 
 #if HAVE_LIBREADLINE
 # if HAVE_READLINE_READLINE_H
@@ -63,20 +58,6 @@ static char cmd[INPUT_SIZE], file[INPUT_SIZE],
 
 char subcmd[INPUT_SIZE],setting[INPUT_SIZE],subsetting[INPUT_SIZE];
 
-
-#ifdef UNIVERSAL
-void univ_check (int signal_type)
-{
-  if (univ_read(fromboard)) {
-    printf("Read %s from Universal.\n",fromboard);
-    if (strcmp(fromboard,"J") == 0) strcpy(fromboard,"go");
-    else if (strcmp(fromboard,"N") == 0) strcpy(fromboard,"new");
-    else if (strcmp(fromboard,"T") == 0) strcpy(fromboard,"undo");
-  }
-  alarm(1);
-}
-#endif
-
 void InputCmd ()
 /*************************************************************************
  *
@@ -90,9 +71,6 @@ void InputCmd ()
    leaf *ptr; 
    int ncmds;
    char *x,*trim;
-#ifdef UNIVERSAL
-   char *p,c;
-#endif
 
    CLEAR (flags, THINK);
    memset(userinput,0,sizeof(userinput));
@@ -101,34 +79,6 @@ void InputCmd ()
    memset(inputstr,0,sizeof(inputstr));
 #endif
 
-/*
- * XXX: This is terroristic coding style, and furthermore
- * there seems to be a bug somewhere in the UNIVERSAL codepath
- * mixing up userinput and inputstr. Should be fixed.
- */
-
-#ifdef UNIVERSAL
-  if (1) {
-    if (flags & UNIV) {
-      userinput[0] = '\000';
-      p = userinput;
-      if (kbhit()) {
-        for (;;) {
-	  c = getchar();
-	  while (c != '\015' && c != '\012' && c != EOF) {
-	    *p++ = c;
-	    c = getchar();
-	  }
-	  *p = '\000';
-	  break;
-	}
-      }
-      if (strlen(fromboard) != 0) {
-	strcpy(userinput,fromboard);
-	fromboard[0] = '\0';
-      }
-      if (strlen(userinput) != 0) {
-#else /* !UNIVERSAL */
 #ifdef HAVE_LIBREADLINE
 	 if (isatty(STDIN_FILENO)) {
 	    sprintf(s,"%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
@@ -165,24 +115,9 @@ void InputCmd ()
 	sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
 	if (cmd[0] == '\n')
 	  goto done;
-#endif /* UNIVERSAL */
 	cmd[0] = subcmd[0] = setting[0] = subsetting[0] = '\0';
         ncmds = sscanf (userinput,"%s %s %s %[^\n]",
 			cmd,subcmd,setting,subsetting);
-#ifdef UNIVERSAL
-        userinput[0] = '\000';
-        printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
-        fflush(stdout);
-      }
-    } else {
-      printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
-      fflush(stdout);
-      gets(userinput);
-      cmd[0] = subcmd[0] = setting[0] = subsetting[0] = '\0';
-      ncmds = sscanf (userinput,"%s %s %s %s",cmd,subcmd,setting,subsetting);
-    }
-  }
-#endif /* UNIVERSAL */
 
    /* Put options after command back in inputstr - messy */
    sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting);
@@ -397,19 +332,6 @@ void InputCmd ()
 	fflush(stdout);
       }
    }
-#ifdef UNIVERSAL
-  else if (strcmp(cmd,"universal") == 0) {
-    if (strcmp(subcmd,"on") == 0) {
-      SET (flags, UNIV);
-      univ_init ();
-      signal (SIGALRM, univ_check);
-      alarm(1);
-    } else if (strcmp(subcmd,"off") == 0) {
-      CLEAR (flags, UNIV);
-      signal (SIGALRM, SIG_IGN);
-    }
-  }
-#endif /* UNIVERSAL */
    else if (strcmp (cmd, "depth") == 0 || strcmp (cmd, "sd") == 0) {
       SearchDepth = atoi (inputstr);
       printf("Search to a depth of %d\n",SearchDepth);
@@ -834,14 +756,6 @@ static const char * const helpstr[] = {
    "xboard",
    " on - enables use of xboard/winboard",
    " off - disables use of xboard/winboard",
-#ifdef UNIVERSAL
-   "universal",
-   " on - enables using the universal chess board",
-   " off - disables using the universal chess board",
-#else /* !UNIVERSAL */
-   "universal",
-   " Universal chess board support was not enabled at compile time, sorry",
-#endif /* UNIVERSAL */
    "depth N",
    " Sets the program to look N ply (half-moves) deep for every",
    " search it performs. If there is a checkmate or other condition",

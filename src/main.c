@@ -31,10 +31,6 @@
 #include <stdlib.h>
 #include "common.h"
 #include <time.h>
-#ifdef UNIVERSAL
-#include "univ.h"
-#include <signal.h>
-#endif
 
 int distance[64][64];
 int taxicab[64][64];
@@ -290,10 +286,6 @@ int main (int argc, char *argv[])
   time_t now; 
   int i;
 
-#ifdef UNIVERSAL
-  char buf[INPUT_SIZE];
-#endif
-
   /* Initialize random number generator */
   time(&now);
   srand((unsigned) now);
@@ -337,38 +329,9 @@ int main (int argc, char *argv[])
    {
       InputCmd (); 
       if ((flags & THINK) && !(flags & MANUAL) && !(flags & ENDED)) {
-#ifdef UNIVERSAL
-      if (flags & UNIV) {
-	signal(SIGALRM,SIG_IGN);
-      }
-#endif
         
       if (!(flags & XBOARD)) printf("Thinking...\n");
       Iterate ();
-#ifdef UNIVERSAL
-      if (flags & UNIV /* && !(flags & SELF) */) {
-	  if (Game[GameCnt].move & PROMOTION) {
-	    sprintf(buf,"M%s-%s/%c\r\n",
-		 algbr[FROMSQ(Game[GameCnt].move)],
-		 algbr[TOSQ(Game[GameCnt].move)],
-	  	 notation[PROMOTEPIECE(Game[GameCnt].move)]);
-	    printf("Sent M%s-%s/%c to Universal\n",
-		 algbr[FROMSQ(Game[GameCnt].move)],
-		 algbr[TOSQ(Game[GameCnt].move)],
-	  	 notation[PROMOTEPIECE(Game[GameCnt].move)]);
-	  } else {
-	    sprintf(buf,"M%s-%s\r\n",
-		 algbr[FROMSQ(Game[GameCnt].move)],
-		 algbr[TOSQ(Game[GameCnt].move)]);
-	    printf("Sent M%s-%s to Universal\n",
-		 algbr[FROMSQ(Game[GameCnt].move)],
-		 algbr[TOSQ(Game[GameCnt].move)]);
-	  }
-  	  univ_write(buf);
-          signal(SIGALRM, univ_check);
-	  alarm(1);
-      }
-#endif
       }
    }
 

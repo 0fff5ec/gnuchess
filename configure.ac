@@ -46,7 +46,7 @@ AC_FUNC_MALLOC
 AC_FUNC_MEMCMP
 
 dnl See above, how do we treat failure here?
-AC_CHECK_FUNCS(gettimeofday strchr strcspn strstr strerror memset alarm)
+AC_CHECK_FUNCS(gettimeofday strchr strcspn strstr strerror memset)
 
 AC_CONFIG_FILES(Makefile src/Makefile)
 AC_OUTPUT
