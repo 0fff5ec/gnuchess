@@ -57,6 +57,7 @@ AC_CHECK_FUNCS(gettimeofday strchr strcspn strstr strerror memset nanosleep usle
 dnl Check for getopt_long or use bundled version
 AC_SUBST(LIBOBJS)
 AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] )
+ACX_PTHREAD()
 
 
 AC_CONFIG_FILES(Makefile src/Makefile)

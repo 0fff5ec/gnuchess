@@ -55,15 +55,21 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
 DEPDIR = @DEPDIR@
 EXEEXT = @EXEEXT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LIBOBJS = @LIBOBJS@
 LN_S = @LN_S@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
+PTHREAD_CC = @PTHREAD_CC@
+PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
+PTHREAD_LIBS = @PTHREAD_LIBS@
 VERSION = @VERSION@
 am__include = @am__include@
 am__quote = @am__quote@
@@ -97,8 +103,7 @@ am_gnuchess_OBJECTS = atak.$(OBJEXT) book.$(OBJEXT) cmd.$(OBJEXT) \
 	sort.$(OBJEXT) swap.$(OBJEXT) test.$(OBJEXT) ttable.$(OBJEXT) \
 	util.$(OBJEXT)
 gnuchess_OBJECTS = $(am_gnuchess_OBJECTS)
-# Manually added LIBOBJ for getopt_long
-gnuchess_LDADD = $(LDADD) @LIBOBJS@
+gnuchess_LDADD = $(LDADD)
 gnuchess_DEPENDENCIES =
 gnuchess_LDFLAGS =
 
@@ -124,15 +129,13 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 @AMDEP_TRUE@	$(DEPDIR)/test.Po $(DEPDIR)/ttable.Po \
 @AMDEP_TRUE@	$(DEPDIR)/util.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(PTHREAD_CFLAGS)
 CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(PTHREAD_LIBS) -o $@
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(gnuchess_SOURCES)
 DIST_COMMON = ./stamp-h.in Makefile.am Makefile.in config.h.in
 SOURCES = $(gnuchess_SOURCES)
-# For getopt_long
-EXTRA_DIST = getopt.h
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

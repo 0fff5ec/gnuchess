@@ -5,6 +5,8 @@
 
 	* Replace ac_need_stdint_h with ac_create_stdint_h
 
+	* Add acx_pthread, config.sub, config.guess
+
 2003-02-11 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Drop enpassant knowledge on "switch" command.
