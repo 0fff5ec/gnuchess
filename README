@@ -1,28 +1,9 @@
-This version of gnuchess is based on the current CVS tree,
-available on 
+GNU Chess Project
+
+For latest Information visit:
 
 http://savannah.gnu.org/projects/chess/
 
-It is NOT by any means an official distribution tree of gnuchess.
+See INSTALL for installation instructions. 
 
-I started hacking on gnuchess because it would not work on Linux/PPC
-with gcc 2.95 at optimization level -O2. In fact, it hit an
-optimization bug of gcc (which is fixed in gcc 3.0). This patched
-version should work with any gcc. Further changes include a
-fundamental change in the book building algorithm which makes it some
-orders of magnitude faster (so now you can really build a book out of
-this huge book.pgn without waiting for a week), an implementation of
-the help function, readline support etc. 
-
-Special thanks for help and patches go out to Goswin Brederlow.
-
-The original documentation is available in doc/README, a more detailed
-description of the changes I made is in ChangeLog. I try to keep an
-up-to-date version in
-
-http://www.mathematik.uni-dortmund.de/lsix/geyer/gnuchess
-
-If you find any bugs, please also drop me a note.
-
-Lukas Geyer <geyer@math.uni-dortmund.de>
-
+See doc directory for documentation.

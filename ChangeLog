@@ -1,3 +1,13 @@
+2002-03-06  Simon Waters <simon@wretched.demon.co.uk>
+
+	* Make "book on" use BOOKPREFER not BOOKBEST
+
+	* Fix implementation of BOOKBEST
+
+	* Implement "book {worst|best|prefer}"
+
+	* Correct README as it said not Official distro
+
 2002-03-05  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Remove redundant tests from configure.ac

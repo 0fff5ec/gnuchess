@@ -206,12 +206,21 @@ void InputCmd ()
         } else {
           BookPGNReadFromFile (file);
 	}
-      } else if (strncmp (inputstr, "on", 2) == 0) {
-	bookmode = BOOKBEST;
+      } else if (strncmp (inputstr, "on", 2) == 0 || strncmp (inputstr, "prefer", 6) == 0) {
+	bookmode = BOOKPREFER;
 	printf("book now on.\n");
       } else if (strncmp (inputstr, "off", 3) == 0) {
 	bookmode = BOOKOFF;
 	printf("book now off.\n");
+      } else if (strncmp (inputstr, "best", 4) == 0) {
+	bookmode = BOOKBEST;
+	printf("book now best.\n");
+      } else if (strncmp (inputstr, "worst", 5) == 0) {
+	bookmode = BOOKWORST;
+	printf("book now worst.\n");
+      } else if (strncmp (inputstr, "random", 6) == 0) {
+	bookmode = BOOKRAND;
+	printf("book now random.\n");
       }
    } else if (strcmp (cmd, "test") == 0)
       TestCmd (inputstr);
@@ -815,6 +824,9 @@ static const char * const helpstr[] = {
    " add - compiles book.dat from book.pgn",
    " on - enables use of book",
    " off - disables use of book",
+   " worst - play worst move from book",
+   " best - play best move from book",
+   " prefer - default, same as 'book on'",
    "version",
    " prints out the version of this program",
    "pgnsave FILENAME",

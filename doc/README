@@ -368,6 +368,12 @@ COMMAND LIST
 	add - compiles book.dat from book.pgn
 	on - enables use of book
 	off - disables use of book
+	best - play best move from book
+	worst - play worst move from book
+	random - play any move from book
+	
+	prefer (default) - choose a good move from book
+	(Method subject to variation)
 
   version
 	prints out the version of this program

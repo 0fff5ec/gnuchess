@@ -474,8 +474,7 @@ int BookQuery(int BKquery)
    * and end with emtpy line
    */
   int i,j,k,icnt = 0, mcnt, found, tot, maxdistribution;
-  int matches[MAXMATCH], best = 0;
-  short bestsofar;
+  int matches[MAXMATCH] ;
   leaf m[MAXMOVES];
   leaf pref[MAXMOVES];
   struct {
@@ -526,7 +525,6 @@ int BookQuery(int BKquery)
       fprintf(ofp,"%d hash collisions... ", bookhashcollisions);
   }      
 
-  bestsofar = 0;
   mcnt = -1;
   side = board.side;
   xside = 1^side;
@@ -592,7 +590,6 @@ fini:
     return BOOK_ENOMOVES;
   }
   k = 0;
-  if (bookmode == BOOKPREFER) best = -INFINITY;
   if (mcnt+1) {
     if ( !(flags & XBOARD) || BKquery == 1 ) {
       for (i = 0; i <= mcnt; i++) {
@@ -625,20 +622,17 @@ fini:
           printf("p=NO EXPERIENCES\n");
       }
     } else if (bookmode == BOOKBEST) {
-      temp = (bookfirstlast > mcnt+1 ? mcnt+1 : bookfirstlast);
-      k = rand() % temp;
-      RootPV = m[matches[k]].move;
+      qsort(&pref,mcnt+1,sizeof(leaf),compare);
+      RootPV = pref[0].move;
     } else if (bookmode == BOOKWORST) {
-      temp = (bookfirstlast > mcnt+1 ? mcnt+1 : bookfirstlast);
-      k = rand() % temp;
-      RootPV = m[matches[k]].move;
+      qsort(&pref,mcnt+1,sizeof(leaf),compare);
+      RootPV = pref[mcnt].move;
     } else if (bookmode == BOOKPREFER) {
       qsort(&pref,mcnt+1,sizeof(leaf),compare);
       for (i = 0; i <= mcnt; i++) {
 	if (!(flags & XBOARD) || BKquery == 1) {
 	  SANMove(pref[i].move,1);
           printf(" %s(%d) ",SANmv,pref[i].score);
-	  if (pref[i].score > best) best = pref[i].score;
 	}
 	m[i].move = pref[i].move;
 	if (!(flags & XBOARD) || BKquery == 1) 
