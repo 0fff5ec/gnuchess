@@ -433,7 +433,7 @@ void InitBitCount ()
  *
  **************************************************************************/
 {
-   unsigned short i, j, n;
+   int i, j, n;
  
    BitCount[0] = 0;
    BitCount[1] = 1; 
@@ -441,8 +441,7 @@ void InitBitCount ()
    for (n = 2; n <= 16; n++)
    {
       i <<= 1;
-      /* (j !=0) for overflow condition */
-      for (j = i; j <= i + (i-1) && j != 0; j++)  
+      for (j = i; j <= i + (i-1); j++)  
          BitCount[j] = 1 + BitCount[j - i]; 
    }
 } 
