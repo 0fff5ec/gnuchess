@@ -1,3 +1,9 @@
+2003-03-12 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Fix En Passant handling in white/black commands
+
+--- 5.06 Released
+
 2003-03-10 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Remove obselete M4 include file.

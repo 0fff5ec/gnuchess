@@ -135,9 +135,10 @@ void cmd_black(void)
   CLEAR ( flags, MANUAL);
   CLEAR (flags, TIMEOUT);   
   computer = white;
-  board.side = black;
-  board.ep = -1; // Hack to fixed appearing pawn bug
-
+  if ( board.side == white ) {
+    board.side = black;
+    board.ep = -1; 
+  }
 }
 
 void cmd_book(void)
@@ -592,9 +593,10 @@ void cmd_white(void)
   CLEAR ( flags, MANUAL);
   CLEAR (flags, TIMEOUT);   
   computer = black;
-  board.side = white;
-  board.ep = -1; // Hack to fixed appearing pawn bug
-
+  if ( board.side == black ){
+    board.side = white;
+    board.ep = -1; // Hack to fixed appearing pawn bug
+  }
 }
 
 void cmd_xboard(void)
