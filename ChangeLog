@@ -1,3 +1,7 @@
+2003-03-16 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Remove stale Threat Extension code
+
 2003-03-12 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Fix En Passant handling in white/black commands

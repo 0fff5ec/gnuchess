@@ -192,7 +192,6 @@ void Iterate (void)
    }
    while (!(flags & TIMEOUT)) 
    {
-      threatply = 0;
       if (score > MATE-255)
       {
 	 RootAlpha = score-1;

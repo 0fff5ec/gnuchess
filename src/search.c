@@ -32,7 +32,6 @@
 #define R 2*DEPTH
 #define TIMECHECK 	1023
 #define HISTSCORE(d)	((d)*(d))
-#define THREATMARGIN 	350
 
 #define FUTSCORE        (MATERIAL+fdel)
 #define GETNEXTMOVE  (InChk[ply] ? PhasePick1 (&p, ply) : PhasePick (&p, ply))
@@ -204,7 +203,7 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
    int best, score, nullscore, savealpha;
    int side, xside;
    int rc, t0, t1, firstmove;
-   int fcut, fdel, donull, savenode, nullthreatdone, extend;
+   int fcut, fdel, donull, savenode, extend;
    leaf *p, *pbest;
    int g0, g1;
    int upperbound;
@@ -381,7 +380,7 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
       donull = false;
    if (flags & USENULL && g0 != NULLMOVE && depth > DEPTH && nodetype != PV &&
        !InChk[ply] && MATERIAL+ValueP > beta && beta > -MATE+ply && donull &&
-	board.pmaterial[side] > ValueB && !threatply)
+	board.pmaterial[side] > ValueB )
    {
       TreePtr[ply+1] = TreePtr[ply];
       MakeNullMove (side);
@@ -449,7 +448,6 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
    pbest = p;
    best = -INFINITY;
    savealpha = alpha;
-   nullthreatdone = false;
    nullscore = INFINITY;
    savenode = nodetype;
    if (nodetype != PV)
@@ -469,28 +467,6 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
       {
 	 if (GETNEXTMOVE == false)
 	    break;
-
-#ifdef THREATEXT
-/****************************************************************************
- *
- *  This section needs to be explained.  We are doing a null threat search
- *  and the previous ply was the null move.  Inhibit any move which captures
- *  the fail-high moving piece.  Also inhibit any move by the piece which is 
- *  captured by the fail-high move.  Both these moves cannot be executed in
- *  the actual threat, so.....
- *  Also 3 plies later, inhibit moves out of the target square of the PV/fail
- *  high move as this is also not possible.
- *
- ****************************************************************************/
-	 if (threatply+1 == ply)
-	 { 
-	    if ((TOSQ(p->move) == FROMSQ(threatmv)) ||
-			 (FROMSQ(p->move) == TOSQ(threatmv)))
-	       continue; 
-	 }
-         if (threatply && threatply+3 == ply && FROMSQ(p->move)==TOSQ(threatmv))
-            continue;
-#endif
 
          MakeMove (side, &p->move);
          NodeCnt++;
@@ -542,35 +518,6 @@ int Search (uint8_t ply, short depth, int alpha, int beta, short nodetype)
 
       UnmakeMove (xside, &p->move);
 
-/*  Perform threat extensions code */
-#ifdef THREATEXT
-      if ((score >= beta || nodetype == PV) && !InChk[ply] && g0 != NULLMOVE &&
-	!threatply && depth == 4 && ThrtCnt[ply] < 1)
-      {
-	 if (!nullthreatdone)
-	 {
-	    threatply = ply;
-	    threatmv  = p->move;
-            MakeNullMove (side);
-
-            nullscore = -Search(ply+1, depth-1-R, -alpha+THREATMARGIN, 
-			-alpha+THREATMARGIN+1, nodetype);
-            UnmakeNullMove (xside); 
-	    nullthreatdone = true;
-	    threatply = 0;
-	 }
-	 if (nullscore <= alpha-THREATMARGIN)
-	 {
-	    ThrtExtCnt++;
-            ThrtCnt[ply+1]++;
-            MakeMove (side, &p->move);
-            score = -Search (ply+1, depth, -beta, -alpha, nodetype);
-            UnmakeMove (xside, &p->move);
-            ThrtCnt[ply+1]--;
-         }
-      }	
-#endif
-      
       if (score > best)
       {
          best = score;

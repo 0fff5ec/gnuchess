@@ -86,18 +86,6 @@ int Quiesce (uint8_t ply, int alpha, int beta)
       if (p->score == -INFINITY)
 	 continue;
 
-#ifdef THREATEXT
-/*  See search.c for an explanation of the code below  */
-      if (threatply+1 == ply) 
-      {
-         if ((TOSQ(p->move) == FROMSQ(threatmv)) || 
-		(FROMSQ(p->move) == TOSQ(threatmv)))
-	    continue;
-      }
-      if (threatply && threatply+3 == ply && FROMSQ(p->move) == TOSQ(threatmv))
-	 continue;
-#endif
-
       MakeMove (side, &p->move);
       QuiesCnt++;
       if (SqAtakd (board.king[side], xside))

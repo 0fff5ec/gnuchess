@@ -452,8 +452,6 @@ extern short RootBeta;
 extern short pickphase[MAXPLYDEPTH];
 extern short InChk[MAXPLYDEPTH];
 extern short KingThrt[2][MAXPLYDEPTH];
-extern short threatmv;
-extern uint8_t threatply;
 extern short KingSafety[2];
 extern short pscore[64];
 
