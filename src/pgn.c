@@ -173,7 +173,7 @@ void BookPGNReadFromFile (char *file)
    FILE *fp;
    char s[100], c, wmv[8], bmv[8];
    char header[2000];
-   int moveno, gnucolor, result, n, i, ngames = 0;
+   int moveno, result, n, i, ngames = 0;
    leaf *p;
    struct timeval t1, t2;
    struct timezone tz;

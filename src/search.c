@@ -201,7 +201,7 @@ int Search (short ply, short depth, int alpha, int beta, short nodetype)
  **************************************************************************/
 {
    int best, score, nullscore, savealpha;
-   short side, xside, i, rc, t0, t1, firstmove;
+   short side, xside, rc, t0, t1, firstmove;
    short fcut, fdel, donull, savenode, nullthreatdone, extend;
    leaf *p, *pbest;
    int g0, g1;

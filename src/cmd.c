@@ -42,7 +42,7 @@ char fromboard[10];
 
 extern short stage, InChkDummy, terminal;
 static char inputstr[128], cmd[128], file[128], s[128], logfile[128], 
-            gamefile[128],resultstr[128],userinput[128];
+            gamefile[128],userinput[128];
 
 char subcmd[128],setting[128],subsetting[128];
 
@@ -230,7 +230,6 @@ void InputCmd ()
 	  *x = '\000';
 	  break;
 	}
-        *x++;
       }
       suffix = 0;
       for (;;) {
@@ -501,7 +500,6 @@ void ShowCmd (char *subcmd)
  ************************************************************************/
 {
    char cmd[10];
-   short i;
 
    sscanf (subcmd, "%s %[^\n]", cmd, subcmd);
    if (strcmp (cmd, "board") == 0)
@@ -551,7 +549,7 @@ void ShowCmd (char *subcmd)
    {
       int s, wp, bp, wk, bk;
       short r, c, sq;
-      BitBoard *b, x;
+      BitBoard *b;
 
       phase = PHASE;
       GenAtaks ();
@@ -637,7 +635,6 @@ void TestCmd (char *subcmd)
  *
  *************************************************************************/
 {
-   int ncmds;
    char cmd[10];
 
    sscanf (subcmd, "%s %[^\n]", cmd, subcmd);

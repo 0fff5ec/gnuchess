@@ -41,11 +41,8 @@
 #define MAXMATCH 100
 #define MAXPEEK 10
 			   
-static int bookcnt, bigbookcnt = 0, variations = 0, bigvariations = 0;
-static int lastbookcnt;
+static int bookcnt, bigbookcnt = 0;
 static int runningbookcnt = 0;
-static char linebuf[MAXVAR][MAXLINE];  
-static char smallbuf[MAXLINE/2];
 HashType posshash[MAXMOVES];
 struct hashtype {
   short wins;
@@ -74,8 +71,8 @@ leaf *b;
 void BookBuilder(short depth, int score, short result, short side)
 {
   FILE *wfp,*rfp;
-  register i;
-  int targetslot, found = 0, storeit = 0, tot;
+  int i;
+  int targetslot, found = 0, storeit = 0;
   if (depth == -1 && score == -1) {
     if ((rfp = fopen(BOOKRUN,"r+b")) != NULL) {
       printf("Opened existing book!\n");

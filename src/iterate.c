@@ -46,7 +46,6 @@ void Iterate (void)
 {
    short side;
    int score, RootAlpha, RootBeta;
-   short terminal, InChkDummy;
 
    side = board.side;
 

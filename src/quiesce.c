@@ -38,7 +38,7 @@ int Quiesce (short ply, int alpha, int beta)
  *
  **************************************************************************/
 {
-   short side, xside, i;
+   short side, xside;
    int best, delta, score, savealpha;
    leaf *p, *pbest;
 

@@ -288,10 +288,9 @@ short Mask315[64] =
 
 int main (int argc, char *argv[])
 {
-  BitBoard d;
   int compilebook = 0;
   time_t now; 
-  register i;
+  int i;
 
 #ifdef UNIVERSAL
   char buf[10];

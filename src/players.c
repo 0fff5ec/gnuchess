@@ -93,7 +93,7 @@ void DBSortPlayer (char *style)
 
 void DBListPlayer (char *style)
 {
-  register i;
+  int i;
 	
   DBReadPlayer ();
   DBSortPlayer (style);
@@ -111,7 +111,7 @@ void DBListPlayer (char *style)
 
 void DBWritePlayer (void)
 {
-   register i;
+   int i;
    float result1;
    int result2;
    FILE *wfp;
@@ -160,7 +160,7 @@ void DBReadPlayer (void)
 int DBSearchPlayer (char *player)
 {
   int index = -1;
-  register i;
+  int i;
 
   for (i = 0; i < totalplayers; i++)
     if (strncmp(playerdb[i].player,player,strlen(playerdb[i].player)) == 0)

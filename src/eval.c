@@ -436,7 +436,7 @@ inline int ScoreN (short side)
  *
  ***************************************************************************/
 {
-   short s, s1, sq, xside, n;
+   short s, s1, sq, xside;
    short EnemyKing;
    BitBoard c, t;
 
@@ -821,7 +821,7 @@ inline int ScoreK (short side)
  ***************************************************************************/
 {
    short s, sq, sq1, n, n1, n2, xside, file, fsq, rank;
-   BitBoard b, x, x1, x2;
+   BitBoard b, x;
 
    s = 0;
    xside = 1^side;
