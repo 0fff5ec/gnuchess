@@ -433,7 +433,6 @@ void InitFICS (void);
 void MakeBinBook (char *, short);
 short GetNextMove (FILE *, char *);
 int BookQuery (void);
-int GenBook (void);
 void BookBuilder (short, int, short, short);
 
 /*  The move generation routines  */
