@@ -69,9 +69,6 @@ static short PawnSq[2][64] =
 
 static const short Passed[2][8] =
 { { 0, 48, 48, 96, 144, 192, 240, 0}, {0, 240, 192, 144, 96, 48, 48, 0} };
-/* Credit if passed pawn blocked by enemy piece one square ahead */
-static const short Passed0[2][8] =
-{ { 0, 12, 12, 24, 36, 48, 60, 0}, {0, 60, 48, 36, 24, 12, 12, 0} };
 /* Penalties for one or more isolated pawns on a given file */
 static const short isolani_normal[8] = {
   -8, -10, -12, -14, -14, -12, -10, -8
