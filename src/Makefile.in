@@ -210,10 +210,10 @@ install:
 	cp gnuchess.exe /cygdrive/c/winboard/gnuchess.exe
 
 dist:
-	cd ../.. ; tar cf - chess > chess-$(VERSION).tar ; gzip chess-$(VERSION).tar
+	cd ../.. ; tar --exclude chess/src/Makefile -cf - chess > chess-$(VERSION).tar ; gzip chess-$(VERSION).tar
 
 distclean:
 	rm -rf ../test
         rm *.o gnuchess 
-	rm Makefile config.log config.cache config.status 
+	rm config.log config.cache config.status 
 	find .. -name "CVS" -type d -exec rm -irf {} \;
