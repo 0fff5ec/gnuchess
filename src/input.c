@@ -35,7 +35,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
+
 
 #include "common.h"
 
@@ -126,7 +128,11 @@ void input_wakeup(void)
 
 void wait_for_input(void)
 {
-  while (input_status == INPUT_NONE) /* Busy loop */ ;
+  struct timespec delay, remains;
+  delay.tv_sec=0;
+  delay.tv_nsec=50000000; /* 50 milliseconds */
+  while (input_status == INPUT_NONE) { nanosleep(&delay,&remains); } ;
+//  while (input_status == INPUT_NONE) /* Busy loop */ ;
 }
 
 void InitInput(void)
