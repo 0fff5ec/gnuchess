@@ -85,7 +85,19 @@ void PGNSaveToFile (const char *file, const char *resultstr)
    s[0] = '\0';
    for (i = 0; i <= GameCnt; i += 2)
    {
-      sprintf (s, "%s%d. %s %s ", s, i/2+1, Game[i].SANmv, Game[i+1].SANmv);
+      if ( i == GameCnt ) 
+      {
+	/* 
+	 * Handle special case to avoid printing out blacks GameCnt+1 
+	 * move from a preceeding game.
+	 * Game is not reinitialised in init, just overwritten
+	 */
+        sprintf (s, "%s%d. %s ", s, i/2+1, Game[i].SANmv);
+      }      
+      else 
+      {
+        sprintf (s, "%s%d. %s %s ", s, i/2+1, Game[i].SANmv, Game[i+1].SANmv);
+      }
       if (strlen (s) > 80)
       {
          p = s + 79;
