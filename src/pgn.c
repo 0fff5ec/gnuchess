@@ -66,11 +66,11 @@ void PGNSaveToFile (const char *file, const char *resultstr)
    fprintf(fp,"[Date \"%4d.%02d.%02d\"]\n",timestruct->tm_year+1900,
            timestruct->tm_mon+1,timestruct->tm_mday);
    fprintf (fp, "[Round \"\"]\n");
-   if (computerplays == white) 
+   if (computer == white) 
      fprintf (fp, "[White \"%s %s\"]\n",PROGRAM,VERSION);
    else
      fprintf (fp, "[White \"%s\"]\n",name);
-   if (computerplays == black)
+   if (computer == black)
      fprintf (fp, "[Black \"%s %s\"]\n",PROGRAM,VERSION);
    else
      fprintf (fp, "[Black \"%s\"]\n",name);

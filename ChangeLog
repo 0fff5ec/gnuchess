@@ -2,6 +2,8 @@
 
 	* Stop output of result in iterate if game has ended already.
 
+	* Ensure PGNSaveGame output computer as correct colour player.
+
 2003-01-13 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Add time.h to common.h to define timeval on Cygwin
