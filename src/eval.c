@@ -40,7 +40,6 @@ int LoneKing (short, short);
 int ScoreKBNK (short, short);
 int KPK (short);
 int BishopTrapped (short);
-int KnightTrapped (short);
 int DoubleQR7 (short);
 
 short Developed[2];
@@ -595,28 +594,6 @@ inline int BishopTrapped (short side)
 
    return (s);
 }
-
-
-inline int KnightTrapped (short side)
-/****************************************************************************
- *
- *  Check for trapped knights.
- *
- ****************************************************************************/
-{
-   BitBoard c;
-   short sq, s;
-
-   s = 0;
-   c = board.b[side][knight] & brank58[side];
-   while (c)
-   {
-      sq = leadz (c);
-      c = CLEARBIT (c, sq);
-   }
-   return (s);
-}
-
 
 inline int ScoreR (short side)
 /****************************************************************************
