@@ -88,7 +88,6 @@ void BookBuilder(short depth, int score, short result, short side)
 	return;
       }
     }
-    fread(&bookpos,sizeof(struct hashtype),runningbookcnt,rfp);
     runningbookcnt = fread(&bookpos,sizeof(struct hashtype),MAXBOOK,rfp);
     fclose(rfp);
     printf("Read %d book positions\n",runningbookcnt);
