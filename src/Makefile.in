@@ -84,7 +84,7 @@ objects := atak.o book.o cmd.o epd.o eval.o genmove.o hash.o hung.o init.o itera
 
 # Regular build (includes Xboard)
 gnuchess : $(objects)
-	$(CC) $(CFLAGS) -o $@ $^ $(LFLAGS)
+	$(CC) $(CFLAGS) -o $@ $(objects) $(LFLAGS)
 
 # Novag version
 k2u: $(objects) libsv.a univ.o
