@@ -13,6 +13,8 @@ Variations of the order of 1% are common.
 
 2001/11/02 SRW, on AMD 166 MHZ, 128 MB, Linux 2.2.19, RH 7.0
 
+2003/03/12 SRW, correction, white to move, position 4 BT2630.epd
+
 Development version of GNUchess 5.03 scored;
 
 Test		Score	Nodes Examined
@@ -33,3 +35,5 @@ Test		Score	Nodes Examined
 BT2630.epd	7/30	4087232
 endgame.epd	14/46	10893908
 wac.epd		249/300	32364914
+
+2003/03/12 SRW, correction, white to move, position 4 BT2630.epd
