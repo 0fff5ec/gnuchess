@@ -537,6 +537,7 @@ void InitDistance (void);
 void InitVars (void);
 void InitHashCode (void);
 void InitHashTable (void);
+void CalcHashSize (int);
 void NewPosition (void);
 void InitFICS (void);
 void InitInput (void);

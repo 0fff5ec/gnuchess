@@ -90,3 +90,32 @@ void ShowHashKey (HashType HashKey)
    a2 = (HashKey >> 32);
    printf ("Hashkey = %lx%lx\n", a2, a1);
 }
+
+void CalcHashSize (int tablesize)
+/***************************************************************************
+ *
+ *  Calculates the ttable hashtable size, ttable hashmask, and pawntable hashmask
+ *
+ ***************************************************************************/
+{
+   int i;
+
+   i = (tablesize < HASHSLOTS ? HASHSLOTS : tablesize);
+
+   TTHashMask = 0;
+   while ((i>>=1) > 0)
+   {
+      TTHashMask <<= 1;
+      TTHashMask |= 1;
+   }
+   HashSize = TTHashMask + 1;
+   printf ("Adjusting HashSize to %d slots\n", HashSize);
+
+   i = PAWNSLOTS;
+   PHashMask = 0;
+   while ((i>>=1) > 0)
+   {
+      PHashMask <<= 1;
+      PHashMask |= 1;
+   }
+}

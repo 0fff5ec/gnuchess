@@ -1,3 +1,7 @@
+2003-06-09 Anil Mungal <vagrancy@rogers.com>
+
+	* Tidy up hashsize calculation, fix segfault
+
 2003-06-09 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Ensure comments all use tradition /* */ syntax

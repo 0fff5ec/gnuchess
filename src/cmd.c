@@ -278,13 +278,7 @@ void cmd_hashsize(void)
   } else {
     int i;
     i = atoi (token[1]);
-    TTHashMask = 0;
-    while ((i >>= 1) > 0) {
-      TTHashMask <<= 1;
-      TTHashMask |= 1;
-    }
-    HashSize = TTHashMask + 1;
-    printf ("Adjusting HashSize to %d slots\n", HashSize);
+    CalcHashSize(i);
     InitHashTable (); 
   }
 }
