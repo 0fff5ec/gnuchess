@@ -367,7 +367,8 @@ int BookBuilder(short result, short side)
   uint32_t i;
   
   /* Only first BOOKDEPTH moves */
-  if (GameCnt/2+1 >= BOOKDEPTH) 
+  /* BOOKDEPTH is 20, so it is in fact a half-move count */
+  if (GameCnt > BOOKDEPTH) 
     return BOOK_EMIDGAME;
   CalcHashKey();
   for (DIGEST_START(i, HashKey);
@@ -482,7 +483,7 @@ int BookQuery(int BKquery)
     uint16_t losses;
     uint16_t draws;
   } r[MAXMOVES];
-  FILE *rfp;
+  FILE *rfp = NULL;
   leaf *p;
   short side,xside,temp;
   uint32_t booksize;
@@ -493,21 +494,33 @@ int BookQuery(int BKquery)
     return BOOK_ENOBOOK;
   }
   if (!bookloaded) {
+    char * const *booktry;
+
     bookloaded = 1;
-    rfp = fopen(BOOKBIN,"rb");
-    if (rfp == NULL) {
-      if (!(flags & XBOARD) || BKquery == 1 )
-	fprintf(ofp," no book (%s).\n\n",BOOKBIN);
+    for (booktry = bookbin; *booktry ; booktry++) {
+      if (!(flags & XBOARD)) {
+	fprintf(ofp, "Looking for opening book in %s...\n", *booktry);
+      }
+      rfp = fopen(*booktry, "rb");
+      /* XXX: Any further error analysis here?  -- Lukas */
+      if (rfp == NULL) continue;
+      if (!(flags & XBOARD))
+	fprintf(ofp,"Read opening book (%s)...\n", *booktry);
+      if (!check_magic(rfp)) {
+	fprintf(stderr, 
+		" File %s does not conform to the current format.\n"
+		" Consider rebuilding it.\n\n",
+		*booktry);
+	fclose(rfp);
+	rfp = NULL;
+      } else break; /* Success, stop search */
+    }
+    if (rfp == NULL && (!(flags & XBOARD) || BKquery == 1) ) {
+      fprintf(ofp," No book found.\n\n");
       return BOOK_ENOBOOK;
     }
-    if (!(flags & XBOARD))
-      fprintf(ofp,"Read opening book (%s)... ",BOOKBIN);
-    if (!check_magic(rfp)) {
-      fprintf(stderr, 
-	      " File %s does not conform to the current format.\n"
-	      " Consider rebuilding the book.\n\n",
-	      BOOKBIN);
-      return BOOK_EFORMAT;
+    if (!(flags & XBOARD)) {
+      fprintf(ofp, "Loading book from %s.\n", *booktry);
     }
     /*
      * The factor 1.06 is the minimum additional amount of

@@ -1,3 +1,14 @@
+2002-08-02 Based on patch from Lukas Geyer
+
+	* Add list of possible book locations, to allow
+	  central location for book on multiuser servers.
+	   "book.dat"
+	   "/usr/lib/games/gnuchess/book.dat"
+
+	* Limit book to BOOKDEPTH ply not BOOKDEPTH moves.
+
+	* Improve handling of excessive hashsize requests.
+
 2002-08-01  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Correct additional input file name limits

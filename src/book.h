@@ -25,8 +25,15 @@
 */
 #define BOOKSRC "book.src"
 
-/* The book which BookQuery() uses */
-#define BOOKBIN "book.dat"
+/*
+ * BookQuery() tries the following filenames in order to find
+ * a valid opening book. The array must be NULL-terminated.
+ */
+static char * const bookbin[] = {
+   "book.dat",
+   "/usr/lib/games/gnuchess/book.dat",
+   NULL
+};
 
 /* The book which BookBuilder() uses */
 #define BOOKRUN "book.dat"

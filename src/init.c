@@ -750,31 +750,44 @@ void InitHashTable ()
 {
    unsigned int size;
  
-   HashTab[0] = (HashSlot *) realloc (HashTab[0], HashSize * sizeof (HashSlot));
-   HashTab[1] = (HashSlot *) realloc (HashTab[1], HashSize * sizeof (HashSlot));
-//   HashTab[1] = (HashSlot *) realloc (HashSize, sizeof (HashSlot));
-   if (HashTab[0] == NULL || HashTab[1] == NULL)
-      printf ("Not enough memory for transposition table\n");
-   else
-   {
-      size = (HashSize * 2 * sizeof (HashSlot)) >> 10;
-      if (!(flags & XBOARD))
-	printf ("Transposition table:  Entries=%dK Size=%dK\n", 
-		HashSize>>10, size);
+   /* One can not use realloc() here, it screws up error handling */
+   do {
+     free(HashTab[0]);
+     free(HashTab[1]);
+     HashTab[0] = malloc (HashSize * sizeof (HashSlot));
+     HashTab[1] = malloc (HashSize * sizeof (HashSlot));
+     if (HashTab[0] == NULL || HashTab[1] == NULL) {
+        printf ("Not enough memory for transposition table, trying again.\n");
+        HashSize >>= 1;
+	TTHashMask >>= 1;
+	if (HashSize == 0) {
+	  fprintf(stderr, "Memory exhausted, goodbye, my friend.\n");
+	  exit(EXIT_FAILURE);
+	}
+	continue;
+     }
+   } while (0);
+   size = (HashSize * 2 * sizeof (HashSlot)) >> 10;
+   if (!(flags & XBOARD)) {
+     printf ("Transposition table:  Entries=%dK Size=%dK\n", 
+             HashSize>>10, size);
    }
 
+   /*
+    * Here realloc() is O.K., though not very useful, because PAWNSLOTS
+    * is constant anyway.
+    */
    PawnTab[0] = (PawnSlot *) realloc (PawnTab[0], PAWNSLOTS * sizeof (PawnSlot));
    PawnTab[1] = (PawnSlot *) realloc (PawnTab[1], PAWNSLOTS * sizeof (PawnSlot));
-   if (PawnTab[0] == NULL || PawnTab[1] == NULL)
-      printf ("Not enough memory for pawn table\n");
-   else
-   {
+   if (PawnTab[0] == NULL || PawnTab[1] == NULL) {
+      printf ("Not enough memory for pawn table, goodbye.\n");
+      exit(EXIT_FAILURE);
+   } else {
       size = (PAWNSLOTS * 2 * sizeof (PawnSlot)) >> 10;
       if (!(flags & XBOARD))
 	printf ("Pawn hash table: Entries=%dK Size=%dK\n",
 		PAWNSLOTS >> 10, size);
    }
-   return;
 }
 
 
