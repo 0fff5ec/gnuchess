@@ -536,13 +536,26 @@ void InputCmd ()
 	;
    /* Set total time for move to be N seconds is "st N" */
    else if (strcmp (cmd, "st") == 0)
-	;
+   {
+	/* Approximately level 1 0 N */
+	sscanf(inputstr,"%hd",&TCinc);
+	suddendeath = 0 ;
+	/* Allow a little fussiness for failing low etc */
+	SearchTime = TCinc * 0.90f ;
+        CLEAR (flags, TIMECTL);
+   }
    /* Ignore draw offers */
    else if (strcmp (cmd, "draw") == 0)
 	;
    /* Predecessor to setboard */
    else if (strcmp (cmd, "edit") == 0)
-	;
+   {
+	if ( flags & XBOARD )
+	{
+	 printf("tellusererror command 'edit' not implemented\n");
+	 fflush(stdout);
+	}
+   }
    /* Give a possible move for the player to play */
    else if (strcmp (cmd, "hint") == 0)
 	;
@@ -551,10 +564,10 @@ void InputCmd ()
 	;
    /* Enter analysis mode */
    else if (strcmp (cmd, "analyze") == 0)
-	;
-   /* Enter analysis mode */
-   else if (strcmp (cmd, "analyze") == 0)
-	;
+   {
+	printf("Error (unknown command): analyze\n");
+	fflush(stdout);
+   }
    /* Our opponent is a computer */
    else if (strcmp (cmd, "computer") == 0)
 	;

@@ -5,6 +5,9 @@
 
 	* sd synonym for depth
 
+	* Added approximate st and additional errors for xboard
+	  suggested by Tim Mann
+
 2002-03-02  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Modified code to print "Illegal move: cmd" when
