@@ -19,6 +19,8 @@
 
 	* Correct memset in book code.
 
+	* Reorder test on trimming trailing spaces.
+
 2002-05-19  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Corrected command line size to 128 through out cmd.c to

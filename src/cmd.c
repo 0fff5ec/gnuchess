@@ -189,7 +189,7 @@ void InputCmd ()
    sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting);
 
    trim = inputstr + strlen(inputstr) - 1;
-   while (*trim==' ' && trim>=inputstr)
+   while ( trim>=inputstr && *trim==' ')
                 *trim--='\0';
 
    if (strcmp (cmd, "quit") == 0 || strcmp (cmd, "exit") == 0)
