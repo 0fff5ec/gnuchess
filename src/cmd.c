@@ -529,6 +529,7 @@ void cmd_st(void)
 void cmd_switch(void)
 {
   board.side = 1^board.side;
+  board.ep = -1 ; /* Enpassant doesn't apply after switch */
   printf ("%s to move\n", board.side == white ? "White" : "Black");
 }
 
