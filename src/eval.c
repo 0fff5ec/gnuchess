@@ -751,7 +751,7 @@ inline int ScoreQ (short side)
    /* Try to keep our queen on the board for attacking purposes. */
    if (side == computer)
      if (c == NULLBITBOARD)
-        s1 += QUEEN_NOT_PRESENT;
+        s += QUEEN_NOT_PRESENT;
 
    while (c)
    {
@@ -759,7 +759,7 @@ inline int ScoreQ (short side)
       CLEARBIT (c, sq);
 
       /* Control */
-      s1 += CTL(sq,queen,side);
+      s1 = CTL(sq,queen,side);
 
       if (distance[sq][EnemyKing] <= 2)
          s1 += QUEENNEARKING;
