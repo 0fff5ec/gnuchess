@@ -571,16 +571,16 @@ void InputCmd ()
      /* Find next move in PV, ignore if none available */
      /* Code belongs in search.c with ShowLine ? */
 
-     int pvar[2];
+     int pvar;
      if ((flags & USEHASH))
      {
-        if (TTGetPV(board.side,2,rootscore,&pvar[2]))
+        if (TTGetPV(board.side,2,rootscore,&pvar))
         {
 	  /* Find all moves for ambiguity checks */
 	  /* Otherwise xboard complains at ambiguous hints */
 	  GenMoves(2); 
 
-          SANMove(pvar[2],2);
+          SANMove(pvar,2);
           printf("Hint: %s\n", SANmv);
           fflush(stdout);
 	}

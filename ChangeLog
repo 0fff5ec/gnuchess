@@ -15,6 +15,8 @@
 
 	* Clean up case statement for X-ray attacks.
 
+	* Correct array bound error in cmd.c hint code.
+
 2002-05-19  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Corrected command line size to 128 through out cmd.c to
