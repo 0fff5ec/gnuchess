@@ -470,6 +470,7 @@ extern int rank6[2];
 extern int rank7[2];
 extern int rank8[2];
 
+extern const char *progname;
 extern FILE *ofp;
 extern int myrating, opprating, suddendeath;
 extern char name[50];
@@ -811,6 +812,7 @@ void cmd_switch(void);
 void cmd_test (void);
 void cmd_time(void);
 void cmd_undo(void);
+void cmd_usage(void);
 void cmd_variant(void);
 void cmd_version(void);
 void cmd_white(void);

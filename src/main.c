@@ -24,10 +24,12 @@
      cracraft@ai.mit.edu, cracraft@stanfordalumni.org, cracraft@earthlink.net
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <time.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
+#include <errno.h>                                                              
 
 #include "common.h"
 #include "book.h"
@@ -157,6 +159,8 @@ short KingSafety[2];
 short pscore[64];
 short bookmode;
 short bookfirstlast;
+
+const char *progname;
 FILE *ofp;
 int myrating, opprating, suddendeath, TCionc;
 char name[50];
@@ -285,10 +289,84 @@ int rank6[2] = { 5, 2 };
 int rank7[2] = { 6, 1 };
 int rank8[2] = { 7, 0 };
 
-
 int main (int argc, char *argv[])
 {
   int i;
+
+  /*
+   * Parse command line arguments conforming with getopt_long syntax
+   * Note: we have to support "xboard" and "post" as bare strings
+   * for backward compatibility.
+   */
+ 
+  int c;
+  int opt_help = 0, opt_version = 0, opt_post = 0, opt_xboard = 0, opt_hash = 0;
+  char *endptr;
+
+  progname = argv[0]; // Save in global for cmd_usage
+
+  while (1)
+  {
+    static struct option long_options[] =
+    {
+        {"hashsize", 1, 0, 's'},
+        {"version", 0, 0, 'v'},
+        {"help", 0, 0, 'h'},
+        {"xboard", 0, 0, 'x'},
+        {"post", 0, 0, 'p'},
+        {0, 0, 0, 0}
+    };
+ 
+    /* getopt_long stores the option index here. */ 
+
+    int option_index = 0;
+ 
+    c = getopt_long (argc, argv, "hpvxs:",
+             long_options, &option_index);
+ 
+    /* Detect the end of the options. */
+   if (c == -1)
+     break;
+
+   /* 
+    * Options with a straight flag, could use getoopt_long
+    * flag setting but this is more "obvious" and easier to
+    * modify.
+    */
+   switch (c)
+     {
+     case 'v':
+       opt_version = 1;
+       break;
+     case 'h':
+       opt_help = 1;
+       break;
+     case 'x':
+       opt_xboard = 1;
+       break;
+     case 'p':
+       opt_post = 1;
+       break;
+     case 's':    
+       if  ( optarg == NULL ){ // we have error such as two -s
+         opt_help = 1;
+         break;
+       }
+       errno = 0; // zero error indicator
+       opt_hash = strtol (optarg, &endptr, 10);
+       if ( errno != 0 || *endptr != '\0' ){
+         printf("Hashsize out of Range or Invalid\n");
+         return(1);
+       }
+       break;
+     case '?': // On error give help - getopt does a basic message.
+       opt_help = 1;
+       break;
+     default:
+       puts ("Option Processing Failed\n");
+       abort();
+     }
+  } // end of getopt_long style parsing
 
   /* Initialize random number generator */
   srand((unsigned int) time(NULL));
@@ -299,6 +377,7 @@ int main (int argc, char *argv[])
   /* output for thinking */
   ofp = stdout;
 
+  /* Handle old style command line options */
   if (argc > 1) {
     for (i = 0; i < argc; i++) {
       if (strcmp(argv[i],"xboard") == 0) {
@@ -308,10 +387,41 @@ int main (int argc, char *argv[])
       }
     }
   }
-  
-  dbg_open(NULL);
+  if (opt_xboard == 1)
+	SET (flags, XBOARD);
+  if (opt_post == 1)
+	SET (flags, POST);	
   
   cmd_version();
+  
+  /* If the version option was specified we can exit here */
+  if (opt_version == 1)
+	return(0);
+  
+  /* If a usage statement is required output it here */
+  if (opt_help == 1){
+    cmd_usage();
+    return (1); // Maybe an error if due to bad arguments.
+  }
+
+  dbg_open(NULL);
+
+  if ( opt_hash != 0){
+    /* 
+     * This code should be refactored from here, cmd.c, and init.c
+     * into the hashtable allocation. SRW Implementing command lines 
+     * changes.
+     */
+    int i;
+    i = opt_hash;
+    TTHashMask = 0;
+    while ((i >>= 1) > 0) {
+      TTHashMask <<= 1;
+      TTHashMask |= 1;
+    }
+    HashSize = TTHashMask + 1;
+    printf ("Adjusting HashSize to %d slots\n", HashSize); 
+  }
   Initialize ();
 
   /* Default to enable pondering */

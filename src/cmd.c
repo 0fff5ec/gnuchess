@@ -536,13 +536,40 @@ void cmd_undo(void)
   if (!(flags & XBOARD)) ShowBoard ();
 }
 
+void cmd_usage(void) 
+{
+      printf ("\n");
+      printf ("
+ Usage: %s [OPTION]\n", progname);
+ 
+      printf ("\n");
+      fputs ( "
+  -h, --help          display this help and exit\n\
+  -v, --version       display version information and exit\n", stdout);
+ 
+      printf ("\n"); 
+      fputs ("
+  -x, --xboard       start in engine mode\n\
+  -p, --post   	     start up showing thinking\n\
+  -s size, --hashsize=size   specify hashtable size in slots\n\
+\n
+  Options xboard and post are accepted without leading dashes\n\
+  for backward compatibility\n", stdout);
+ 
+      printf ("\n");
+      fputs ("
+Report bugs to <bug-gnu-chess@gnu.org>.\n", stdout);
+
+}
+
+
 /* Play variant, we instruct interface in protover we play normal */
 void cmd_variant(void) {}
 
 void cmd_version(void)
 {
    if (!(flags & XBOARD))
-     printf ("%s %s\n\n", PROGRAM, VERSION);
+     printf ("%s %s\n", PROGRAM, VERSION);
    else
      printf ("Chess\n");
 }
@@ -782,6 +809,8 @@ static const char * const helpstr[] = {
    " Backs up two moves in game history",
    "undo",
    " Backs up one move in game history",
+   "usage",
+   " Display command line syntax",
    "show",
    " board - displays the current board",
    " time - displays the time settings",
@@ -914,6 +943,7 @@ const struct methodtable commands[] = {
   { "test", cmd_test },
   { "time", cmd_time },
   { "undo", cmd_undo },
+  { "usage", cmd_usage },
   { "variant", cmd_variant },
   { "version", cmd_version },
   { "white", cmd_white },

@@ -1,3 +1,13 @@
+2003-01-29 Simon Waters <Simon@wretched.demon.co.uk>
+
+	* Use getopt_long for option handling
+
+	* Add standard options --help --version
+
+	* Add command line command "usage"
+
+	* Add option --hashsize
+
 2003-01-27 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Stop output of result in iterate if game has ended already.
