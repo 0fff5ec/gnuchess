@@ -42,6 +42,12 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+ /* 
+  * Define time structures to get timeval for Timer 
+  */
+
+#include <sys/time.h>
+
  /*
   * Define macro for declaring 64bit constants for compilers not using ULL
   */

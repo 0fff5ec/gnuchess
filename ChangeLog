@@ -1,3 +1,13 @@
+2003-01-13 Simon Waters <Simon@wretched.demon.co.uk>
+
+	* Add time.h to common.h to define timeval on Cygwin
+
+	* Add test for absence of nanosleep, may make
+	  waiting inefficient on platforms without nanosleep
+	  or usleep
+
+	* Remain in analysis mode on "new".
+
 2003-01-09 Simon Waters <Simon@wretched.demon.co.uk>
 
 	* Implement analysis mode

@@ -130,10 +130,25 @@ void input_wakeup(void)
 
 void wait_for_input(void)
 {
+#ifdef NANOSLEEP
   struct timespec delay, remains;
   delay.tv_sec=0;
   delay.tv_nsec=50000000; /* 50 milliseconds */
-  while (input_status == INPUT_NONE) { nanosleep(&delay,&remains); } ;
+#else
+#ifdef USLEEP
+  unsigned long usec=50000 ; /* 50 milliseconds */
+#endif
+#endif 
+  while (input_status == INPUT_NONE) { 
+
+#ifdef NANOSLEEP
+    nanosleep(&delay,&remains);
+#else
+#ifdef USLEEP
+    usleep(usec);
+#endif
+#endif
+  };
 //  while (input_status == INPUT_NONE) /* Busy loop */ ;
 }
 

@@ -382,7 +382,9 @@ void cmd_new(void)
 {
   InitVars ();
   NewPosition ();
-  CLEAR (flags, MANUAL);
+  /* Protocol specification for ANALYZE says "new" does not end analysis */
+  if (!(flags & ANALYZE))
+    CLEAR (flags, MANUAL);
   CLEAR (flags, THINK);
   myrating = opprating = 0;
 }
