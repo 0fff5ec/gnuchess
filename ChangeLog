@@ -1,7 +1,9 @@
 2003-04-06 Simon Waters <Simon@wretched.demon.co.uk>      
 
-       * Correct GenCheckEscapes to return no moves
-         when not in check. For "show escape" command.
+        * Correct GenCheckEscapes to return no moves
+          when not in check. For "show escape" command.
+
+        * Disambiguate hints
 
 2003-03-16 Simon Waters <Simon@wretched.demon.co.uk>      
 

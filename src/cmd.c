@@ -298,7 +298,8 @@ void cmd_hint(void)
     int HintMove;
     HintMove = TreePtr[1]->move; /* Pick first move in tree */
     if (IsLegalMove(HintMove)){
-      SANMove(TreePtr[1]->move,2);
+      GenMoves(1);
+      SANMove(TreePtr[1]->move,1);
       printf("Hint: %s\n", SANmv);
     } else {
       printf("No hint available at this time\n");
