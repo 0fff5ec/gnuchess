@@ -51,9 +51,8 @@ enum tagtype { NO_TAG, EVENT_TAG, SITE_TAG, DATE_TAG, ROUND_TAG,
 
 enum data_destination_t data_dest;
 
-#define yyterminate(x) { if ( seen_tags || seen_moves) return 1; \
+#define yyterminate() { if ( seen_tags || seen_moves) return 1; \
 			return 2; }
-#define yyterminate() return YY_NULL
 		
 
 char *pgn_event;
