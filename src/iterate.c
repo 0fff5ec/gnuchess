@@ -94,7 +94,8 @@ void Iterate (void)
       /* To prevent huge surplus build-up. */
       if (TCinc != 0)
         if (SearchTime < TCinc) {
-          printf("TimeLimit[%s] = %6.2f\n",TimeLimit[side]);
+	  char color[2][6] = { "White", "Black" };
+          printf("TimeLimit[%s] = %6.2f\n",color[side],TimeLimit[side]);
           if (TimeLimit[side] > 30) {   /* Only if > 15 seconds left */
             SearchTime = TCinc;
           }

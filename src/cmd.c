@@ -253,7 +253,7 @@ void InputCmd ()
      }
    }	
    else if (strcmp (cmd, "rating") == 0) {
-      sscanf(inputstr,"%d %d",&myrating,&opprating); 
+      sscanf(inputstr,"%hd %hd",&myrating,&opprating); 
       fprintf(ofp,"my rating = %d, opponent rating = %d\n",myrating,opprating); 
       /* Change randomness of book based on opponent rating. */
       /* Basically we play narrower book the higher the opponent */
@@ -379,7 +379,7 @@ void InputCmd ()
 	 if (!(flags & XBOARD)) {
 	   printf ("Time Control: %d moves in %.2f secs\n", 
 	          MoveLimit[white], TimeLimit[white]);
-	   printf("Fischer increment of %.2f seconds\n",TCinc);
+	   printf("Fischer increment of %d seconds\n",TCinc);
 	 }
       }
    }

@@ -252,7 +252,7 @@ fini:
         tot = r[matches[k]].wins+r[matches[k]].draws+r[matches[k]].losses;
         if (tot != 0)
           printf("B p=%2.0f\n",
-	   100*(r[matches[k]].wins+r[matches[k]].draws)/tot);
+	   100.0*(r[matches[k]].wins+r[matches[k]].draws)/tot);
         else
           printf("p=NO EXPERIENCES\n");
       }

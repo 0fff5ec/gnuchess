@@ -430,7 +430,7 @@ void BookPGNReadFromFile (char *file)
 
    printf ("Time = %ld\n", et);
    printf("Games compiled: %d\n",ngames);
-   printf("Games per second: %d\n",ngames/et);
+   printf("Games per second: %f\n",ngames/(double)et);
    printf("Positions scanned: %d\n",newpos+existpos);
    printf("New & unique added: %d positions\n",newpos);
    printf("Duplicates not added: %d positions\n",existpos);
