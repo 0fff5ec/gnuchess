@@ -172,21 +172,6 @@ inline int ScoreP (short side)
             } else if (side == black) {
                   s += (Passed[side][RANK(sq)] * phase) / 12;
 	    }
-            if (ENDING) {
-              /* Check for outside passed pawns and give additional bonus */
-                if ( ( (FILE(sq) == 0 || FILE(sq) == 1) &&
-                     ( (FileBit[FILE(sq)+1]&
-                        (board.b[side][pawn]|board.b[xside][pawn]))
-                       == NULLBITBOARD)) ||
-                     ( (FILE(sq) == 6 || FILE(sq) == 7) &&
-                     ( (FileBit[FILE(sq)+1]&
-                        (board.b[side][pawn]|board.b[xside][pawn])))))
-                   s += outside_passed[nbits(
-                         board.b[xside][knight]|
-                         board.b[xside][bishop]|
-                         board.b[xside][rook]|
-                         board.b[xside][queen])];
-            }
 	 }
       }
 

@@ -661,3 +661,6 @@ Version 5.03
 
   Added various EPD files for developer testing. These files cannot be
   included in the released tar file until copyright issues are resolved.
+
+  Removed Outside passed pawn bonus from Evaluate as it was
+  incorrectly in the pawn hash section.
