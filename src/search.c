@@ -663,41 +663,41 @@ void ShowLine (int move __attribute__ ((unused)), int score, char c)
     */
    if (flags & XBOARD) {
      if (score > MATE-255) {
-       printf ("%d%c Mat%d %d %ld\t", Idepth/DEPTH, c,
+       printf ("%d%c Mat%d %d %lu\t", Idepth/DEPTH, c,
                 (int)(MATE+2-abs(score))/2, (int)(et*100), NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"%2d%c%7.2f  Mat%02d%10lu\t", Idepth/DEPTH, c, et,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else if (score < -MATE+255) {
-       printf ("%d%c -Mat%2d %d %ld\t", Idepth/DEPTH, c,
+       printf ("%d%c -Mat%2d %d %lu\t", Idepth/DEPTH, c,
                 (int)(MATE+2-abs(score))/2, (int)(et*100), NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"%2d%c%7.2f -Mat%02d%10lu\t", Idepth/DEPTH, c, et,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else {
-	 printf ("%d%c %d %d %ld\t", Idepth/DEPTH, c, (int)score, 
+	 printf ("%d%c %d %d %lu\t", Idepth/DEPTH, c, (int)score, 
 		 (int)(et*100), NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
-	   fprintf (ofp,"%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
+	   fprintf (ofp,"%2d%c%7.2f%7d%10lu\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
        }
    }
    else {
      if (score > MATE-255) {
-       printf ("\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+       printf ("\r%2d%c%7.2f  Mat%02d%10lu\t", Idepth/DEPTH, c, et,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"\r%2d%c%7.2f  Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"\r%2d%c%7.2f  Mat%02d%10lu\t", Idepth/DEPTH, c, et,
                 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else if (score < -MATE+255) {
-       printf ("\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+       printf ("\r%2d%c%7.2f -Mat%02d%10lu\t", Idepth/DEPTH, c, et,
 	     (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
        if (ofp != stdout)
-	 fprintf (ofp,"\r%2d%c%7.2f -Mat%02d%10ld\t", Idepth/DEPTH, c, et,
+	 fprintf (ofp,"\r%2d%c%7.2f -Mat%02d%10lu\t", Idepth/DEPTH, c, et,
 		 (MATE+2-abs(score))/2, NodeCnt+QuiesCnt);
      } else {
-	 printf ("\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);
+	 printf ("\r%2d%c%7.2f%7d%10lu\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);
 	 if (ofp != stdout) 
-	   fprintf (ofp,"\r%2d%c%7.2f%7d%10ld\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
+	   fprintf (ofp,"\r%2d%c%7.2f%7d%10lu\t", Idepth/DEPTH, c, et, score, NodeCnt+QuiesCnt);	 
       }
    }
 
