@@ -48,9 +48,10 @@ AC_FUNC_MEMCMP
 dnl See above, how do we treat failure here?
 AC_CHECK_FUNCS(gettimeofday strchr strcspn strstr strerror memset nanosleep usleep)
 
-dnl Check for getopt_long or use bundled version
-AC_SUBST(LIBOBJS)
-AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] )
+dnl Don't Check for getopt_long 
+dnl just use bundled version like hello does
+dnl AC_SUBST(LIBOBJS)
+dnl AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] )
 ACX_PTHREAD()
 
 

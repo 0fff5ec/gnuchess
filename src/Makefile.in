@@ -63,7 +63,6 @@ CC = @CC@
 DEPDIR = @DEPDIR@
 EXEEXT = @EXEEXT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LIBOBJS = @LIBOBJS@
 LN_S = @LN_S@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -77,15 +76,17 @@ install_sh = @install_sh@
 
 bin_PROGRAMS = gnuchess
 
-gnuchess_SOURCES = atak.c book.c cmd.c debug.c epd.c eval.c genmove.c hash.c\
+gnuchess_SOURCES = atak.c book.c cmd.c debug.c epd.c eval.c genmove.c \
+ getopt.c getopt1.c hash.c\
  hung.c	init.c input.c iterate.c main.c move.c null.c output.c players.c\
  pgn.c ponder.c quiesce.c random.c repeat.c search.c solve.c sort.c\
- swap.c test.c ttable.c util.c common.h book.h eval.h inlines.h version.h
+ swap.c test.c ttable.c util.c common.h book.h eval.h getopt.h \
+ inlines.h version.h
 
 
 AM_CFLAGS = $(PTHREAD_CFLAGS)
 
-LDFLAGS = $(PTHREAD_LDFLAGS) $(PTHREAD_LIBS) $(LIBOBJS)
+LDFLAGS = $(PTHREAD_LDFLAGS) $(PTHREAD_LIBS)
 
 DISTCLEANFILES = *~
 subdir = src
@@ -97,13 +98,13 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_gnuchess_OBJECTS = atak.$(OBJEXT) book.$(OBJEXT) cmd.$(OBJEXT) \
 	debug.$(OBJEXT) epd.$(OBJEXT) eval.$(OBJEXT) genmove.$(OBJEXT) \
-	hash.$(OBJEXT) hung.$(OBJEXT) init.$(OBJEXT) input.$(OBJEXT) \
-	iterate.$(OBJEXT) main.$(OBJEXT) move.$(OBJEXT) null.$(OBJEXT) \
-	output.$(OBJEXT) players.$(OBJEXT) pgn.$(OBJEXT) \
-	ponder.$(OBJEXT) quiesce.$(OBJEXT) random.$(OBJEXT) \
-	repeat.$(OBJEXT) search.$(OBJEXT) solve.$(OBJEXT) \
-	sort.$(OBJEXT) swap.$(OBJEXT) test.$(OBJEXT) ttable.$(OBJEXT) \
-	util.$(OBJEXT)
+	getopt.$(OBJEXT) getopt1.$(OBJEXT) hash.$(OBJEXT) \
+	hung.$(OBJEXT) init.$(OBJEXT) input.$(OBJEXT) iterate.$(OBJEXT) \
+	main.$(OBJEXT) move.$(OBJEXT) null.$(OBJEXT) output.$(OBJEXT) \
+	players.$(OBJEXT) pgn.$(OBJEXT) ponder.$(OBJEXT) \
+	quiesce.$(OBJEXT) random.$(OBJEXT) repeat.$(OBJEXT) \
+	search.$(OBJEXT) solve.$(OBJEXT) sort.$(OBJEXT) swap.$(OBJEXT) \
+	test.$(OBJEXT) ttable.$(OBJEXT) util.$(OBJEXT)
 gnuchess_OBJECTS = $(am_gnuchess_OBJECTS)
 gnuchess_LDADD = $(LDADD)
 gnuchess_DEPENDENCIES =
@@ -117,7 +118,8 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 @AMDEP_TRUE@DEP_FILES = $(DEPDIR)/atak.Po $(DEPDIR)/book.Po \
 @AMDEP_TRUE@	$(DEPDIR)/cmd.Po $(DEPDIR)/debug.Po \
 @AMDEP_TRUE@	$(DEPDIR)/epd.Po $(DEPDIR)/eval.Po \
-@AMDEP_TRUE@	$(DEPDIR)/genmove.Po $(DEPDIR)/hash.Po \
+@AMDEP_TRUE@	$(DEPDIR)/genmove.Po $(DEPDIR)/getopt.Po \
+@AMDEP_TRUE@	$(DEPDIR)/getopt1.Po $(DEPDIR)/hash.Po \
 @AMDEP_TRUE@	$(DEPDIR)/hung.Po $(DEPDIR)/init.Po \
 @AMDEP_TRUE@	$(DEPDIR)/input.Po $(DEPDIR)/iterate.Po \
 @AMDEP_TRUE@	$(DEPDIR)/main.Po $(DEPDIR)/move.Po \
@@ -215,6 +217,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/epd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/eval.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/genmove.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/hash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/hung.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/init.Po@am__quote@
