@@ -180,7 +180,7 @@ void DBUpdatePlayer (const char *player, const char *resultstr)
 	p++;
   } while (*p != '\0');
   *x = '\000';
-  memset(playerdb,0,MAXPLAYERS*sizeof(playerdb));
+  memset(playerdb,0,sizeof(playerdb[MAXPLAYERS]));
   DBReadPlayer ();
   index = DBSearchPlayer (lname);
   if (index == -1) {
