@@ -52,7 +52,7 @@
 #define BACKWARDPAWN   -(8+phase)
 #define DOUBLEDPAWN    -(8+phase)
 #define PAWNBASEATAK   -18
-#define BLOCKDEPAWN    -12
+#define BLOCKDEPAWN    -48 /* -12 */
 #define CONNECTEDPP	50
 #define PAWNNEARKING    40
 #define ATAKWEAKPAWN    2

@@ -50,12 +50,14 @@ void TestMoveGenSpeed ()
 
    GenCnt = 0;
    et = 0;
+/*
    while (ReadEPDFile ("TEST/BK.epd", 0))
    {
+*/
       gettimeofday (&t1, &tz);
       side = board.side;
       xside = 1^side;
-      for (i = 0; i < 100000; i++)
+      for (i = 0; i < 2000000; i++)
       {
 	 TreePtr[2] = TreePtr[1];
          GenMoves (1);
@@ -63,7 +65,9 @@ void TestMoveGenSpeed ()
       gettimeofday (&t2, &tz);
       et += (t2.tv_sec - t1.tv_sec);
       printf ("Time = %ld\n", et);
+/*
    }
+*/
    printf ("No. of moves generated = %lu\n", GenCnt);
    printf ("Time taken = %ld secs\n", et);
    if (et > 0)
