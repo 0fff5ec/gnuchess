@@ -257,6 +257,8 @@ typedef struct
 
 #define DEPTH	12
 
+#define INPUT_SIZE 128
+
 extern short distance[64][64];
 extern short taxicab[64][64];
 extern unsigned char lzArray[65536];

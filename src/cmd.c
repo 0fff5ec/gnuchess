@@ -55,13 +55,14 @@ extern short stage, InChkDummy, terminal;
 #ifdef HAVE_LIBREADLINE
 static char *inputstr;
 #else
-static char inputstr[128];
+static char inputstr[INPUT_SIZE];
 #endif
 
-static char cmd[128], file[128], s[128], logfile[128], 
-            gamefile[128],userinput[128];
+static char cmd[INPUT_SIZE], file[INPUT_SIZE], 
+            s[INPUT_SIZE], logfile[INPUT_SIZE], 
+            gamefile[INPUT_SIZE], userinput[INPUT_SIZE];
 
-char subcmd[128],setting[128],subsetting[128];
+char subcmd[INPUT_SIZE],setting[INPUT_SIZE],subsetting[INPUT_SIZE];
 
 
 #ifdef UNIVERSAL
@@ -137,17 +138,17 @@ void InputCmd ()
 	    if (*inputstr) {
 	       add_history(inputstr);
 	    }
-	    if (strlen(inputstr) > 63) {
-	       printf("Warning: Input line truncated to 63 characters.\n");
-	       inputstr[63] = 0;
+	    if (strlen(inputstr) > INPUT_SIZE-1) {
+	       printf("Warning: Input line truncated to %d characters.\n", INPUT_SIZE -1 );
+	       inputstr[INPUT_SIZE-1] = '\000';
 	    }
 	 } else {
-	    inputstr = malloc(128);
+	    inputstr = malloc(INPUT_SIZE);
 	    if (inputstr == NULL) {
 	       perror("InputCmd");
 	       exit(EXIT_FAILURE);
 	    }
-	    fgets(inputstr, 64, stdin);
+	    fgets(inputstr, INPUT_SIZE, stdin);
 	    if (inputstr[0]) {
 	       inputstr[strlen(inputstr)-1] = 0;
 	    }
@@ -157,7 +158,7 @@ void InputCmd ()
 	  printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
 	  fflush(stdout);
         }
-	if (fgets (inputstr, 64, stdin) && inputstr[0])
+	if (fgets (inputstr, INPUT_SIZE, stdin) && inputstr[0])
 	    inputstr[strlen(inputstr)-1] = '\000';
 #endif /* HAVE_LIBREADLINE */
 
@@ -746,7 +747,7 @@ void BookCmd (char *subcmd)
  *************************************************************************/
 {
    char cmd[10];
-   char bookfile[64];
+   char bookfile[INPUT_SIZE];
    short bookply;
 
    sscanf (subcmd, "%s %[^\n]", cmd, subcmd);

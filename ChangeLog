@@ -1,3 +1,8 @@
+2002-05-19  Simon Waters <simon@wretched.demon.co.uk>
+
+	* Corrected command line size to 128 through out cmd.c to
+	  fix segmentation fault errors on complex fen positions.
+
 2002-05-02  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Reorder move generation of promotions
