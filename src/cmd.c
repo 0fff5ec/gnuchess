@@ -558,7 +558,25 @@ void InputCmd ()
    }
    /* Give a possible move for the player to play */
    else if (strcmp (cmd, "hint") == 0)
-	;
+   {
+     /* Find next move in PV, ignore if none available */
+     /* Code belongs in search.c with ShowLine ? */
+
+     int pvar[2];
+     if ((flags & USEHASH))
+     {
+        if (TTGetPV(board.side,2,rootscore,&pvar[2]))
+        {
+	  /* Find all moves for ambiguity checks */
+	  /* Otherwise xboard complains at ambiguous hints */
+	  GenMoves(2); 
+
+          SANMove(pvar[2],2);
+          printf("Hint: %s\n", SANmv);
+          fflush(stdout);
+	}
+     }
+   }
    /* Move now, not applicable */
    else if (strcmp (cmd, "?") == 0)
 	;

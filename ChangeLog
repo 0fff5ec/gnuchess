@@ -1,4 +1,4 @@
-2002-03-02  Simon Waters <simon@wretched.demon.co.uk>
+2002-03-03  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Added unknown protocol commands to
 	  avoid "Illegal move: <unknown command>"
@@ -7,6 +7,9 @@
 
 	* Added approximate st and additional errors for xboard
 	  suggested by Tim Mann
+
+	* Added basic "hint" feature, by extracting next
+	  move from PV in hash. Doesn't work in book.
 
 2002-03-02  Simon Waters <simon@wretched.demon.co.uk>
 
