@@ -5,15 +5,13 @@ New in gnuchess 5.05:
   /usr/share/games/gnuchess/ or /usr/lib/games/gnuchess/. The first
   of these directories which contains a valid book.dat is chosen.
 - Changes for easing compilation with MSVC
-
-[ Could we rewrite history for the older versions, too? I like to
-  have NEWS give a quick overview of what has changed between versions,
-  only user-visible stuff. That is the recommended purpose of NEWS. 
-  However, the following is not yet accurate and complete. ]
+- The support for Novag Universal board was removed from code
+- Numerous bug fixes, and minor enhancements to algorithmns
 
 New in gnuchess 5.04:
 - Bug fixes (as always)
-- ???
+- Hint feature implemented using ht
+- Book command now has options "worst", "best" ,"prefer".
 
 New in gnuchess 5.03:
 - Bug fixes (The infamous "illegal move" bug should be dead by now.)
