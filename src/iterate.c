@@ -122,14 +122,16 @@ void Iterate (void)
    /*  Are there any legal moves? */
    if (GenCnt == 0)
    {
-     if (InChk[1]) {
-	if (computerplays == black)
-	  printf("1-0 {computer loses as black}\n");
-	else if (computerplays == white)
-	  printf("0-1 {computer loses as white}\n");
-     } else 
-	 printf("1/2-1/2 {stalemate}\n");
-      fflush(stdout);
+     if (!(flags & ENDED)) { // Don't give result after mate as it will be muddled
+       if (InChk[1]) {
+  	if (computerplays == black)
+  	  printf("1-0 {computer loses as black}\n");
+  	else if (computerplays == white)
+  	  printf("0-1 {computer loses as white}\n");
+       } else 
+  	 printf("1/2-1/2 {stalemate}\n");
+        fflush(stdout);
+      }
       SET (flags, TIMEOUT | ENDED);
       return;
    }
