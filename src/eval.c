@@ -430,8 +430,7 @@ int ScoreN (int side)
       /* Control */
       s1 = CTL(sq,knight,side);
   
-      if ( (BitPosArray[sq] & 
-	    (FileBit[0]|FileBit[7]|RankBit[0]|RankBit[7])) != NULLBITBOARD)
+      if ( (BitPosArray[sq] & rings[3]) != NULLBITBOARD)
 	s1 += KNIGHTONRIM;
 
       if (Outpost[side][sq] && 
