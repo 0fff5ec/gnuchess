@@ -407,25 +407,10 @@ int main (int argc, char *argv[])
 
   dbg_open(NULL);
 
-
   HashSize = 0 ; /* Set HashSize zero */
+  if ( opt_hash != 0)
+    CalcHashSize(opt_hash);
 
-  if ( opt_hash != 0){
-    /* 
-     * This code should be refactored from here, cmd.c, and init.c
-     * into the hashtable allocation. SRW Implementing command lines 
-     * changes.
-     */
-    int i;
-    i = opt_hash;
-    TTHashMask = 0;
-    while ((i >>= 1) > 0) {
-      TTHashMask <<= 1;
-      TTHashMask |= 1;
-    }
-    HashSize = TTHashMask + 1;
-    printf ("Adjusting HashSize to %d slots\n", HashSize); 
-  }
   Initialize ();
 
   /* Default to enable pondering */

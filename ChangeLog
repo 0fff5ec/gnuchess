@@ -1,3 +1,11 @@
+2003-06-13 Simon Waters <Simon@wretched.demon.co.uk>      
+
+	* Use CalcHashSize in main.c
+
+	* Check HashSize return code in cmd.c
+
+	* Put maximum check in CalcHashSize
+
 2003-06-12 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Convert autoconf to AX_CREATE_STDINT_H from AC_CREATE_STDINT_H

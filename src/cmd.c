@@ -51,6 +51,7 @@ static char gamefile[MAXSTR];
 #define TOKENS 3
 
 static char *token[TOKENS];
+char *endptr;
 
 static void split_input(void)
 {
@@ -277,9 +278,16 @@ void cmd_hashsize(void)
     printf("Current HashSize is %d slots\n", HashSize);
   } else {
     int i;
-    i = atoi (token[1]);
-    CalcHashSize(i);
-    InitHashTable (); 
+    /* i = atoi (token[1]); */
+    errno = 0;
+    i = strtol (token[1], &endptr, 10);
+    if ( errno != 0 || *endptr != '\0' ){
+      printf("Hashsize out of Range or Invalid\n");
+    }
+    else {
+     CalcHashSize(i);
+     InitHashTable (); 
+    }
   }
 }
 

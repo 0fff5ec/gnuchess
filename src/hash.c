@@ -102,6 +102,11 @@ void CalcHashSize (int tablesize)
 
    i = (tablesize < HASHSLOTS ? HASHSLOTS : tablesize);
 
+   if ( i > 1073741823 ){
+	   printf("Max hashsize exceeded\n");
+	   i = 107374183;
+   }
+
    TTHashMask = 0;
    while ((i>>=1) > 0)
    {
