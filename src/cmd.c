@@ -230,6 +230,7 @@ void InputCmd ()
 	  *x = '\000';
 	  break;
 	}
+        *x++;
       }
       suffix = 0;
       for (;;) {
