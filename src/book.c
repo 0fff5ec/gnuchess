@@ -36,21 +36,31 @@
 #define MAXMOVES 200
 #define MAXMATCH 100
 
-/* Right now, bigbookcnt is always the same as bookcnt */			   
-static int bookcnt, bigbookcnt = 0;
-static int runningbookcnt = 0;
+static int bookcnt;
 static HashType posshash[MAXMOVES];
+
+/*
+ * This is the only authoritative variable telling us
+ * whether a book has been allocated or not. (Other
+ * parts may mess around with bookloaded.)
+ */
+static int book_allocated = 0;
 
 /*
  * The last byte of magic_str should be the version
  * number of the format, in case we have to change it.
  *
  * Format 0x01 had an index field which is now gone.
+ *
+ * Format 0x03 uses an additional size header, which 
+ * comes directly after the magic string, and has the
+ * number of entries as a big-endian encoded uint32_t
+ * number. 
  */
 
 #define MAGIC_LENGTH 5
 
-static const char magic_str[] = "\x42\x23\x08\x15\x02";
+static const char magic_str[] = "\x42\x23\x08\x15\x03";
 
 static int check_magic(FILE *f)
 {
@@ -71,25 +81,60 @@ static int write_magic(FILE *f)
   }
 }
 
+/* Write and read size information for the binary book */
+
+static int write_size(FILE *f, uint32_t size)
+{
+  unsigned char sizebuf[4];
+  int k;
+
+  for (k = 0; k < 4; k++) {
+    sizebuf[k] = (size >> ((3-k)*8)) & 0xff;
+  }
+  if (1 == fwrite(&sizebuf, sizeof(sizebuf), 1, f)) {
+    return BOOK_SUCCESS;
+  } else {
+    return BOOK_EIO;
+  }
+}
+
+/* Returns 0 if some read error occurs */
+
+static uint32_t read_size(FILE *f)
+{
+  unsigned char sizebuf[4];
+  uint32_t size = 0;
+  int k;
+
+  if (1 != fread(&sizebuf, sizeof(sizebuf), 1, f)) {
+    return 0;
+  }
+  for (k = 0; k < 4; k++) {
+    size = (size << 8) | sizebuf[k];
+  }
+  return size;
+}
+
 /*
- * MAXBOOK now has to be a power of 2, as we use the
- * lower bits to calculate the index of some hash in
- * this array. NOTE: Due to this change, the binary
- * format of book files has changed. We write some
- * magic string in order to check if the file has the
- * correct format.
+ * We now allocate memory for the book dynamically,
+ * according to the size field in the header of the binary
+ * book. However, during book building the following value
+ * is used.
  */
 
-#define MAXBOOK (1UL<<20)
-#define DIGEST_BITS 20
-#define DIGEST_MASK (MAXBOOK-1)
+#define MAX_DIGEST_BITS 20
+
+static int digest_bits;
+
+#define DIGEST_SIZE (1UL << digest_bits)
+#define DIGEST_MASK (DIGEST_SIZE - 1)
 
 static struct hashtype {
   uint16_t wins;
   uint16_t losses;
   uint16_t draws;
   HashType key;
-} bookpos[MAXBOOK];
+} *bookpos;
 
 static inline int is_empty(uint32_t index)
 {
@@ -131,7 +176,7 @@ static inline int is_empty(uint32_t index)
  * size, we OR by 1.
  */
 #define DIGEST_NEXT(i,key) \
-  ((i) = ((i) + (((key) >> DIGEST_BITS) | 1)) & DIGEST_MASK)
+  ((i) = ((i) + (((key) >> digest_bits) | 1)) & DIGEST_MASK)
 
 
 /* Mainly for debugging purposes */
@@ -142,7 +187,7 @@ static int bookhashcollisions = 0;
  * 95% because it is Monday... No, I am open for suggestions
  * for the right value, I just don't know.
  */
-#define BOOK_HASH_LIMIT (0.95 * MAXBOOK)
+#define DIGEST_LIMIT (0.95 * DIGEST_SIZE)
 
 /*
  * This is the record as it will be written in the binary
@@ -212,6 +257,33 @@ static int compare(const void *aa, const void *bb)
   else return(0);
 }
 
+/*
+ * Reads an existing binary book from f. The header must
+ * already be skipped, when you call this function. The
+ * variable digest_bits must be set to the correct value
+ * before calling this function. If any book was allocated
+ * before, it will be lost.
+ */
+static int read_book(FILE *f)
+{
+  if (book_allocated) {
+    free(bookpos);
+    book_allocated = 0;
+  }
+  bookpos = calloc(DIGEST_SIZE, sizeof(struct hashtype));
+  if (bookpos == NULL) {
+    return BOOK_ENOMEM;
+  }
+  book_allocated = 1;
+  bookcnt = 0;
+  bookhashcollisions = 0;
+  while ( 1 == fread(&buf, sizeof(buf), 1, f) ) {
+    buf_to_book();
+    bookcnt++;
+  }
+  return BOOK_SUCCESS;
+}
+  
 /* 
  * Return values are defined in common.h
  */
@@ -219,27 +291,33 @@ static int compare(const void *aa, const void *bb)
 int BookBuilderOpen(void)
 {
   FILE *rfp, *wfp;
+  int res;
 
   if ((rfp = fopen(BOOKRUN,"rb")) != NULL) {
     printf("Opened existing book!\n");
     if (!check_magic(rfp)) {
       fprintf(stderr, 
-	      "File %s does not conform to the new format.\n"
+	      "File %s does not conform to the current format.\n"
 	      "Consider rebuilding your book.\n",
 	      BOOKRUN);
       return BOOK_EFORMAT;
     }
-    runningbookcnt = 0;
-    bookhashcollisions = 0;
-    while ( 1 == fread(&buf, sizeof(buf), 1, rfp) ) {
-      buf_to_book();
-      runningbookcnt++;
-    }
-    printf("Read %d book positions\n", runningbookcnt);
-    printf("Got %d hash collisions\n", bookhashcollisions);
+    /*
+     * We have to read the size header, but in book building we
+     * use the maximum-sized hash table, so we discard the value.
+     */
+    digest_bits = MAX_DIGEST_BITS;
+    read_size(rfp);
+    res = read_book(rfp);
     fclose(rfp);
+    if (res != BOOK_SUCCESS) {
+      fclose(rfp);
+      return res;
+    }
+    printf("Read %d book positions\n", bookcnt);
+    printf("Got %d hash collisions\n", bookhashcollisions);
   } else {
-    wfp = fopen(BOOKRUN,"wb");
+    wfp = fopen(BOOKRUN,"w+b");
     if (wfp == NULL) {
       fprintf(stderr, "Could not create %s file: %s\n",
 		 BOOKRUN, strerror(errno));
@@ -262,6 +340,9 @@ int BookBuilderOpen(void)
 	      BOOKRUN, strerror(errno));
       return BOOK_EIO;
     }
+    digest_bits = MAX_DIGEST_BITS;
+    /* We use read_book() here only to allocate memory */
+    read_book(wfp);
   }
   return BOOK_SUCCESS;
 }
@@ -294,11 +375,11 @@ int BookBuilder(short result, short side)
       existpos++;
       break;
     } else if (DIGEST_EMPTY(i)) {
-      if (runningbookcnt > BOOK_HASH_LIMIT)
+      if (bookcnt > DIGEST_LIMIT)
 	return BOOK_EFULL;
       bookpos[i].key = HashKey;
       newpos++;
-      runningbookcnt++;
+      bookcnt++;
       break;
     } else {
       bookhashcollisions++;
@@ -334,27 +415,45 @@ int BookBuilderClose(void)
    */
   FILE *wfp;
   unsigned int i;
-  int res;
+  int errcode = BOOK_SUCCESS;
 
   wfp = fopen(BOOKRUN, "wb");
   if (wfp == NULL) {
-    perror("Could not open %s for writing");
-    return BOOK_EIO;
+    errcode = BOOK_EIO;
+    goto bailout_noclose;
   }
-  write_magic(wfp);
-  for (i = 0; i < MAXBOOK; i++) {
-    if (is_empty(i)) continue;
-    book_to_buf(i);
-    /* Should we check the return value here, too? */
-    fwrite(&buf, sizeof(buf), 1, wfp);
+  if (write_magic(wfp) != BOOK_SUCCESS) {
+    errcode = BOOK_EIO;
+    goto bailout;
   }
-  res = fclose(wfp);
-  if (res != 0) {
-    perror("Error writing opening book");
-    return BOOK_EIO;
+  if (write_size(wfp, bookcnt) != BOOK_SUCCESS) {
+    errcode = BOOK_EIO;
+    goto bailout;
+  }
+  for (i = 0; i < DIGEST_SIZE; i++) {
+    if (!is_empty(i)) {
+      book_to_buf(i);
+      if (1 != fwrite(&buf, sizeof(buf), 1, wfp)) {
+	errcode = BOOK_EIO;
+	goto bailout;
+      }
+    }
   }
   printf("Got %d hash collisions\n", bookhashcollisions);
-  return BOOK_SUCCESS;
+
+ bailout:
+  if (fclose(wfp) != 0) {
+    errcode = BOOK_EIO;
+  }
+
+ bailout_noclose:
+  free(bookpos);
+  book_allocated = 0;
+
+  /* Let BookQuery allocate again */
+  bookloaded = 0;
+
+  return errcode;
 }
 
 /*
@@ -385,17 +484,50 @@ int BookQuery(int BKquery)
   FILE *rfp;
   leaf *p;
   short side,xside,temp;
+  uint32_t booksize;
+  int res;
+
+  if (bookloaded && !book_allocated) {
+    /* Something failed during loading the book */
+    return BOOK_ENOBOOK;
+  }
+  if (!bookloaded) {
+    bookloaded = 1;
+    rfp = fopen(BOOKBIN,"rb");
+    if (rfp == NULL) {
+      if (!(flags & XBOARD) || BKquery == 1 )
+	fprintf(ofp," no book (%s).\n\n",BOOKBIN);
+      return BOOK_ENOBOOK;
+    }
+    if (!(flags & XBOARD))
+      fprintf(ofp,"Read opening book (%s)... ",BOOKBIN);
+    if (!check_magic(rfp)) {
+      fprintf(stderr, 
+	      " File %s does not conform to the current format.\n"
+	      " Consider rebuilding the book.\n\n",
+	      BOOKBIN);
+      return BOOK_EFORMAT;
+    }
+    /*
+     * The factor 1.06 is the minimum additional amount of
+     * free space in the hash
+     */
+    booksize = read_size(rfp) * 1.06;
+    for (digest_bits = 1; booksize; booksize >>= 1) {
+      digest_bits++;
+    }
+    res = read_book(rfp);
+    if (res != BOOK_SUCCESS) {
+      return res;
+    }
+    if (!(flags & XBOARD))
+      fprintf(ofp,"%d hash collisions... ", bookhashcollisions);
+  }      
 
   bestsofar = 0;
   mcnt = -1;
   side = board.side;
   xside = 1^side;
-  rfp = fopen(BOOKBIN,"rb");
-  if (rfp == NULL) {
-    if (!(flags & XBOARD) || BKquery == 1 )
-      fprintf(ofp," no book (%s).\n\n",BOOKBIN);
-    return BOOK_ENOBOOK;
-  }
   TreePtr[2] = TreePtr[1];
   GenMoves(1);
   FilterIllegalMoves (1);
@@ -406,34 +538,6 @@ int BookQuery(int BKquery)
     icnt++;
     UnmakeMove(xside,&p->move);
   }
-  if (!bookloaded) {
-    bigbookcnt = 0;
-    if (!(flags & XBOARD))
-      fprintf(ofp,"Read opening book (%s)... ",BOOKBIN);
-    fseek(rfp,0L,SEEK_SET);
-    bookcnt = 0;
-    bookhashcollisions = 0;
-    if (check_magic(rfp)) {
-      while ( 1 == fread(&buf, sizeof(buf), 1, rfp) ) {
-	buf_to_book();
-	bookcnt++;
-      }
-      bigbookcnt += bookcnt;
-      bookloaded = 1;
-      if (!(flags & XBOARD))
-        fprintf(ofp,"%d hash collisions... ", bookhashcollisions);
-    } else {
-      /*
-       * The following doesn't need to exit() because the old
-       * book will not be overwritten.
-       */
-      fprintf(stderr, 
-	      " File %s does not conform to the new format.\n"
-	      " Consider rebuilding the book.\n\n",
-	      BOOKBIN);
-      return BOOK_EFORMAT;
-    }
-  }      
   for (i = 0; i < icnt; i++) {
     for (DIGEST_START(j,posshash[i]);
 	 !DIGEST_EMPTY(j);
@@ -472,7 +576,7 @@ int BookQuery(int BKquery)
 fini:  
   if (!(flags & XBOARD) || BKquery == 1)
   {
-    fprintf(ofp," Opening database: %d book positions.\n",bigbookcnt);
+    fprintf(ofp," Opening database: %d book positions.\n",bookcnt);
     if (mcnt+1 == 0) {
       fprintf(ofp," In this position, there is no book move.\n\n");
     } else if (mcnt+1 == 1) {

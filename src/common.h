@@ -487,7 +487,8 @@ enum {
   BOOK_EIO,      /* I/O error, e.g. caused by wrong permissions */
   BOOK_EFULL,    /* Book hash is full, new position was not added. */
   BOOK_ENOBOOK,  /* No book present */
-  BOOK_ENOMOVES  /* No moves found (in BookQuery() only) */
+  BOOK_ENOMOVES, /* No moves found (in BookQuery() only) */
+  BOOK_ENOMEM    /* Memory allocation failed */
 };
  
 /*  The move generation routines  */

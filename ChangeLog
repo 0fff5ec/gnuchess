@@ -1,3 +1,9 @@
+2002-02-08  Lukas Geyer  <geyer@math.uni-dortmund.de>
+
+	* Changes mainly to book.c in order to have
+	dynamically allocated book hashes. Changed the
+	binary book format once more.
+
 2002-02-07  Simon Waters <simon@wretched.demon.co.uk>
 
 	* Moved Lukas's version into CVS

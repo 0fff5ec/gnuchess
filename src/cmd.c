@@ -323,7 +323,6 @@ void InputCmd ()
      NewPosition ();
      CLEAR (flags, MANUAL);
      CLEAR (flags, THINK);
-     bookloaded = 0;
      myrating = opprating = 0;
    }
    else if (strcmp (cmd, "time") == 0) {

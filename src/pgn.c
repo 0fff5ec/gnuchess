@@ -424,7 +424,9 @@ const char *const player[] = {
    }
 
    fclose (fp);
-   BookBuilderClose();
+   if (BookBuilderClose() != BOOK_SUCCESS) {
+     perror("Error writing opening book");
+   }
 
    /* Reset the board otherwise we leave the last position in the book
       on the board. */
