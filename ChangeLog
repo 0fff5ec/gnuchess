@@ -14,6 +14,9 @@
 
 	* Various code clean-ups.
 
+	* Redefine DRAWSCORE to 0, faster, and avoids excessive
+	  draw penalties.
+
 2003-06-13 Simon Waters <Simon@wretched.demon.co.uk>      
 
 	* Use CalcHashSize in main.c
