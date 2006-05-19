@@ -3,6 +3,9 @@
 	* Fix input_thread declaration to allow compilation
 	  under GCC v4
 
+	* Change to generated file config.h.in due to 
+	  newer tools
+
 --- 5.07 Released
 2003-08-07 Mike Curtis <chess@wt.net>
 
