@@ -6,6 +6,9 @@
 	* Change to generated file config.h.in due to 
 	  newer tools
 
+	* Various protocol corrections and corrections
+	  to output when using Xboard protocol.
+
 --- 5.07 Released
 2003-08-07 Mike Curtis <chess@wt.net>
 

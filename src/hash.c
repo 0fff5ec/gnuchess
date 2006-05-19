@@ -114,7 +114,10 @@ void CalcHashSize (int tablesize)
       TTHashMask |= 1;
    }
    HashSize = TTHashMask + 1;
-   printf ("Adjusting HashSize to %d slots\n", HashSize);
+
+   if (!(flags & XBOARD)) {
+     printf ("Adjusting HashSize to %d slots\n", HashSize);
+   }
 
    i = PAWNSLOTS;
    PHashMask = 0;

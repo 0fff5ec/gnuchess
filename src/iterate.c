@@ -94,7 +94,6 @@ void Iterate (void)
 	   time first move out of book and blundered pawn */
 	/* Book lookups took too long */
       if ( nmovesfrombook <= 3 ){
-	printf ("Search time bonus near book\n");
 	SearchTime = 1.5 * SearchTime;
       }
 
@@ -288,8 +287,7 @@ void Iterate (void)
 
    if (flags & XBOARD) 
    {
-      printf ("%d. ... %s\n", GameCnt/2 + 1, AlgbrMove(RootPV));
-      printf ("My move is: %s\n", AlgbrMove(RootPV));
+      printf ("move %s\n", AlgbrMove(RootPV));
       fflush(stdout);
       if (ofp != stdout) {
         fprintf (ofp,"%d. ... %s\n", GameCnt/2 + 1, AlgbrMove(RootPV));

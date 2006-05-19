@@ -548,8 +548,6 @@ void cmd_version(void)
 {
    if (!(flags & XBOARD))
      printf ("%s %s\n", PROGRAM, VERSION);
-   else
-     printf ("Chess\n");
 }
 
 void cmd_white(void) 
@@ -967,17 +965,19 @@ void parse_input(void)
      SANMove (ptr->move, 1);
      MakeMove (board.side, &ptr->move);
      strcpy (Game[GameCnt].SANmv, SANmv);
-     printf("%d. ",GameCnt/2+1);
-     printf("%s",token[0]);
-     if (ofp != stdout) {
-       fprintf(ofp,"%d. ",GameCnt/2+1);
-       fprintf(ofp,"%s",token[0]);
-     }
-     putchar('\n');
-     fflush(stdout);
-     if (ofp != stdout) {
-       fputc('\n',ofp);
-       fflush(ofp);
+     if (!(flags&XBOARD)) {
+       printf("%d. ",GameCnt/2+1);
+       printf("%s",token[0]);
+       if (ofp != stdout) {
+         fprintf(ofp,"%d. ",GameCnt/2+1);
+         fprintf(ofp,"%s",token[0]);
+       }
+       putchar('\n');
+       fflush(stdout);
+       if (ofp != stdout) {
+         fputc('\n',ofp);
+         fflush(ofp);
+       }
      }
      if (!(flags & XBOARD)) ShowBoard (); 
      SET (flags, THINK);
