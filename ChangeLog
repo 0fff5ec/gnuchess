@@ -1,3 +1,8 @@
+2006-05-19 Simon Waters <simon-gnu@technocool.net>      
+
+	* Fix input_thread declaration to allow compilation
+	  under GCC v4
+
 --- 5.07 Released
 2003-08-07 Mike Curtis <chess@wt.net>
 

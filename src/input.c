@@ -92,7 +92,7 @@ void getline_standard(char *p)
   fgets(inputstr, MAXSTR, stdin);
 }
 
-static pthread_t input_thread;
+pthread_t input_thread;
 
 /* Mutex and condition variable for thread communication */
 
