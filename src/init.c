@@ -785,6 +785,7 @@ void NewPosition (void)
  ****************************************************************************/
 {
    CLEAR (flags, ENDED);
+   check_board();
    Game50 = 0;
    RealGameCnt = GameCnt = -1;
    Game[0].hashkey = HashKey;

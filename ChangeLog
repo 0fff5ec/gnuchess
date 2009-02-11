@@ -1,3 +1,7 @@
+2009-02-11 Simon Waters <simon-gnu@technocool.net>
+
+	* Ensure check_board prevents invalid positions being analyzed.
+
 2006-05-19 Simon Waters <simon-gnu@technocool.net>      
 
 	* Fix input_thread declaration to allow compilation

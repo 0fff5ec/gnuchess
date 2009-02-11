@@ -753,6 +753,9 @@ extern char inputstr[MAXSTR];
 /* Input parser */
 void parse_input(void);
 
+/* Check Board to avoid analysis of incorrectly input positions */
+void check_board(void);
+
 /* Pondering */
 void ponder(void);
 

@@ -140,6 +140,7 @@ void cmd_black(void)
     board.side = black;
     board.ep = -1; 
   }
+  check_board();
 }
 
 void cmd_book(void)
@@ -316,10 +317,7 @@ void cmd_list(void)
 void cmd_load(void)
 {
   LoadEPD (token[1]);
-  if (!ValidateBoard()) {
-    SET (flags, ENDED);
-    printf ("Board is wrong!\n");
-  }
+  check_board() ; 
 }
 
 void cmd_manual(void) { SET (flags, MANUAL); }
@@ -480,6 +478,7 @@ void cmd_setboard(void)
   /* setboard uses FEN, not EPD, but ParseEPD will accept FEN too */
   ParseEPD (token[1]);
   NewPosition();
+  check_board();
 }
 
 void cmd_solve(void) { Solve (token[1]); }
@@ -565,6 +564,7 @@ void cmd_white(void)
     board.side = white;
     board.ep = -1; /* Hack to fixed appearing pawn bug */
   }
+  check_board();
 }
 
 void cmd_xboard(void)
@@ -990,5 +990,26 @@ void parse_input(void)
      printf("Illegal move: %s\n",token[0]);
      fflush(stdout);
    }  
+}
+
+void check_board()
+/*************************************************************************
+ *
+ *  When the board is changed by commands, call the Validation
+ *  routine, and if it fails set flags to prevent the analysis of
+ *  illegal positions, as the code is not robust against the
+ *  analysis of such positions (To Do).
+ *
+ *************************************************************************/
+{ 
+  if (!ValidateBoard()) {
+    SET (flags, ENDED);
+    if (flags&XBOARD) {
+	printf ("telluser Board is wrong!\n");
+        fflush(stdout);
+    } else {
+    	printf ("Board is wrong!\n");
+    }
+  }
 }
 
