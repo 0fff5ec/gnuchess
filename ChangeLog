@@ -6,6 +6,8 @@
 
 	* Renamed getline (Problem only reported on Ubuntu)
 
+	* Correct URL for FSF Debian #511760
+
 2009-02-11 Simon Waters <simon-gnu@technocool.net>
 
 	* Ensure check_board prevents invalid positions being analyzed.
