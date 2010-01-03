@@ -57,7 +57,7 @@ volatile int input_status = INPUT_NONE;
 char inputstr[MAXSTR];
 
 /*
- * The readline getline(), notice that even if we have readline,
+ * The readline get_line(), notice that even if we have readline,
  * it is not used if stdin is not a tty.
  */
 
@@ -127,7 +127,7 @@ void *input_func(void *arg __attribute__((unused)) )
 	      (RealGameCnt+1)/2 + 1 );
     }
     pthread_mutex_lock(&input_mutex);
-    getline(prompt);
+    get_line(prompt);
     input_status = INPUT_AVAILABLE;
     pthread_cond_signal(&input_cond);
     pthread_mutex_unlock(&input_mutex);
@@ -173,13 +173,13 @@ void InitInput(void)
 {
 #ifdef HAVE_LIBREADLINE
   if (isatty(STDIN_FILENO)) {
-    getline = getline_readline;
+    get_line = getline_readline;
     using_history();
   } else {
-    getline = getline_standard;
+    get_line = getline_standard;
   }
 #else
-  getline = getline_standard;
+  get_line = getline_standard;
 #endif
   /* Start input thread */
   pthread_create(&input_thread, NULL, input_func, NULL);
