@@ -5,6 +5,7 @@ copyright (c) 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993
 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 Modified Simon Waters <simon@wretched.demon.co.uk> 2001
 Modified Simon Waters <simon@wretched.demon.co.uk> 2003
+Modified Simon Waters <simon-gnu@technocool.net> 2010
 
 IMPORTANT: Please send all updates to Simon at the above address.
 
@@ -40,7 +41,7 @@ this document only.
 GNU Chess 5 is the new version of GNU Chess. The goal of creating this
 new version was to eliminate perceived problems with past versions, the
 major one being spaghetti-code that was extremely poorly documented, but
-another being antiquated data structures and especially the ignominous
+another being antiquated data structures and especially the ignominious
 linked list. Another good reason was to have more standard file formats
 for game positions and game listings.
 
