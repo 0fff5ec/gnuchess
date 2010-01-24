@@ -1,6 +1,10 @@
 
 2010-01-24 Simon Waters <simon-gnu@technocool.net>
 
+	* Remove side to move values from Evaluation function
+
+2010-01-24 Simon Waters <simon-gnu@technocool.net>
+
 	* Evaluation fixes suggested or insprired by Lars Mathiesen
 
 2010-01-03 Simon Waters <simon-gnu@technocool.net>

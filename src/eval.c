@@ -213,30 +213,6 @@ int ScoreP (short side)
       }
    }
 
-
-  if (computerplays == side) {
-
-    /* Penalize having eight pawns */
-    if (nbits(board.b[computerplays][pawn]) == 8)
-        s += EIGHT_PAWNS;
-
-    /* Detect stonewall formation in enemy */
-    if (nbits(stonewall[xside] & board.b[xside][pawn]) == 3)
-      s += STONEWALL;
-
-    /* Locked pawns */
-    n = 0;
-    if (side == white)
-      n = nbits((c >> 8) & board.b[xside][pawn] &
-               boxes[1]);
-    else
-      n = nbits((c << 8) & board.b[xside][pawn] &
-               boxes[1]);
-    if (n > 1)
-      s += n * LOCKEDPAWNS;
-  }
-
-
    /* Save the score into the pawn hash table */ 
    ptable->pkey = KEY(PawnHashKey);
    ptable->passed = passed[side];
@@ -681,14 +657,6 @@ int ScoreQ (short side)
    
    s = s1 = 0;
 
-   /* Try to keep our queen on the board for attacking purposes. */
-   if (board.b[side][queen] == NULLBITBOARD) {
-       if (side == computer) {
-         s += QUEEN_NOT_PRESENT;
-       }
-       return(s);
-    }                                                                           
-
    xside = 1 ^ side;
    c = board.b[side][queen];
    EnemyKing = board.king[xside];
@@ -822,15 +790,6 @@ int ScoreK (short side)
 	if (n != -1) s += pawncover[n];
       }
 
-      if (side == computer && file >= F_FILE && 
-		!(FileBit[G_FILE] & board.b[side][pawn]))
-      {
-         if (side == white && cboard[F2] == pawn)
-            s += GOPEN;
-         else if (side == black && cboard[F7] == pawn)
-            s += GOPEN;
-      }
-
       /* No friendly pawns on this king file */
       if (!(FileBit[file] & board.b[side][pawn]))
          s += KINGOPENFILE;
@@ -885,37 +844,6 @@ int ScoreK (short side)
                 !(BitPosArray[B7] & board.b[side][pawn]) ||
                 !(BitPosArray[C7] & board.b[side][pawn]) )
                 s += RUPTURE;
-	  }
-	}
-      }
-      if (side == computer) {
-
-	/* Stock piece sacrifice on h file */
-
-	if (file >= E_FILE && board.b[xside][queen] && board.b[xside][rook] &&
-	    !((board.b[side][pawn]|board.b[xside][pawn]) & FileBit[7]))
-         s += HOPEN;
-	
-	/* King trapping rook */
-        if (side == white) {
-	  if (file > E_FILE) {
-	    if (board.b[side][rook]&mask_kr_trapped_w[H_FILE-file]) {
-		s += ROOKTRAPPED;
-	    }
-	  } else if (file < D_FILE) {
-	    if (board.b[side][rook]&mask_qr_trapped_w[file]) {
-		s += ROOKTRAPPED;
-	    }
-	  }
-	} else {
-	  if (file > E_FILE) {
-	    if (board.b[side][rook]&mask_kr_trapped_b[H_FILE-file]) {
-		s += ROOKTRAPPED;
-	    }
-	  } else if (file < D_FILE) {
-	    if (board.b[side][rook]&mask_qr_trapped_b[file]) {
-		s += ROOKTRAPPED;
-	    }
 	  }
 	}
       }
