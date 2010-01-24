@@ -622,7 +622,7 @@ int ScoreR (short side)
 	 else if (Ray[sq][4] & passed[white])
             s1 += ROOKINFRONTPP;
       }
-      if (FileBit[fyle] & passed[black] & brank58[black])
+      if (phase > 6 && (FileBit[fyle] & passed[black] & brank58[black]))
       {
 	 if (nbits (Ray[sq][4] & passed[black]) == 1)
 	    s1 += ROOKBEHINDPP;
@@ -777,11 +777,14 @@ int ScoreK (short side)
       /* After castling kingside, reward having all 3 pawns in front but not if
 	 there is a threatening pawn. This permits the freeing move F3/F6. */
 	 
-      if (side == white)
+      if (side == white && rank == 0) {
         n = nbits (MoveArray[king][sq] & board.b[side][pawn] & RankBit[rank+1]);
-      else
+        s += pawncover[n];
+      }
+      if (side == black && rank == 7) {
         n = nbits (MoveArray[king][sq] & board.b[side][pawn] & RankBit[rank-1]);
-      s += pawncover[n];
+        s += pawncover[n];
+      }
 
       /* Penalize compromised wing pawn formations prior to castle. */
       if (!board.castled[side]) {
@@ -962,10 +965,8 @@ int ScoreK (short side)
          CLEARBIT (b, sq1);
 	 if (BitPosArray[sq1] & board.b[white][pawn])
             s -= distance[sq][sq1+8] * 10 - 5;
-	 else if (BitPosArray[sq1] & board.b[white][pawn])
+	 else if (BitPosArray[sq1] & board.b[black][pawn])
             s -= distance[sq][sq1-8] * 10 - 5;
-         else
-	    s -= distance[sq][sq1] - 5;
       }
 
       /* Attack on weak opponent pawns */
