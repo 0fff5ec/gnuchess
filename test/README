@@ -66,6 +66,16 @@ endgame.epd 16/46 233118788
 After with "hashsize 5242880" (factor 10 bigger)
 endgame.epd 17/46 231145373
 After fix to backward pawn calc
-endgame.epd 18/48 230600501
+endgame.epd 18/46 230600501
+Removed xsize from maxnposn
+endgame.epd 19/46 243104887
+Seems to gain one result - chance?
+Retry with BT2630 as it has more games where this function will matter
+xside book off, easy: 14/30 92200782
+xside book off, easy: 13/30 94339538
+Pawn symmetry 14/30 92329031
+
+
+
 
 

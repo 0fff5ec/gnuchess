@@ -131,12 +131,12 @@ void cmd_black(void)
   * No longer used by Xboard but requested as a feature
   */
 
-  NewPosition(); /* Reset some flags and settings */
-  CLEAR ( flags, THINK);
-  CLEAR ( flags, MANUAL);
-  CLEAR (flags, TIMEOUT);   
   computer = white;
   if ( board.side == white ) {
+    NewPosition(); /* Reset some flags and settings */
+    CLEAR ( flags, THINK);
+    CLEAR ( flags, MANUAL);
+    CLEAR (flags, TIMEOUT);   
     board.side = black;
     board.ep = -1; 
   }
@@ -175,7 +175,9 @@ void cmd_computer(void) {}
 void cmd_depth(void)
 {
   SearchDepth = atoi (token[1]);
-  printf("Search to a depth of %d\n",SearchDepth);
+  if(!(flags & XBOARD)){
+    printf("Search to a depth of %d\n",SearchDepth);
+  }
 }
 
 /* Ignore draw offers */
@@ -261,7 +263,9 @@ void cmd_hashsize(void)
 void cmd_hint(void)
 {
   if ( flags & ENDED ){
-    printf("The game is over.\n");
+    if(!(flags & XBOARD)){
+      printf("The game is over.\n");
+    }
   } else {
     int HintMove;
     HintMove = TreePtr[1]->move; /* Pick first move in tree */
@@ -270,7 +274,9 @@ void cmd_hint(void)
       SANMove(TreePtr[1]->move,1);
       printf("Hint: %s\n", SANmv);
     } else {
-      printf("No hint available at this time\n");
+      if(!(flags & XBOARD)){
+        printf("No hint available at this time\n");
+      }
     }
   }
   fflush(stdout);
@@ -282,14 +288,18 @@ void cmd_level(void)
   sscanf (token[1], "%d %f %d", &TCMove, &TCTime, &TCinc);
   if (TCMove == 0) {
     TCMove =  35 /* MIN((5*(GameCnt+1)/2)+1,60) */;
-    printf("TCMove = %d\n",TCMove);
+    if(!(flags & XBOARD)){
+      printf("TCMove = %d\n",TCMove);
+    }
     suddendeath = 1;
   } else
     suddendeath = 0;
   if (TCTime == 0) {
     SET (flags, TIMECTL);
     SearchTime = TCinc / 2.0f ;
-    printf("Fischer increment of %d seconds\n",TCinc);
+    if(!(flags & XBOARD)){
+      printf("Fischer increment of %d seconds\n",TCinc);
+    }
   } else {
     SET (flags, TIMECTL);
     MoveLimit[white] = MoveLimit[black] = TCMove - (GameCnt+1)/2;
@@ -459,7 +469,9 @@ void cmd_result(void)
     fprintf(ofp, "result: %s\n",token[1]);
     fclose(ofp); 
     ofp = stdout;
-    printf("Save to %s\n",gamefile);
+    if(!(flags & XBOARD)){
+      printf("Save to %s\n",gamefile);
+    }
     PGNSaveToFile (gamefile, token[1]);
     DBUpdatePlayer (name, token[1]);
   }
@@ -555,12 +567,12 @@ void cmd_white(void)
   * No longer used by Xboard but requested as a feature
   */
 
-  NewPosition(); /* Reset some flags and settings */
-  CLEAR ( flags, THINK);
-  CLEAR ( flags, MANUAL);
-  CLEAR (flags, TIMEOUT);   
   computer = black;
   if ( board.side == black ){
+    NewPosition(); /* Reset some flags and settings */
+    CLEAR ( flags, THINK);
+    CLEAR ( flags, MANUAL);
+    CLEAR (flags, TIMEOUT);   
     board.side = white;
     board.ep = -1; /* Hack to fixed appearing pawn bug */
   }
@@ -965,7 +977,7 @@ void parse_input(void)
      SANMove (ptr->move, 1);
      MakeMove (board.side, &ptr->move);
      strcpy (Game[GameCnt].SANmv, SANmv);
-     if (!(flags&XBOARD)) {
+     if (!(flags & XBOARD)) {
        printf("%d. ",GameCnt/2+1);
        printf("%s",token[0]);
        if (ofp != stdout) {
@@ -1004,7 +1016,7 @@ void check_board()
 { 
   if (!ValidateBoard()) {
     SET (flags, ENDED);
-    if (flags&XBOARD) {
+    if (flags & XBOARD) {
 	printf ("telluser Board is wrong!\n");
         fflush(stdout);
     } else {
