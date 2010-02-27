@@ -263,7 +263,7 @@ phase2:
       n2 = RANK(board.king[xside]);
       for (i = 0; i <= 6; i++)
       {
-	 if (t & FileBit[i] && t & FileBit[i+1] && (n1 < i-1 || n1 > i+1 ||
+	 if (t & FileBit[i] && t & FileBit[i+1] && (n1 < i || n1 > i+1 ||
 		(side == white && n2 < 4) || (side == black && n2 > 3)))
             s += CONNECTEDPP;
       }
