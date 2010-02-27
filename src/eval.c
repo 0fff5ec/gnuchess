@@ -115,8 +115,12 @@ int ScoreP (short side)
    BitBoard c, t, p, blocker, *e;
    PawnSlot *ptable;
 
-   if (board.b[side][pawn] == NULLBITBOARD)
+   if (board.b[side][pawn] == NULLBITBOARD){
+	/* Reset these in case last pawn was captured */
+      passed[side] = NULLBITBOARD;
+      weaked[side] = NULLBITBOARD;
       return (0);
+   }
    xside = 1^side;
    EnemyKing = board.king[xside];
    p = board.b[xside][pawn];
@@ -155,7 +159,7 @@ int ScoreP (short side)
 
       /*  Backward pawns */
       backward = false;
-    /*   i = sq + (side == white ? 8 : -8); */
+    
       if ( side == white ) {
  	 i = sq + 8;  }
       else {
@@ -171,7 +175,7 @@ int ScoreP (short side)
       }
       if (!backward && (BitPosArray[sq] & brank7[xside]))
       {
-         i1 = 1;
+         i1 = i;
          i = i + (side == white ? 8 : -8);
          if (!(PassedPawnMask[xside][i] & ~FileBit[ROW(i1)] & c))
          {

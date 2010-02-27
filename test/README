@@ -55,3 +55,17 @@ Noted that 5/24 of these are solved on same hardware with "hash off".
 Hashing is a mixed blessing at fast time scales, as it slows the 
 search slightly.
 
+2010/02/27
+
+Test versionis of GNUCHESS 5.8, options easy, book off, default settings on DELL SC400  Intel(R) Pentium(R) 4 CPU 2.40GHz, Debian Lenny, 1GB RAM, GCC 4.3.2
+
+Before reset of passed/weaked
+endgame.epd 16/46 229584849
+After reset of passed/weaked
+endgame.epd 16/46 233118788
+After with "hashsize 5242880" (factor 10 bigger)
+endgame.epd 17/46 231145373
+After fix to backward pawn calc
+endgame.epd 18/48 230600501
+
+
