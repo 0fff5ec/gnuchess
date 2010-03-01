@@ -973,8 +973,6 @@ void parse_input(void)
    leaf *ptr; 
    const struct methodtable * meth;
  
-   dbg_printf("parse_input() called, inputstr = *%s*\n", inputstr);
-   
    split_input();
 
    for (meth = commands; meth->name != NULL; meth++) {

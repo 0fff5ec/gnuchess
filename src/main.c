@@ -411,8 +411,6 @@ int main (int argc, char *argv[])
     return (1); /* Maybe an error if due to bad arguments. */
   }
 
-  dbg_open(NULL);
-
   HashSize = 0 ; /* Set HashSize zero */
   if ( opt_hash != 0)
     CalcHashSize(opt_hash);
@@ -436,11 +434,8 @@ int main (int argc, char *argv[])
   bookfirstlast = 3;
 
   while (!(flags & QUIT)) {
-    dbg_printf("Waiting for input...\n");
     wait_for_input();
-    dbg_printf("Parsing input...\n");
     parse_input();
-    dbg_printf("input_status = %d\n", input_status);
     if ((flags & THINK) && !(flags & MANUAL) && !(flags & ENDED)) {
       if (!(flags & XBOARD)) printf("Thinking...\n");
       Iterate ();
@@ -448,10 +443,7 @@ int main (int argc, char *argv[])
     }
     RealGameCnt = GameCnt;
     RealSide = board.side;
-    dbg_printf("Waking up input...\n");
-    dbg_printf("input_status = %d\n", input_status);
     input_wakeup();
-    dbg_printf("input_status = %d\n", input_status);
     /* Ponder only after first move */
     /* Ponder or (if pondering disabled) just wait for input */
     if ((flags & HARD) && !(flags & QUIT) ) {
@@ -465,6 +457,5 @@ int main (int argc, char *argv[])
   free (HashTab[0]);
   free (HashTab[1]);
 
-  dbg_close();
   return (0);
 }

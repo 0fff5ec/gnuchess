@@ -67,7 +67,6 @@ void getline_readline(char * p)
   char *inp;
 
   inp = readline(p);
-  dbg_printf("getline_readline() called, input is >%s<\n", inp ? inp : "NULL");
   if (inp && *inp) {
     add_history(inputstr);
     strncpy(inputstr, inp, MAXSTR-1);

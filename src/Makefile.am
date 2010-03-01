@@ -4,7 +4,7 @@ bin_SCRIPTS = gnuchessx
 
 bin_PROGRAMS = gnuchess
 
-gnuchess_SOURCES = atak.c book.c cmd.c debug.c epd.c eval.c genmove.c \
+gnuchess_SOURCES = atak.c book.c cmd.c epd.c eval.c genmove.c \
  getopt.c getopt1.c hash.c\
  hung.c	init.c input.c iterate.c main.c move.c null.c output.c players.c\
  pgn.c ponder.c quiesce.c random.c repeat.c search.c solve.c sort.c\

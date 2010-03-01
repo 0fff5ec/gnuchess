@@ -156,12 +156,10 @@ typedef struct
 #define SET(a,b)                     \
   do {                               \
     (a) |= (b);                      \
-    dbg_printf("Set   0x%x\n", (b)); \
   } while (0)
 #define CLEAR(a,b)                   \
   do {                               \
     (a) &= ~(b);                     \
-    dbg_printf("Clear 0x%x\n", (b)); \
   } while (0)
 
 /* Draw score can be used to penalise draws if desired */
@@ -790,6 +788,7 @@ void cmd_list(void);
 void cmd_load(void);
 void cmd_manual(void);
 void cmd_movenow(void);
+void cmd_memory(void);
 void cmd_name(void);
 void cmd_new(void);
 void cmd_nopost(void);
@@ -835,30 +834,5 @@ unsigned char nbits (BitBoard);
 #else
 # include "inlines.h"
 #endif
-
-/* More elaborate debugging output to logfile */
-
-/* All the following functions are no-ops if DEBUG is not defined */
-
-/*
- * dbg_open() can be called with NULL as argument, using a default
- * filename, defined in debug.c, for the debug log. Otherwise the
- * argument is the filename. If dbg_open() fails or is not called at
- * all, debugging output goes to stderr by default.
- */
-int dbg_open(const char *name);
-
-/* Same format rules as printf() */
-int dbg_printf(const char *fmt, ...);
-
-/* Closes the debugging log, if it is not stderr */
-int dbg_close(void);
-
-# ifdef DEBUG
-#  include <assert.h>
-#  define ASSERT(x) assert(x)
-# else
-#  define ASSERT(x)
-# endif
 
 #endif /* !COMMON_H */

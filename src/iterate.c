@@ -44,7 +44,6 @@ void Iterate (void)
    uint8_t side;
    int score, RootAlpha, RootBeta;
 
-   dbg_printf("Entered iterate().\n");
    side = board.side;
 
    /* Note computer is playing side we are making move for. */
@@ -145,7 +144,6 @@ void Iterate (void)
    /* Don't look up moves in book in opponents time, think instead */
 
    if (bookmode != BOOKOFF && !(flags & SOLVE) && !(flags & PONDER) && nmovesfrombook <= 3) {
-     dbg_printf("Doing book lookup.\n");
      if (BookQuery(0) == BOOK_SUCCESS) {
        nmovesfrombook = 0;
        wasbookmove = 1;
