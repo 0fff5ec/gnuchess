@@ -348,9 +348,12 @@ void Iterate (void)
      fflush(stdout);
      SET (flags, ENDED);
    }
-   if (EvaluateDraw () || Repeat() >= 2)
-   {
-      printf("1/2-1/2 {draw}\n");
+   if   ((GameCnt-Game50) > 100){
+      printf("1/2-1/2 {Draw by 50 move rule}\n");
+      fflush(stdout); 
+      SET (flags, ENDED);
+   }else if(Repeat() >= 2){
+      printf("1/2-1/2 {Draw by 3-fold repetion}\n");
       fflush(stdout); 
       SET (flags, ENDED);
    }

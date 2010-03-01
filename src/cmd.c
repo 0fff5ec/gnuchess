@@ -335,6 +335,16 @@ void cmd_manual(void) { SET (flags, MANUAL); }
 /* Move now, not applicable */
 void cmd_movenow(void) {}
 
+void cmd_memory(void) {
+  int i=atoi(token[1]);
+  if ( i > 0 ){
+    int tablesize=(1048576*i)/(2*sizeof(HashSlot));
+    CalcHashSize(tablesize);
+    InitHashTable (); 
+  }
+}
+
+
 /*
  * TODO: Add a logpath variable or macro, not always dump into current
  * dir. Again, how does one handle paths portably across Unix/Windows?
@@ -784,6 +794,8 @@ static const char * const helpstr[] = {
    " off - disables the memory hash table",
    "hashsize N",
    " Sets the hash table to permit storage of N positions",
+   "memory N",
+   " Sets the amount of memory used in MegaBytes.",
    "null",
    " on - enables using the null move heuristic to speed search",
    " off - disables using the null move heuristic",
@@ -916,6 +928,7 @@ const struct methodtable commands[] = {
   { "list", cmd_list },
   { "load", cmd_load },
   { "manual", cmd_manual },
+  { "memory", cmd_memory },
   { "name", cmd_name },
   { "new", cmd_new },
   { "nopost", cmd_nopost },

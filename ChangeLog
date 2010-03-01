@@ -1,4 +1,8 @@
 2010-02-27 Simon Waters <simon-gnu@technocool.net>
+
+	* Add cmd_memory and other commands from Michel Van den Bergh
+
+2010-02-27 Simon Waters <simon-gnu@technocool.net>
 	
 	* further Evaluation fixes suggested or insprired by Lars Mathiesen
 
