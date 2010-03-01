@@ -298,7 +298,7 @@ int main (int argc, char *argv[])
    */
  
   int c;
-  int opt_help = 0, opt_version = 0, opt_post = 0, opt_xboard = 0, opt_hash = 0, opt_easy = 0, opt_manual = 0;
+  int opt_help = 0, opt_version = 0, opt_post = 0, opt_xboard = 0, opt_hash = 0, opt_memory = 0, opt_easy = 0, opt_manual = 0;
   char *endptr;
 
   progname = argv[0]; /* Save in global for cmd_usage */
@@ -308,6 +308,7 @@ int main (int argc, char *argv[])
     static struct option long_options[] =
     {
         {"hashsize", 1, 0, 's'},
+        {"memory", 1, 0, 'M'},
         {"version", 0, 0, 'v'},
         {"help", 0, 0, 'h'},
         {"xboard", 0, 0, 'x'},
@@ -321,7 +322,7 @@ int main (int argc, char *argv[])
 
     int option_index = 0;
  
-    c = getopt_long (argc, argv, "ehmpvxs:",
+    c = getopt_long (argc, argv, "ehmpvxs:M:",
              long_options, &option_index);
  
     /* Detect the end of the options. */
@@ -362,6 +363,18 @@ int main (int argc, char *argv[])
        opt_hash = strtol (optarg, &endptr, 10);
        if ( errno != 0 || *endptr != '\0' ){
          printf("Hashsize out of Range or Invalid\n");
+         return(1);
+       }
+       break;
+     case 'M':    
+       if  ( optarg == NULL ){ /* we have error such as two -s */
+         opt_help = 1;
+         break;
+       }
+       errno = 0; /* zero error indicator */
+       opt_memory = strtol (optarg, &endptr, 10);
+       if ( errno != 0 || *endptr != '\0' ){
+         printf("Memory size invalid\n");
          return(1);
        }
        break;
@@ -411,9 +424,19 @@ int main (int argc, char *argv[])
     return (1); /* Maybe an error if due to bad arguments. */
   }
 
+  if (opt_memory != 0 && opt_hash != 0 ){
+    cmd_usage();
+    return (1); /* only one or the other */
+  }
+
   HashSize = 0 ; /* Set HashSize zero */
   if ( opt_hash != 0)
     CalcHashSize(opt_hash);
+
+  if ( opt_memory > 0 ){
+    int tablesize=(1048576*opt_memory)/(2*sizeof(HashSlot));
+    CalcHashSize(tablesize);
+  }
 
   Initialize ();
 

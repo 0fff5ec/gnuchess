@@ -543,7 +543,7 @@ void cmd_usage(void)
 {
       printf (
      "\n"
-     " Usage: %s [OPTION]\n"
+     " Usage: %s [ --help | --version |\n"
      "\n"
      " -h, --help         display this help and exit\n"
      " -v, --version      display version information and exit\n" 
@@ -553,6 +553,9 @@ void cmd_usage(void)
      " -e, --easy   	   disable thinking in opponents time\n"
      " -m, --manual  	   enable manual mode\n"
      " -s size, --hashsize=size   specify hashtable size in slots\n"
+     " -M size, --memory=size   specify memory usage in MB for hashtable\n"
+     "\n"
+     " Options hashsize and memory are mutally exlusive. Hashtable sizes may be rounded down substanitally.\n"
      "\n"
      " Options xboard and post are accepted without leading dashes\n"
      " for backward compatibility\n"

@@ -2,6 +2,8 @@
 
 	* Add cmd_memory and other commands from Michel Van den Bergh
 
+	* Add memory as command line argument
+
 	* Remove debug scaffolding
 
 2010-02-27 Simon Waters <simon-gnu@technocool.net>
