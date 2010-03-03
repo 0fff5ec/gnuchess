@@ -372,7 +372,7 @@ extern int RealGameCnt;
 extern short RealSide;
 extern int GameCnt;
 extern int computer;
-extern unsigned int flags;
+extern volatile unsigned int flags;
 extern unsigned int preanalyze_flags;
 extern Board board;
 extern int cboard[64];

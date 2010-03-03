@@ -36,7 +36,7 @@ short SqAtakd (short sq, short side)
  *
  **************************************************************************/
 {
-   register BitBoard *a, b, *c, d, blocker;
+   BitBoard *a, b, *c, d, blocker;
    int t;
    
    a = board.b[side];
@@ -94,7 +94,7 @@ void GenAtaks (void)
 {
    int side; 
    int sq;
-   register BitBoard *a, b, *t, *a0;
+   BitBoard *a, b, *t, *a0;
 
    memset (Ataks, 0, sizeof (Ataks)); 
    for (side = white; side <= black; side++)
@@ -182,7 +182,7 @@ BitBoard AttackTo (int sq, int side)
  *
  ***************************************************************************/
 {
-   register BitBoard *a, b, *c, e, blocker;
+   BitBoard *a, b, *c, e, blocker;
    int t;
    
    a = board.b[side];
@@ -234,7 +234,7 @@ BitBoard AttackXTo (int sq, int side)
  *
  ***************************************************************************/
 {
-   register BitBoard *a, b, *c, *d, e, blocker;
+   BitBoard *a, b, *c, *d, e, blocker;
    int t;
    
    a = board.b[side];
@@ -312,7 +312,7 @@ BitBoard AttackXFrom (int sq, int side)
  *
  ***************************************************************************/
 {
-   register BitBoard *a, b, c, blocker;
+   BitBoard *a, b, c, blocker;
    int piece, dir, blocksq;
 
    a = board.b[side];

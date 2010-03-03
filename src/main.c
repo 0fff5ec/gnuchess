@@ -74,7 +74,7 @@ int GameCnt;
 int RealGameCnt;
 short RealSide;
 int computer;
-unsigned int flags;
+volatile unsigned int flags;
 unsigned int preanalyze_flags;
 int cboard[64];
 int Mvboard[64];

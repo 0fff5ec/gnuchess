@@ -77,7 +77,7 @@ void UpdateFriends (void)
  *
  ***************************************************************************/
 {
-   register BitBoard *w, *b;
+   BitBoard *w, *b;
 
    w = board.b[white];
    b = board.b[black];
