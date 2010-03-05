@@ -1,3 +1,9 @@
+New in gnuchess 5.08:
+
+- GNU GPLv3
+- bug fixs including GCCv4 compilation
+- memory command
+
 New in gnuchess 5.07:
 
 - New PGN parser handles annotated PGN when creating opening book
